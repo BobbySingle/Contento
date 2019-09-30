@@ -1,5 +1,6 @@
 <template>
-<div  class="vuebar-element" v-bar>
+<div>
+<div>
   <h1>Profile</h1>
   <p>
   
@@ -202,12 +203,14 @@ Tristique risus nec feugiat in fermentum posuere. Sed sed risus pretium quam vul
 Feugiat nisl pretium fusce id velit ut tortor pretium viverra. Platea dictumst quisque sagittis purus sit amet volutpat consequat mauris. Et tortor consequat id porta nibh venenatis. Ullamcorper velit sed ullamcorper morbi. Parturient montes nascetur ridiculus mus mauris vitae. Pulvinar sapien et ligula ullamcorper. Sed arcu non odio euismod lacinia at quis. Facilisis magna etiam tempor orci eu lobortis elementum nibh. Tellus elementum sagittis vitae et leo duis ut. Nunc sed blandit libero volutpat. Facilisi cras fermentum odio eu feugiat pretium nibh ipsum. Mi ipsum faucibus vitae aliquet nec. Fringilla est ullamcorper eget nulla. Aliquam vestibulum morbi blandit cursus risus at ultrices. Lectus urna duis convallis convallis tellus id interdum velit laoreet. Non arcu risus quis varius quam quisque id diam. Etiam erat velit scelerisque in dictum non consectetur.
 
 Porttitor leo a diam sollicitudin tempor. Mauris a diam maecenas sed enim ut sem. Imperdiet massa tincidunt nunc pulvinar. Dignissim sodales ut eu sem integer vitae justo. Porttitor lacus luctus accumsan tortor posuere ac ut consequat semper. Nec nam aliquam sem et tortor consequat id. Quam nulla porttitor massa id neque. Scelerisque in dictum non consectetur a erat nam at. Cum sociis natoque penatibus et magnis dis parturient montes nascetur. Viverra mauris in aliquam sem fringilla ut morbi tincidunt. Urna molestie at elementum eu facilisis. Purus sit amet luctus venenatis lectus magna fringilla urna porttitor. A lacus vestibulum sed arcu non odio euismod lacinia. Nunc pulvinar sapien et ligula. In aliquam sem fringilla ut morbi tincidunt.</p>
-
-</div>
+  </div>
+    <!-- dragger will be automatically added here -->   
+  </div>
 </template>
 <script>
-import VueBar from "@/plugins/vuebar/index"
 export default {
   
 }
 </script>
+<style  scoped>
+</style>

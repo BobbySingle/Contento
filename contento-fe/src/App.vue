@@ -20,3 +20,6 @@ export default {
   }),
 };
 </script>
+<style>
+@import "../src/assets/scrollbar.css";
+</style>
