@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-content>
+    <v-content class="mt-4">
       <Header />
       <Drawer />
       <router-view />
