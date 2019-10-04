@@ -4,6 +4,11 @@ body{
 }
 ::-webkit-scrollbar{
     width: 10px;
+    height: 10px;
+    background-color: gray;
+}
+::-webkit-scrollbar{
+    width: 10px;
     background-color: gray;
 }
 ::-webkit-scrollbar-thumb{

@@ -2,7 +2,7 @@
   <v-container>
     <!-- /** Begin Create Campaign */ -->
     <v-row no-gutters class="mb-6" justify="start">
-      <v-btn color="primary" large>Create Campaign</v-btn>
+      <popup-create-campaign></popup-create-campaign>
     </v-row>
     <!-- /** End Create Campaign */ -->
 
@@ -23,59 +23,66 @@
     <!-- /**End Search & Filter */ -->
 
     <!-- /**Begin Table Campaign */ -->
-      <v-card flat v-for="item in campaigns" :key="item.id" class="tr-table-campaign">
-        <v-row no-gutters>
-          <v-col md="2">
-            <v-row
-              justify="center"
-              align="center"
-              v-bind:class="{ campaign_success:item.statusCampaign == 1, campaign_on_going:item.statusCampaign == 2,campaign_overdue:item.statusCampaign == 3}"
-            >
-              <v-col>
-                <div>
-                  <span text @click="clickCustomer" class="customer-inner-table">{{item.customer}}</span>
-                </div>
-                <div>{{item.releaseDate}}</div>
-                <div>Deadline: {{item.deadline}}</div>
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-col md="8">
-            <div class="campaign-details py-2" @click="clickCustomer(item.customer)">
+    <v-card flat v-for="item in campaigns" :key="item.id" class="tr-table-campaign">
+      <v-row no-gutters>
+        <v-col md="2">
+          <v-row
+            justify="center"
+            align="center"
+            v-bind:class="{ campaign_success:item.statusCampaign == 1, campaign_on_going:item.statusCampaign == 2,campaign_overdue:item.statusCampaign == 3}"
+          >
+            <v-col>
               <div>
-                <h3>{{ item.titleCampaign }}</h3>
+                <span text @click="clickCustomer" class="customer-inner-table">{{item.customer}}</span>
               </div>
-              <div>
-                <h4>{{ item.descriptionCampaign }}</h4>
-              </div>
+              <div>{{item.releaseDate}}</div>
+              <div>Deadline: {{item.deadline}}</div>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col md="6">
+          <div class="campaign-details py-2" @click="clickCustomer(item.customer)">
+            <div>
+              <h3>{{ item.titleCampaign }}</h3>
             </div>
             <div>
-              <span
-                v-for="topic in item.topicCampaign"
-                :key="topic"
-                class="tag-campaign-details"
-              >#{{topic}}</span>
+              <h4>{{ item.descriptionCampaign }}</h4>
             </div>
-          </v-col>
-          <v-col md="2">
-            <v-row justify="center" align="center" style="height: 100%;">
-              <div>
-                <v-row class="py-1">
-                  <v-btn color="warning" fab small>
-                    <v-icon>edit</v-icon>
-                  </v-btn>
-                </v-row>
-                <v-row class="py-1">
-                  <v-btn color="success" fab small>
-                    <v-icon>more_horiz</v-icon>
-                  </v-btn>
-                </v-row>
-              </div>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-divider></v-divider>
-      </v-card>
+          </div>
+          <div>
+            <span
+              v-for="topic in item.topicCampaign"
+              :key="topic"
+              class="tag-campaign-details"
+            >#{{topic}}</span>
+          </div>
+        </v-col>
+        <v-col md="2">
+          <v-row justify="center" align="center" style="height:100%">
+            <v-chip v-if="item.statusCampaign === 1" color="#3cd1c2" style="color:white">Success</v-chip>
+            <v-chip v-if="item.statusCampaign === 2" color="#ffa500" style="color:white">On Going</v-chip>
+            <v-chip v-if="item.statusCampaign === 3" color="#fe8974" style="color:white">Overdue</v-chip>
+          </v-row>
+        </v-col>
+        <v-col md="2">
+          <v-row justify="center" align="center" style="height: 100%;">
+            <div>
+              <v-row class="py-1">
+                <v-btn color="warning" fab small>
+                  <v-icon>edit</v-icon>
+                </v-btn>
+              </v-row>
+              <v-row class="py-1">
+                <v-btn color="success" fab small>
+                  <v-icon>more_horiz</v-icon>
+                </v-btn>
+              </v-row>
+            </div>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-divider></v-divider>
+    </v-card>
     <!-- /**End Table Campaign */ -->
     <!-- /**Begin Pagination */ -->
     <v-row class="py-4">
@@ -87,7 +94,9 @@
   </v-container>
 </template>
 <script>
+import PopupCreateCampaign from "../../../components/Popup/CreateCampaign.vue";
 export default {
+  components: { PopupCreateCampaign },
   data: () => ({
     page: 1,
     filters: ["Lasted", "Campaign", "Customer"],
@@ -96,7 +105,7 @@ export default {
         customer: "Customer 4",
         releaseDate: "Otc/5/2019",
         deadline: "Otc/30/2019",
-        statusCampaign: "1",
+        statusCampaign: 1,
         titleCampaign: "Campaign Title",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -106,7 +115,7 @@ export default {
         customer: "Customer 3",
         releaseDate: "Otc/5/2019",
         deadline: "Otc/30/2019",
-        statusCampaign: "1",
+        statusCampaign: 1,
         titleCampaign: "Campaign Title",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -116,7 +125,7 @@ export default {
         customer: "Customer 2",
         releaseDate: "Otc/5/2019",
         deadline: "Otc/30/2019",
-        statusCampaign: "2",
+        statusCampaign: 2,
         titleCampaign: "Campaign Title",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -126,7 +135,7 @@ export default {
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
         deadline: "Otc/30/2019",
-        statusCampaign: "3",
+        statusCampaign: 3,
         titleCampaign: "Campaign Title",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -136,7 +145,7 @@ export default {
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
         deadline: "Otc/30/2019",
-        statusCampaign: "3",
+        statusCampaign: 3,
         titleCampaign: "Campaign Title",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -146,7 +155,7 @@ export default {
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
         deadline: "Otc/30/2019",
-        statusCampaign: "3",
+        statusCampaign: 3,
         titleCampaign: "Campaign Title",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -249,4 +258,5 @@ export default {
   font-weight: bold;
   transition: 0.5s;
 }
+
 </style>
