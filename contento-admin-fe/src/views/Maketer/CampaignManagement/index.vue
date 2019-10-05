@@ -40,14 +40,14 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col md="6">
+        <v-col md="6" align-self="center">
           <div class="campaign-details py-2" @click="clickCustomer(item.customer)">
             <div>
               <h3>{{ item.titleCampaign }}</h3>
             </div>
-            <div>
+            <!-- <div>
               <h4>{{ item.descriptionCampaign }}</h4>
-            </div>
+            </div>-->
           </div>
           <div>
             <span
@@ -68,9 +68,10 @@
           <v-row justify="center" align="center" style="height: 100%;">
             <div>
               <v-row class="py-1">
-                <v-btn color="warning" fab small>
+                <!-- <v-btn color="warning" fab small>
                   <v-icon>edit</v-icon>
-                </v-btn>
+                </v-btn>-->
+                <popup-edit-campaign :campaign="item" />
               </v-row>
               <v-row class="py-1">
                 <v-btn color="success" fab small>
@@ -95,8 +96,9 @@
 </template>
 <script>
 import PopupCreateCampaign from "../../../components/Popup/CreateCampaign.vue";
+import PopupEditCampaign from "../../../components/Popup/EditCampaign.vue";
 export default {
-  components: { PopupCreateCampaign },
+  components: { PopupCreateCampaign, PopupEditCampaign },
   data: () => ({
     page: 1,
     filters: ["Lasted", "Campaign", "Customer"],
@@ -104,62 +106,64 @@ export default {
       {
         customer: "Customer 4",
         releaseDate: "Otc/5/2019",
-        deadline: "Otc/30/2019",
+        deadline: "2019-10-17T15:20:03.146Z",
         statusCampaign: 1,
-        titleCampaign: "Campaign Title",
+        titleCampaign: "How to structure an effective campaign plan",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["topic 1", "topic2"]
-      },
+        topicCampaign: ["Film", "Social", "Food & Drink","2Tek", "Business"],},
       {
         customer: "Customer 3",
         releaseDate: "Otc/5/2019",
-        deadline: "Otc/30/2019",
+        deadline: "2019-10-17T15:20:03.146Z",
         statusCampaign: 1,
-        titleCampaign: "Campaign Title",
+        titleCampaign: "How to Launch a Successful Marketing Campaign",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["topic 1", "topic2"]
+        topicCampaign: ["Film", "Social", "Food & Drink"]
       },
       {
         customer: "Customer 2",
         releaseDate: "Otc/5/2019",
-        deadline: "Otc/30/2019",
+        deadline: "2019-10-17T15:20:03.146Z",
         statusCampaign: 2,
-        titleCampaign: "Campaign Title",
+        titleCampaign:
+          "This Is The Ultimate Marketing Campaign Planning Checklist That Will Get You Proactive",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["topic 1", "topic2"]
+        topicCampaign: ["Film", "Social", "Food & Drink","2Tek",]
       },
       {
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
-        deadline: "Otc/30/2019",
+        deadline: "2019-10-17T15:20:03.146Z",
         statusCampaign: 3,
-        titleCampaign: "Campaign Title",
+        titleCampaign:
+          "Catch Me If You Can - Chủ nghĩa lừa đảo, tuổi trẻ ngông cuồng & Steven Spielbeg",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["topic 1", "topic2"]
+        topicCampaign: ["Film"]
       },
       {
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
-        deadline: "Otc/30/2019",
+        deadline: "2019-10-17T15:20:03.146Z",
         statusCampaign: 3,
-        titleCampaign: "Campaign Title",
+        titleCampaign:
+          "Đây liệu có phải là Joker vĩ đại nhất mọi thời đại hay niềm tin vào lý tưởng Joker, Chí Phèo phiên bản siêu anh hùng? Phim bị cắt bao lâu?",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["topic 1", "topic2"]
+        topicCampaign: ["Film", "Social"]
       },
       {
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
-        deadline: "Otc/30/2019",
+        deadline: "2019-10-17T15:20:03.146Z",
         statusCampaign: 3,
         titleCampaign: "Campaign Title",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["topic 1", "topic2"]
+        topicCampaign: ["Film", "Social"]
       }
     ]
   }),
@@ -231,7 +235,7 @@ export default {
   /**line-clamp */
   overflow: hidden;
   text-overflow: ellipsis;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   display: -webkit-box;
   -webkit-box-orient: vertical;
 }
@@ -258,5 +262,4 @@ export default {
   font-weight: bold;
   transition: 0.5s;
 }
-
 </style>

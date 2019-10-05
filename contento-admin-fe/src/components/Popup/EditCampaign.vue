@@ -1,17 +1,20 @@
 <template>
   <v-dialog v-model="dialog" persistent width="1000px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" large v-on="on">Create Campaign</v-btn>
+      <!-- <v-btn color="primary" large v-on="on">Create Campaign</v-btn> -->
+      <v-btn color="warning" fab small v-on="on">
+        <v-icon>edit</v-icon>
+      </v-btn>
     </template>
     <v-card>
       <v-row class="mx-4 mb-4" justify="center">
-        <v-card-title class="heading">Add New Campaign</v-card-title>
+        <v-card-title class="heading">Edit Campaign</v-card-title>
       </v-row>
       <v-row no-gutters class="mx-10">
         <v-col md="12">
           <v-row>
             <v-col md="6">
-              <v-text-field :counter="255" label="Title:" required></v-text-field>
+              <v-text-field :counter="255" label="Title:" required v-model="title" :value="campaign.titleCampaign"></v-text-field>
             </v-col>
             <v-spacer></v-spacer>
             <v-col md="5">
@@ -21,7 +24,12 @@
                 </v-col>
 
                 <v-col md="11">
-                  <datetime title="End Time" type="datetime" v-model="endtime" class="endtime"></datetime>
+                  <datetime
+                    title="End Time"
+                    type="datetime"
+                    :value="campaign.deadline"
+                    class="endtime"
+                  ></datetime>
                 </v-col>
               </v-row>
             </v-col>
@@ -30,27 +38,20 @@
             <v-col md="6">
               <v-row no-gutters>
                 <v-col md="10">
-                  <v-select :items="customers" label="Customer"></v-select>
-                </v-col>
-                <v-col md="2" class="pl-5" style="width:100%;" align-self="center">
-                  <!-- <v-btn fab color="primary" small>
-                    <v-icon color="white">add</v-icon>
-                  </v-btn>-->
-
-                  <!-- /**Popup CreateCustomer */ -->
-                  <popup-create-customer></popup-create-customer>
+                  <v-select :items="customers" label="Customer" v-model="customer" :value="campaign.customer"></v-select>
                 </v-col>
               </v-row>
             </v-col>
             <v-spacer></v-spacer>
             <v-col md="5">
-              <v-select :items="editors" label="Editor"></v-select>
+              <v-select :items="editors" label="Editor" v-model="editor" :value="'Editor 2'"></v-select>
             </v-col>
           </v-row>
           <v-row>
             <v-col md="12">
               <v-combobox
-                v-model="chips"
+                v-model="chipsEditor"
+                :value="campaign.topicCampaign"
                 :items="categorys"
                 chips
                 clearable
@@ -61,9 +62,8 @@
                   <v-chip
                     v-bind="attrs"
                     :input-value="selected"
-                    close
                     @click="select"
-                    @click:close="remove(item)"
+                    close
                     color="blue"
                     class="chips"
                   >
@@ -75,7 +75,7 @@
           </v-row>
           <v-row>
             <v-col md="12">
-              <CKEditor ref="ckeditor" :content="content" />
+              <CKEditor ref="ckeditor" :content="content" v-model="ckeditor" />
             </v-col>
           </v-row>
         </v-col>
@@ -92,6 +92,7 @@
 import CKEditor from "../CKEditor/Ckeditor5";
 import PopupCreateCustomer from "./CreateCustomer.vue";
 export default {
+  props: ["campaign"],
   components: {
     CKEditor,
     PopupCreateCustomer
@@ -100,31 +101,49 @@ export default {
     return {
       dialog: false,
       menu: false,
-      customers: ["Customer 1", "Customer 2", "Customer 3"],
+      customers: ["Customer 1", "Customer 2", "Customer 3", "Customer 4"],
       editors: ["Editor 1", "Editor 2", "Editor 3"],
-      chips: [],
-      categorys: ["Sport", "Travel", "Food & Drink", "2Tek", "Social","Business","Film"],
-      endtime: new Date().toISOString(),
-      content: ""
+      chipsEditor: [],
+      categorys: [
+        "Sport",
+        "Travel",
+        "Food & Drink",
+        "2Tek",
+        "Social",
+        "Business",
+        "Film"
+      ],
+      endtime: "",
+      content: "",
+      title: "",
+      customer: "",
+      editor: "",
+      ckeditor: ""
     };
   },
   methods: {
-    remove(item) {
-      this.chips.splice(this.chips.indexOf(item), 1);
-      this.chips = [...this.chips];
-    },
+    // remove(item) {
+    //   this.chipsEditor.splice(this.chipsEditor.indexOf(item), 1);
+    //   this.chipsEditor = [...this.chipsEditor];
+    // },
     update() {
       console.log(this.$refs.ckeditor.editorData);
+      console.log(this.title);
+      console.log(this.customer);
+      console.log(this.editor);
+      console.log(this.chipsEditor);
+      console.log(this.endtime);
     }
+
   },
   mounted() {
     this.content =
       '<p>Ghi cai nay vao content ok gi roi lam gi tiep gio</p><figure class="image"><img src="https://firebasestorage.googleapis.com/v0/b/contento-admin.appspot.com/o/images%2Fcontent%2Fa.png?alt=media&amp;token=2860ba48-8ee3-41ab-8c5e-96b935d65d51"></figure>"';
-  },
-  watch: {
-    endtime() {
-      console.log(this.endtime);
-    }
+    this.title = this.campaign.titleCampaign;
+    this.customer = this.campaign.customer;
+    this.editor = "Editor 2";
+    this.endtime = this.campaign.deadline;
+    this.chipsEditor = this.campaign.topicCampaign;
   }
 };
 </script>
