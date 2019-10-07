@@ -5,11 +5,11 @@
     permanent
     app
     dark
-    style="background-color:#424242;"
+    style="background-color:#1976d2;"
   >
-    <v-list-item style="background-color:#424242" dark>
+    <v-list-item style="background-color:#004ba0" dark>
       <v-list-item-avatar>
-        <v-img src="../../assets/Logo.png" sizes="85"></v-img>
+        <v-img src="../../assets/logo.png" sizes="85"></v-img>
       </v-list-item-avatar>
       <v-list-item-title>Contento</v-list-item-title>
       <v-btn icon @click.stop="mini = !mini">

@@ -1,6 +1,6 @@
 <template>
 <nav>
-  <v-app-bar app dark height="56" style="background-color:#1b1b1b" flat>
+  <v-app-bar app dark height="56" style="background-color:#004ba0" flat>
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-menu

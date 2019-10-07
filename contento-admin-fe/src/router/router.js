@@ -4,6 +4,7 @@ import Home from "../views/Home/index.vue";
 import CampaignManagement from "../views/Maketer/CampaignManagement/index.vue";
 import CampaignRequest from "../views/Editor/CampaignRequest/index.vue";
 import TaskManagement from "../views/Writer/TaskManagement/index.vue";
+import CampaignDetails from "../views/Maketer/CampaignDetails/index.vue"
 
 Vue.use(Router);
 
@@ -30,6 +31,11 @@ export default new Router({
       path: "/TaskManagement",
       name: "TaskManagement",
       component: TaskManagement
+    },
+    {
+      path: "/CampaignDetails",
+      name: "CampaignDetails",
+      component: CampaignDetails
     },
   ]
 });

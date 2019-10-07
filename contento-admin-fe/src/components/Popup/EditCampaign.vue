@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog" persistent width="1000px">
     <template v-slot:activator="{ on }">
       <!-- <v-btn color="primary" large v-on="on">Create Campaign</v-btn> -->
-      <v-btn color="warning" fab small v-on="on">
+      <v-btn color="primary" fab small v-on="on">
         <v-icon>edit</v-icon>
       </v-btn>
     </template>
@@ -63,7 +63,6 @@
                     v-bind="attrs"
                     :input-value="selected"
                     @click="select"
-                    close
                     color="blue"
                     class="chips"
                   >
@@ -161,9 +160,10 @@ export default {
 .chips {
   color: white !important;
 }
+/*
 .chips:hover {
   background-color: rgba(100, 100, 100, 0.5) !important;
   color: black !important;
   transition: 0.5s;
-}
+} */
 </style>

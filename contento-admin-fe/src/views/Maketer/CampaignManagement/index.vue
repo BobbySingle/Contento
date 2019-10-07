@@ -11,7 +11,7 @@
       <v-col sm="9" md="10">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
-          <input class="input-field" type="text" placeholder="Email" name="email" />
+          <input class="input-field" type="text" placeholder="Customer,Title" name="search" />
         </div>
       </v-col>
       <v-col sm="3" md="2">
@@ -25,7 +25,7 @@
     <!-- /**Begin Table Campaign */ -->
     <v-card flat v-for="item in campaigns" :key="item.id" class="tr-table-campaign">
       <v-row no-gutters>
-        <v-col md="2">
+        <v-col sm="3" md="2">
           <v-row
             justify="center"
             align="center"
@@ -33,15 +33,15 @@
           >
             <v-col>
               <div>
-                <span text @click="clickCustomer" class="customer-inner-table">{{item.customer}}</span>
+                <span text @click="clickCampaign(item)" class="customer-inner-table">{{item.customer}}</span>
               </div>
               <div>{{item.releaseDate}}</div>
               <div>Deadline: {{item.deadline}}</div>
             </v-col>
           </v-row>
         </v-col>
-        <v-col md="6" align-self="center">
-          <div class="campaign-details py-2" @click="clickCustomer(item.customer)">
+        <v-col sm="5" md="6" align-self="center">
+          <div class="campaign-details py-2" @click="clickCampaign(item)">
             <div>
               <h3>{{ item.titleCampaign }}</h3>
             </div>
@@ -57,14 +57,14 @@
             >#{{topic}}</span>
           </div>
         </v-col>
-        <v-col md="2">
+        <v-col sm="2" md="2">
           <v-row justify="center" align="center" style="height:100%">
-            <v-chip v-if="item.statusCampaign === 1" color="#3cd1c2" style="color:white">Success</v-chip>
-            <v-chip v-if="item.statusCampaign === 2" color="#ffa500" style="color:white">On Going</v-chip>
-            <v-chip v-if="item.statusCampaign === 3" color="#fe8974" style="color:white">Overdue</v-chip>
+            <v-chip v-if="item.statusCampaign === 1" color="success" style="color:white">Success</v-chip>
+            <v-chip v-if="item.statusCampaign === 2" color="warning" style="color:white">On Going</v-chip>
+            <v-chip v-if="item.statusCampaign === 3" color="error" style="color:white">Overdue</v-chip>
           </v-row>
         </v-col>
-        <v-col md="2">
+        <v-col sm="2" md="2">
           <v-row justify="center" align="center" style="height: 100%;">
             <div>
               <v-row class="py-1">
@@ -73,11 +73,11 @@
                 </v-btn>-->
                 <popup-edit-campaign :campaign="item" />
               </v-row>
-              <v-row class="py-1">
+              <!-- <v-row class="py-1">
                 <v-btn color="success" fab small>
                   <v-icon>more_horiz</v-icon>
                 </v-btn>
-              </v-row>
+              </v-row>-->
             </div>
           </v-row>
         </v-col>
@@ -104,6 +104,7 @@ export default {
     filters: ["Lasted", "Campaign", "Customer"],
     campaigns: [
       {
+        id:1,
         customer: "Customer 4",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -113,6 +114,7 @@ export default {
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         topicCampaign: ["Film", "Social", "Food & Drink","2Tek", "Business"],},
       {
+        id:2,
         customer: "Customer 3",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -123,6 +125,7 @@ export default {
         topicCampaign: ["Film", "Social", "Food & Drink"]
       },
       {
+        id:3,
         customer: "Customer 2",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -134,6 +137,7 @@ export default {
         topicCampaign: ["Film", "Social", "Food & Drink","2Tek",]
       },
       {
+        id:4,
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -145,6 +149,7 @@ export default {
         topicCampaign: ["Film"]
       },
       {
+        id:5,
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -156,6 +161,7 @@ export default {
         topicCampaign: ["Film", "Social"]
       },
       {
+        id:6,
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -168,8 +174,9 @@ export default {
     ]
   }),
   methods: {
-    clickCustomer: function(event) {
-      alert("Hello!" + event);
+    clickCampaign: function(event) {
+      localStorage.setItem("Campaign", JSON.stringify(event));
+      this.$router.push("/CampaignDetails");
     }
   }
 };
@@ -217,15 +224,18 @@ export default {
 /**Begin Status - line */
 
 .campaign_success {
-  border-left: 4px solid #3cd1c2;
+  /* border-left: 4px solid #3cd1c2; */
+  border-left: 4px solid #4caf50;
   height: 100%;
 }
 .campaign_on_going {
-  border-left: 4px solid orange;
+  /* border-left: 4px solid orange; */
+  border-left: 4px solid #fb8c00;
   height: 100%;
 }
 .campaign_overdue {
-  border-left: 4px solid tomato;
+  /* border-left: 4px solid tomato; */
+  border-left: 4px solid #ff5252;
   height: 100%;
 }
 /**End Status - line */

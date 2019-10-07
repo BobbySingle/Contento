@@ -61,9 +61,7 @@
                   <v-chip
                     v-bind="attrs"
                     :input-value="selected"
-                    close
                     @click="select"
-                    @click:close="remove(item)"
                     color="blue"
                     class="chips"
                   >
@@ -109,10 +107,10 @@ export default {
     };
   },
   methods: {
-    remove(item) {
-      this.chips.splice(this.chips.indexOf(item), 1);
-      this.chips = [...this.chips];
-    },
+    // remove(item) {
+    //   this.chips.splice(this.chips.indexOf(item), 1);
+    //   this.chips = [...this.chips];
+    // },
     update() {
       console.log(this.$refs.ckeditor.editorData);
     }
@@ -139,12 +137,12 @@ export default {
   height: 32px;
   width: 100%;
 }
-.chips {
+ .chips {
   color: white !important;
 }
-.chips:hover {
+/* .chips:hover {
   background-color: rgba(100, 100, 100, 0.5) !important;
   color: black !important;
   transition: 0.5s;
-}
+} */ 
 </style>
