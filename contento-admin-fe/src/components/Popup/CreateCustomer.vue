@@ -1,9 +1,12 @@
  <template>
   <v-dialog v-model="dialog" persistent width="400px">
     <template v-slot:activator="{ on }">
-      <v-btn fab color="primary" small v-on="on">
-        <v-icon color="white">add</v-icon>
-      </v-btn>
+      <div v-on="on">
+        <v-btn fab color="primary" small v-if="isSmallBtn">
+          <v-icon color="white">add</v-icon>
+        </v-btn>
+        <v-btn color="primary" v-if="!isSmallBtn">Create New Customer</v-btn>
+      </div>
     </template>
     <v-card>
       <v-row class="mx-4 mb-4" justify="center">
@@ -35,10 +38,13 @@
 </template>
 <script>
 export default {
-    data(){
-        return{
-            dialog:false,
-        }
-    }
-}
+  props: {
+    isSmallBtn: Boolean
+  },
+  data() {
+    return {
+      dialog: false
+    };
+  }
+};
 </script>

@@ -33,7 +33,11 @@
           >
             <v-col>
               <div>
-                <span text @click="clickCampaign(item)" class="customer-inner-table">{{item.customer}}</span>
+                <span
+                  text
+                  @click="clickCampaign(item)"
+                  class="customer-inner-table"
+                >{{item.customer}}</span>
               </div>
               <div>{{item.releaseDate}}</div>
               <div>Deadline: {{item.deadline}}</div>
@@ -72,12 +76,10 @@
                   <v-icon>edit</v-icon>
                 </v-btn>-->
                 <popup-edit-campaign :campaign="item" />
-              </v-row>
-              <!-- <v-row class="py-1">
-                <v-btn color="success" fab small>
-                  <v-icon>more_horiz</v-icon>
+                <v-btn color="success" fab small router to="/Calendar" class="mx-3">
+                  <v-icon>event</v-icon>
                 </v-btn>
-              </v-row>-->
+              </v-row>
             </div>
           </v-row>
         </v-col>
@@ -104,17 +106,18 @@ export default {
     filters: ["Lasted", "Campaign", "Customer"],
     campaigns: [
       {
-        id:1,
-        customer: "Customer 4",
+        id: 1,
+        customer: "Nguyen Tran Thi Con Gai",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
         statusCampaign: 1,
         titleCampaign: "How to structure an effective campaign plan",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["Film", "Social", "Food & Drink","2Tek", "Business"],},
+        topicCampaign: ["Film", "Social", "Food & Drink", "2Tek", "Business"]
+      },
       {
-        id:2,
+        id: 2,
         customer: "Customer 3",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -125,7 +128,7 @@ export default {
         topicCampaign: ["Film", "Social", "Food & Drink"]
       },
       {
-        id:3,
+        id: 3,
         customer: "Customer 2",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -134,10 +137,10 @@ export default {
           "This Is The Ultimate Marketing Campaign Planning Checklist That Will Get You Proactive",
         descriptionCampaign:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["Film", "Social", "Food & Drink","2Tek",]
+        topicCampaign: ["Film", "Social", "Food & Drink", "2Tek"]
       },
       {
-        id:4,
+        id: 4,
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -149,7 +152,7 @@ export default {
         topicCampaign: ["Film"]
       },
       {
-        id:5,
+        id: 5,
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -161,7 +164,7 @@ export default {
         topicCampaign: ["Film", "Social"]
       },
       {
-        id:6,
+        id: 6,
         customer: "Customer 1",
         releaseDate: "Otc/5/2019",
         deadline: "2019-10-17T15:20:03.146Z",
@@ -177,7 +180,29 @@ export default {
     clickCampaign: function(event) {
       localStorage.setItem("Campaign", JSON.stringify(event));
       this.$router.push("/CampaignDetails");
+    },
+    formatListCampaign() {
+      this.campaigns.forEach(el => {
+        el.deadline = this.getDateTimeFormat(el.deadline);
+      });
+    },
+    getDateTimeFormat(datetime) {
+      const date = new Date(Date.parse(datetime));
+      return (
+        date.getHours() +
+        ":" +
+        date.getMinutes() +
+        "  " +
+        date.getDate() +
+        "/" +
+        (date.getMonth() + 1) +
+        "/" +
+        date.getFullYear()
+      );
     }
+  },
+  mounted() {
+    this.formatListCampaign();
   }
 };
 </script>

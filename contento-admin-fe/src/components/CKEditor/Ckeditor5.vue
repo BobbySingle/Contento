@@ -16,8 +16,8 @@ function CustomUploadAdapterPlugin(editor) {
   editor.plugins.get("FileRepository").createUploadAdapter = loader => {
     return new UploadImagePlugin(loader);
   };
-  editor.plugins.get('EasyImage').createUploadAdapter = loader => {
-    return new UploadImagePlugin(loader)
+  editor.plugins.get("EasyImage").createUploadAdapter = loader => {
+    return new UploadImagePlugin(loader);
   };
 }
 export default {
@@ -26,7 +26,12 @@ export default {
     content: {
       type: String,
       required: false
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
+
   },
   data() {
     return {
@@ -34,11 +39,13 @@ export default {
       editorData: this.content,
       editorConfig: {
         extraPlugins: [CustomUploadAdapterPlugin]
-      }
+      },
+      editorInstance: null
     };
   },
   methods: {
     onReady(editor) {
+      console.log('on ready')
       // Insert the toolbar before the editable area.
       editor.ui
         .getEditableElement()
@@ -46,12 +53,16 @@ export default {
           editor.ui.view.toolbar.element,
           editor.ui.getEditableElement()
         );
+        this.editorInstance = editor;
+        this.editorInstance.isReadOnly = this.readOnly;
+    },
+    changeEditorReadOnly() {
+      this.editorInstance.isReadOnly = !this.editorInstance.isReadOnly;
     }
   },
   watch: {
     content: function() {
       this.editorData = this.content;
-      console.log(this.editorData);
     }
   }
 };

@@ -20,15 +20,12 @@
     <v-divider class="mx-auto" inset></v-divider>
 
     <v-list dense>
-      <v-list-item v-for="item in items" :key="item.title" link v-if="item.role === role">
+      <v-list-item v-for="item in items" :key="item.title" link v-if="item.role === role" router :to="item.link">
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
-
         <v-list-item-content>
-          <router-link :to="item.link" style="text-decoration: none; color:white;">
             <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </router-link>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -42,21 +39,21 @@ export default {
       role: "",
       items: [
         {
-          title: "Campaign Management",
+          title: "Campaign",
           icon: "emoji_events",
           link: "/CampaignManagement",
           role: "Maketer"
         },
         {
-          title: "Content Managerment",
+          title: "Content",
           icon: "edit",
-          link: "/",
+          link: "/ContentManagement",
           role: "Maketer"
         },
         {
-          title: "Customer Managerment",
+          title: "Customer",
           icon: "people",
-          link: "/",
+          link: "/CustomertManagement",
           role: "Maketer"
         },
         {

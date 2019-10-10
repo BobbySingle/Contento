@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-btn text router to="/CampaignManagement">Back</v-btn>
+      <v-btn text @click="$router.go(-1)">Back</v-btn>
     </v-row>
     <v-row justify="center" class="mb-5">
       <h1>Campaign Details</h1>
@@ -78,14 +78,14 @@
           <v-data-table :headers="headers" :items="listtasks" style="width:100%;">
             <template v-slot:item.status="{ item }">
               <v-chip color="success" dark v-if="item.status === 1">Completed</v-chip>
-              <v-chip color="warning" dark v-if="item.status === 2">Final Approval</v-chip>
-              <v-chip color="warning" dark v-if="item.status === 3">Under Review</v-chip>
-              <v-chip color="warning" dark v-if="item.status === 4">In Progress</v-chip>
-              <v-chip color="error" dark v-if="item.status === 5">Overdue</v-chip>
-              <v-chip color="primary" dark v-if="item.status === 6">Publishing</v-chip>
+              <v-chip color="warning" dark v-if="item.status === 2">Under Review</v-chip>
+              <v-chip color="warning" dark v-if="item.status === 3">In Progress</v-chip>
+              <v-chip color="error" dark v-if="item.status === 4">Overdue</v-chip>
+              <v-chip color="secondary" dark v-if="item.status === 5">Publishing</v-chip>
+              <v-chip color="primary" dark v-if="item.status === 6">Published</v-chip>
             </template>
             <template v-slot:item.action="{item}">
-              <v-btn color="primary" v-if="item.status === 1">Publish</v-btn>
+              <v-btn color="primary" v-if="item.status === 1" @click="publish(item.id)">Publish</v-btn>
               <v-btn disabled v-if="item.status != 1">Publish</v-btn>
             </template>
           </v-data-table>
@@ -181,7 +181,21 @@ export default {
       ]
     };
   },
-
+  methods: {
+    publish(event) {
+      localStorage.setItem("ContentID", event);
+      this.$router.push("/PublishChannel");
+    },
+    /**Begin format time Deadline */
+    formatListContent() {
+      this.listtasks.forEach(el => {
+        el.deadline = this.$moment(String(el.deadline)).format(
+          "YYYY-MM-DD hh:mm"
+        );
+      });
+    }
+    /**End format time Deadline */
+  },
   mounted() {
     let campaign = JSON.parse(localStorage["Campaign"].toString());
     this.title = campaign.titleCampaign;
@@ -189,27 +203,13 @@ export default {
     this.editor = "Editor 2";
     this.endtime = campaign.deadline;
     this.chips = campaign.topicCampaign;
+    this.formatListContent();
   }
 };
 </script>
 <style scoped>
 .chips {
   color: white !important;
-}
-.campaign_success {
-  /* border-left: 4px solid #3cd1c2; */
-  border-left: 4px solid #4caf50;
-  height: 100%;
-}
-.campaign_on_going {
-  /* border-left: 4px solid orange; */
-  border-left: 4px solid #fb8c00;
-  height: 100%;
-}
-.campaign_overdue {
-  /* border-left: 4px solid tomato; */
-  border-left: 4px solid #ff5252;
-  height: 100%;
 }
 </style>
 
