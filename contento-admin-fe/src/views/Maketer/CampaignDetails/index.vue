@@ -4,93 +4,114 @@
       <v-btn text @click="$router.go(-1)">Back</v-btn>
     </v-row>
     <v-row justify="center" class="mb-5">
-      <h1>Campaign Details</h1>
+      <h1 class="text__h1">Campaign Details</h1>
     </v-row>
     <v-row no-gutters class="mx-10">
-      <v-col sm="12" md="12">
-        <v-row>
-          <v-col sm="6" md="6">
-            <v-text-field label="Title:" v-model="title" readonly></v-text-field>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col sm="5" md="5">
-            <v-row class="out-endtime">
-              <v-col sm="2" md="1">
-                <v-icon>mdi-calendar-range</v-icon>
-              </v-col>
-
-              <v-col sm="10" md="11">
-                <datetime
-                  title="End Time"
-                  type="datetime"
-                  v-model="endtime"
-                  class="endtime"
-                  disabled
-                ></datetime>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col sm="6" md="6">
-            <v-row no-gutters>
-              <v-col sm="12" md="12">
-                <v-select :items="customers" label="Customer" v-model="customer" readonly></v-select>
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col sm="5" md="5">
-            <v-select :items="editors" label="Editor" v-model="editor" readonly></v-select>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col sm="12" md="12">
-            <v-combobox
-              v-model="chips"
-              :items="categorys"
-              chips
-              clearable
-              label="Category"
-              multiple
-              disabled
-            >
-              <template v-slot:selection="{ attrs, item, select, selected }">
-                <v-chip
-                  v-bind="attrs"
-                  :input-value="selected"
-                  @click="select"
-                  color="blue"
-                  class="chips"
+      <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+        <v-expansion-panel>
+          <v-expansion-panel-header class="text__14">Infomation:</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-col sm="12" md="12">
+              <v-row>
+                <v-col sm="6" md="6">
+                  <span style="color:grey; font-weight:300; font-size:12px;">Title</span>
+                  <br />
+                  <span class="text__14">{{title}}</span>
+                  <!-- <v-text-field label="Title:" v-model="title" readonly class="text__14"></v-text-field> -->
+                </v-col>
+                <v-spacer></v-spacer>
+                <v-col sm="5" md="5">
+                  <span style="color:grey; font-weight:300; font-size:12px;">End Date</span>
+                  <br />
+                  <span class="text__14">{{endDate}}</span>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col sm="6" md="6">
+                  <span style="color:grey; font-weight:300; font-size:12px;">Customer</span>
+                  <br />
+                  <span class="text__14">{{customerName}}</span>
+                </v-col>
+                <v-spacer></v-spacer>
+                <v-col sm="5" md="5">
+                  <span style="color:grey; font-weight:300; font-size:12px;">Editor</span>
+                  <br />
+                  <span class="text__14">{{editor}}</span>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col sm="12" md="12">
+                  <span style="color:grey; font-weight:300; font-size:12px;">Categorys</span>
+                  <br />
+                  <v-chip
+                    class="text__14 chips ma-1"
+                    v-for="item in listTag"
+                    :key="item"
+                    color="blue"
+                    :input-value="item"
+                  >{{item}}</v-chip>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="text__14">List Tasks:</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-col sm="12" md="12">
+              <v-row>
+                <v-data-table
+                  :headers="headers"
+                  :items="listtasks"
+                  style="width:100%;"
+                  :page.sync="page"
+                  :items-per-page="itemsPerPage"
+                  hide-default-footer
+                  @page-count="pageCount = $event"
                 >
-                  <strong>{{ item }}</strong>
-                </v-chip>
-              </template>
-            </v-combobox>
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col sm="12" md="12">
-        <v-row class="ml-1">
-          <h3 style="color:grey;">List Task</h3>
-        </v-row>
-        <v-row>
-          <v-data-table :headers="headers" :items="listtasks" style="width:100%;">
-            <template v-slot:item.status="{ item }">
-              <v-chip color="success" dark v-if="item.status === 1">Completed</v-chip>
-              <v-chip color="warning" dark v-if="item.status === 2">Under Review</v-chip>
-              <v-chip color="warning" dark v-if="item.status === 3">In Progress</v-chip>
-              <v-chip color="error" dark v-if="item.status === 4">Overdue</v-chip>
-              <v-chip color="secondary" dark v-if="item.status === 5">Publishing</v-chip>
-              <v-chip color="primary" dark v-if="item.status === 6">Published</v-chip>
-            </template>
-            <template v-slot:item.action="{item}">
-              <v-btn color="primary" v-if="item.status === 1" @click="publish(item.id)">Publish</v-btn>
-              <v-btn disabled v-if="item.status != 1">Publish</v-btn>
-            </template>
-          </v-data-table>
-        </v-row>
-      </v-col>
+                  <template v-slot:item.status="{ item }">
+                    <v-chip class="text__14" color="success" dark v-if="item.status === 1">Completed</v-chip>
+                    <v-chip
+                      class="text__14"
+                      color="warning"
+                      dark
+                      v-if="item.status === 2"
+                    >Under Review</v-chip>
+                    <v-chip
+                      class="text__14"
+                      color="warning"
+                      dark
+                      v-if="item.status === 3"
+                    >In Progress</v-chip>
+                    <v-chip class="text__14" color="error" dark v-if="item.status === 4">Overdue</v-chip>
+                    <v-chip
+                      class="text__14"
+                      color="secondary"
+                      dark
+                      v-if="item.status === 5"
+                    >Publishing</v-chip>
+                    <v-chip class="text__14" color="primary" dark v-if="item.status === 6">Published</v-chip>
+                  </template>
+                  <template v-slot:item.action="{item}">
+                    <v-btn
+                      class="text__14"
+                      color="primary"
+                      v-if="item.status === 1"
+                      @click="publish(item)"
+                    >Publish</v-btn>
+                    <v-btn class="text__14" disabled v-if="item.status != 1">Publish</v-btn>
+                  </template>
+                </v-data-table>
+                <v-row justify="center">
+                  <div class="text-center pt-2">
+                    <v-pagination v-model="page" :length="pageCount"></v-pagination>
+                  </div>
+                </v-row>
+              </v-row>
+            </v-col>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-row>
   </v-container>
 </template>
@@ -98,11 +119,17 @@
 export default {
   data() {
     return {
+      /**Begin Pagination */
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 5,
+      /**End Pagination */
+      /**Begin Expension Panel */
+      panel: [0, 1],
+      /**End Expension Panel */
       dialog: false,
       menu: false,
-      customers: ["Customer 1", "Customer 2", "Customer 3", "Customer 4"],
-      editors: ["Editor 1", "Editor 2", "Editor 3"],
-      chips: ["Sport", "Travel", "Food & Drink"],
+      listTag: [],
       categorys: [
         "Sport",
         "Travel",
@@ -112,22 +139,28 @@ export default {
         "Business",
         "Film"
       ],
-      endtime: "",
+      endDate: "",
       title: "",
-      customer: "",
+      customerName: "",
       editor: "",
       /**List Tasks */
       headers: [
         {
           text: "#",
-          align: "left",
-          value: "id"
+          align: "center",
+          value: "id",
+          width: "8%"
         },
-        { text: "Task", value: "title", sortable: false },
-        { text: "Current Assignee", value: "writer", align: "center" },
-        { text: "Deadline", value: "deadline", align: "center" },
-        { text: "Status", value: "status", align: "center" },
-        { text: "Action", value: "action", align: "center" }
+        { text: "Task", value: "title", sortable: false, width: "40%" },
+        {
+          text: "Current Assignee",
+          value: "writer",
+          align: "center",
+          width: "16%"
+        },
+        { text: "Deadline", value: "deadline", align: "center", width: "16%" },
+        { text: "Status", value: "status", align: "center", width: "10%" },
+        { text: "Action", value: "action", align: "center", width: "10%" ,sortable:false}
       ],
       listtasks: [
         {
@@ -183,31 +216,37 @@ export default {
   },
   methods: {
     publish(event) {
-      localStorage.setItem("ContentID", event);
+      localStorage.setItem("Content", JSON.stringify(event));
       this.$router.push("/PublishChannel");
     },
-    /**Begin format time Deadline */
-    formatListContent() {
+    /**Begin format time created */
+    formatListTask() {
       this.listtasks.forEach(el => {
         el.deadline = this.$moment(String(el.deadline)).format(
           "YYYY-MM-DD hh:mm"
         );
       });
     }
-    /**End format time Deadline */
+    /**End format time created */
   },
   mounted() {
+    /**Begin Load data campaign details */
     let campaign = JSON.parse(localStorage["Campaign"].toString());
-    this.title = campaign.titleCampaign;
-    this.customer = campaign.customer;
+    this.title = campaign.title;
+    this.customerName = campaign.customerName;
     this.editor = "Editor 2";
-    this.endtime = campaign.deadline;
-    this.chips = campaign.topicCampaign;
-    this.formatListContent();
+    /**Convert Date to ISO */
+    this.endDate = campaign.endDate;
+    this.listTag = campaign.listTag;
+    this.formatListTask();
+    /**End Load data campaign details */
   }
 };
 </script>
 <style scoped>
+::v-deep .v-expansion-panels {
+  z-index: inherit;
+}
 .chips {
   color: white !important;
 }

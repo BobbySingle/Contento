@@ -8,7 +8,8 @@ import CampaignDetails from "../views/Maketer/CampaignDetails/index.vue"
 import PublishChannel from "../views/Maketer/PublishChannel/index.vue"
 import Calendar from "../views/Maketer/Calendar/index.vue"
 import ContentManagement from "../views/Maketer/ContentManagement/index.vue";
-import CustomertManagement from "../views/Maketer/CustomerManagement/index.vue";
+import CustomerManagement from "../views/Maketer/CustomerManagement/index.vue";
+import CustomerCampaigns from "../views/Maketer/CustomerCampaigns/index.vue"
 
 Vue.use(Router);
 
@@ -57,9 +58,14 @@ export default new Router({
       component: ContentManagement
     },
     {
-      path: "/CustomertManagement",
-      name: "CustomertManagement",
-      component: CustomertManagement
+      path: "/CustomerManagement",
+      name: "CustomerManagement",
+      component: CustomerManagement
+    },
+    {
+      path: "/CustomerCampaigns",
+      name: "CustomerCampaigns",
+      component: CustomerCampaigns
     },
   ]
 });

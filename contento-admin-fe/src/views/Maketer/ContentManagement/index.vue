@@ -1,20 +1,39 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1>List Content</h1>
+      <h1 class="text__h1">List Content</h1>
     </v-row>
     <v-row no-gutters class="mx-10">
       <v-col sm="12" md="12">
         <v-row>
-          <v-data-table :headers="headers" :items="listtasks" style="width:100%;">
+          <v-data-table
+            :headers="headers"
+            :items="listtasks"
+            style="width:100%;"
+            class="text__14"
+            :page.sync="page"
+            :items-per-page="itemsPerPage"
+            hide-default-footer
+            @page-count="pageCount = $event"
+          >
             <template v-slot:item.status="{ item }">
-              <v-chip color="success" dark v-if="item.status === 1">Completed</v-chip>
+              <v-chip color="success" dark v-if="item.status === 1" class="text__14">Completed</v-chip>
             </template>
             <template v-slot:item.action="{item}">
-              <v-btn color="primary" v-if="item.status === 1" @click="publish(item.id)">Publish</v-btn>
-              <v-btn disabled v-if="item.status != 1">Publish</v-btn>
+              <v-btn
+                class="text__14"
+                color="primary"
+                v-if="item.status === 1"
+                @click="publish(item)"
+              >Publish</v-btn>
+              <v-btn class="text__14" disabled v-if="item.status != 1">Publish</v-btn>
             </template>
           </v-data-table>
+          <v-row justify="center">
+            <div class="text-center pt-2">
+              <v-pagination v-model="page" :length="pageCount"></v-pagination>
+            </div>
+          </v-row>
         </v-row>
       </v-col>
     </v-row>
@@ -24,6 +43,11 @@
 export default {
   data() {
     return {
+      /**Begin Pagination */
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 5,
+      /**End Pagination */
       dialog: false,
       menu: false,
       /**List Content */
@@ -31,13 +55,25 @@ export default {
         {
           text: "#",
           align: "left",
-          value: "id"
+          value: "id",
+          width: "8%"
         },
-        { text: "Title", value: "title", sortable: false },
-        { text: "Implementer", value: "writer", align: "center" },
-        { text: "ReleaseDate", value: "releaseDate", align: "center" },
-        { text: "Status", value: "status", align: "center" },
-        { text: "Action", value: "action", align: "center" }
+        { text: "Title", value: "title", sortable: false, width: "40%" },
+        { text: "Implementer", value: "writer", align: "center", width: "16%" },
+        {
+          text: "ReleaseDate",
+          value: "releaseDate",
+          align: "center",
+          width: "16%"
+        },
+        { text: "Status", value: "status", align: "center", width: "10%" },
+        {
+          text: "Action",
+          value: "action",
+          align: "center",
+          sortable: false,
+          width: "10%"
+        }
       ],
       listtasks: [
         {
@@ -93,7 +129,7 @@ export default {
   },
   methods: {
     publish(event) {
-      localStorage.setItem("ContentID", event);
+      localStorage.setItem("Content", JSON.stringify(event));
       this.$router.push("/PublishChannel");
     },
     /**Begin format time releaseDate */

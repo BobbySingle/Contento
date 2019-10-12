@@ -4,8 +4,8 @@
       <Header />
       <Drawer />
       <router-view />
-      <Footer />
     </v-content>
+    <Footer />
   </v-app>
 </template>
 
@@ -16,7 +16,9 @@ import Footer from "@/components/Footer/index";
 export default {
   name: "App",
   components: {
-    Header,Drawer,Footer
+    Header,
+    Drawer,
+    Footer
   },
   data: () => ({
     //
@@ -25,4 +27,5 @@ export default {
 </script>
 <style>
 @import "../src/assets/scrollbar.css";
+@import "../src/assets/font.css";
 </style>

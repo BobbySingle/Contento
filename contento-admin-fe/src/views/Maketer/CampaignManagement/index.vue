@@ -1,216 +1,220 @@
 <template>
   <v-container>
-    <!-- /** Begin Create Campaign */ -->
-    <v-row no-gutters class="mb-6" justify="start">
-      <popup-create-campaign></popup-create-campaign>
+    <v-row justify="center" class="mb-5">
+      <h1 class="text__h1">Campaign Management</h1>
     </v-row>
-    <!-- /** End Create Campaign */ -->
-
-    <!-- /**Begin Search & Filter */ -->
-    <v-row>
-      <v-col sm="9" md="10">
+    <!-- /**Begin Search  */ -->
+    <v-row no-gutters class="mx-10">
+      <v-col sm="8" md="9">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
-          <input class="input-field" type="text" placeholder="Customer,Title" name="search" />
+          <input
+            class="input-field text__14"
+            type="text"
+            placeholder="Customer,Title"
+            name="search"
+            v-model="search"
+          />
         </div>
       </v-col>
-      <v-col sm="3" md="2">
-        <div class="filter">
-          <v-select :items="filters" label="Filter"></v-select>
-        </div>
+      <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;">
+        <popup-create-campaign></popup-create-campaign>
       </v-col>
     </v-row>
-    <!-- /**End Search & Filter */ -->
+    <!-- /** End Search */ -->
 
-    <!-- /**Begin Table Campaign */ -->
-    <v-card flat v-for="item in campaigns" :key="item.id" class="tr-table-campaign">
-      <v-row no-gutters>
-        <v-col sm="3" md="2">
-          <v-row
-            justify="center"
-            align="center"
-            v-bind:class="{ campaign_success:item.statusCampaign == 1, campaign_on_going:item.statusCampaign == 2,campaign_overdue:item.statusCampaign == 3}"
+    <v-row no-gutters class="mx-10">
+      <v-col sm="12" md="12">
+        <v-row>
+          <v-data-table
+            :headers="headers"
+            :items="listCampaigns"
+            :search="search"
+            style="width:100%"
+            :mobile-breakpoint="600"
+            :page.sync="page"
+            :items-per-page="itemsPerPage"
+            hide-default-footer
+            @page-count="pageCount = $event"
           >
-            <v-col>
+            <template v-slot:item.customerName="{item}">
+              <v-col
+                class="text__14"
+                style="display:flex; align-items:center;"
+                v-bind:class="{ campaign_success:item.idStatus == 1, campaign_on_going:item.idStatus == 2,campaign_overdue:item.idStatus == 3}"
+              >
+                <div>
+                  <span
+                    @click="clickCampaign(item)"
+                    class="customer-inner-table text__14"
+                  >{{item.customerName}}</span>
+                </div>
+              </v-col>
+            </template>
+            <template v-slot:item.title="{item}">
+              <div class="campaign-details py-2" @click="clickCampaign(item)">
+                <div>
+                  <span class="text__14">{{ item.title }}</span>
+                </div>
+              </div>
               <div>
                 <span
-                  text
-                  @click="clickCampaign(item)"
-                  class="customer-inner-table"
-                >{{item.customer}}</span>
+                  v-for="topic in item.listTag"
+                  :key="topic"
+                  class="tag-campaign-details text__14"
+                >#{{topic}}</span>
               </div>
-              <div>{{item.releaseDate}}</div>
-              <div>Deadline: {{item.deadline}}</div>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col sm="5" md="6" align-self="center">
-          <div class="campaign-details py-2" @click="clickCampaign(item)">
-            <div>
-              <h3>{{ item.titleCampaign }}</h3>
-            </div>
-            <!-- <div>
-              <h4>{{ item.descriptionCampaign }}</h4>
-            </div>-->
-          </div>
-          <div>
-            <span
-              v-for="topic in item.topicCampaign"
-              :key="topic"
-              class="tag-campaign-details"
-            >#{{topic}}</span>
-          </div>
-        </v-col>
-        <v-col sm="2" md="2">
-          <v-row justify="center" align="center" style="height:100%">
-            <v-chip v-if="item.statusCampaign === 1" color="success" style="color:white">Success</v-chip>
-            <v-chip v-if="item.statusCampaign === 2" color="warning" style="color:white">On Going</v-chip>
-            <v-chip v-if="item.statusCampaign === 3" color="error" style="color:white">Overdue</v-chip>
-          </v-row>
-        </v-col>
-        <v-col sm="2" md="2">
-          <v-row justify="center" align="center" style="height: 100%;">
-            <div>
-              <v-row class="py-1">
-                <!-- <v-btn color="warning" fab small>
-                  <v-icon>edit</v-icon>
-                </v-btn>-->
+            </template>
+            <template v-slot:item.idStatus="{ item }">
+              <v-chip
+                v-if="item.idStatus === 1"
+                color="success"
+                style="color:white;"
+                class="text__14"
+              >Success</v-chip>
+              <v-chip
+                v-if="item.idStatus === 2"
+                color="warning"
+                style="color:white;"
+                class="text__14"
+              >On Going</v-chip>
+              <v-chip
+                v-if="item.idStatus === 3"
+                color="error"
+                style="color:white;"
+                class="text__14"
+              >Overdue</v-chip>
+            </template>
+            <template v-slot:item.action="{item}">
+              <v-row class="flex-nowrap">
                 <popup-edit-campaign :campaign="item" />
                 <v-btn color="success" fab small router to="/Calendar" class="mx-3">
                   <v-icon>event</v-icon>
                 </v-btn>
               </v-row>
+            </template>
+          </v-data-table>
+          <v-row justify="center">
+            <div class="text-center pt-2">
+              <v-pagination v-model="page" :length="pageCount"></v-pagination>
             </div>
           </v-row>
-        </v-col>
-      </v-row>
-      <v-divider></v-divider>
-    </v-card>
-    <!-- /**End Table Campaign */ -->
-    <!-- /**Begin Pagination */ -->
-    <v-row class="py-4">
-      <v-layout>
-        <v-pagination v-model="page" :length="4" circle></v-pagination>
-      </v-layout>
+        </v-row>
+      </v-col>
     </v-row>
-    <!-- /**End Pagination */ -->
   </v-container>
 </template>
 <script>
 import PopupCreateCampaign from "../../../components/Popup/CreateCampaign.vue";
 import PopupEditCampaign from "../../../components/Popup/EditCampaign.vue";
+import axios from "axios";
+import { timeout } from "q";
 export default {
   components: { PopupCreateCampaign, PopupEditCampaign },
-  data: () => ({
-    page: 1,
-    filters: ["Lasted", "Campaign", "Customer"],
-    campaigns: [
-      {
-        id: 1,
-        customer: "Nguyen Tran Thi Con Gai",
-        releaseDate: "Otc/5/2019",
-        deadline: "2019-10-17T15:20:03.146Z",
-        statusCampaign: 1,
-        titleCampaign: "How to structure an effective campaign plan",
-        descriptionCampaign:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["Film", "Social", "Food & Drink", "2Tek", "Business"]
-      },
-      {
-        id: 2,
-        customer: "Customer 3",
-        releaseDate: "Otc/5/2019",
-        deadline: "2019-10-17T15:20:03.146Z",
-        statusCampaign: 1,
-        titleCampaign: "How to Launch a Successful Marketing Campaign",
-        descriptionCampaign:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["Film", "Social", "Food & Drink"]
-      },
-      {
-        id: 3,
-        customer: "Customer 2",
-        releaseDate: "Otc/5/2019",
-        deadline: "2019-10-17T15:20:03.146Z",
-        statusCampaign: 2,
-        titleCampaign:
-          "This Is The Ultimate Marketing Campaign Planning Checklist That Will Get You Proactive",
-        descriptionCampaign:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["Film", "Social", "Food & Drink", "2Tek"]
-      },
-      {
-        id: 4,
-        customer: "Customer 1",
-        releaseDate: "Otc/5/2019",
-        deadline: "2019-10-17T15:20:03.146Z",
-        statusCampaign: 3,
-        titleCampaign:
-          "Catch Me If You Can - Chủ nghĩa lừa đảo, tuổi trẻ ngông cuồng & Steven Spielbeg",
-        descriptionCampaign:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["Film"]
-      },
-      {
-        id: 5,
-        customer: "Customer 1",
-        releaseDate: "Otc/5/2019",
-        deadline: "2019-10-17T15:20:03.146Z",
-        statusCampaign: 3,
-        titleCampaign:
-          "Đây liệu có phải là Joker vĩ đại nhất mọi thời đại hay niềm tin vào lý tưởng Joker, Chí Phèo phiên bản siêu anh hùng? Phim bị cắt bao lâu?",
-        descriptionCampaign:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["Film", "Social"]
-      },
-      {
-        id: 6,
-        customer: "Customer 1",
-        releaseDate: "Otc/5/2019",
-        deadline: "2019-10-17T15:20:03.146Z",
-        statusCampaign: 3,
-        titleCampaign: "Campaign Title",
-        descriptionCampaign:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        topicCampaign: ["Film", "Social"]
-      }
-    ]
-  }),
+  data() {
+    return {
+      /**Begin Pagination */
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10,
+      /**End Pagination */
+      dialog: false,
+      menu: false,
+      search: "",
+      loading: true,
+      /**List Content */
+      headers: [
+        {
+          text: "Customer",
+          align: "center",
+          value: "customerName",
+          width: "15%"
+        },
+        { text: "Title", value: "title", sortable: false, width: "35%" },
+        { text: "Start", value: "startedDate", align: "center", width: "15%" },
+        { text: "End", value: "endDate", align: "center", width: "15%" },
+        { text: "Status", value: "idStatus", align: "center", width: "10%" },
+        { text: "Action", value: "action", align: "center", width: "10%" }
+      ],
+      listCampaigns: [
+        // {
+        //   id: 2,
+        //   customerName: "Customer 1",
+        //   created: "2019-09-07T15:20:03.146Z",
+        //   endDate: "2019-10-17T15:20:03.146Z",
+        //   idStatus: 1,
+        //   title: "What are you doing?",
+        //   description:
+        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        //   listTag: ["Film", "Social", "Food & Drink"]
+        // },
+        // {
+        //   id: 3,
+        //   customerName: "Customer 1",
+        //   created: "2019-09-10T15:20:03.146Z",
+        //   endDate: "2019-10-17T15:20:03.146Z",
+        //   idStatus: 2,
+        //   title: "How to Launch a Successful Marketing Campaign",
+        //   description:
+        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        //   listTag: ["Film", "Social", "Food & Drink"]
+        // },
+        // {
+        //   id: 4,
+        //   customerName: "Customer 1",
+        //   created: "2019-09-12T15:20:03.146Z",
+        //   endDate: "2019-10-17T15:20:03.146Z",
+        //   idStatus: 3,
+        //   title: "How to Launch a Successful Marketing Campaign",
+        //   description:
+        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        //   listTag: ["Film", "Social", "Food & Drink"]
+        // }
+      ]
+    };
+  },
   methods: {
     clickCampaign: function(event) {
       localStorage.setItem("Campaign", JSON.stringify(event));
       this.$router.push("/CampaignDetails");
     },
+    /**Begin format time created */
     formatListCampaign() {
-      this.campaigns.forEach(el => {
-        el.deadline = this.getDateTimeFormat(el.deadline);
+      this.listCampaigns.forEach(el => {
+        el.startedDate = this.$moment(String(el.startedDate)).format(
+          "YYYY-MM-DD hh:mm"
+        );
+        el.endDate = this.$moment(String(el.endDate)).format(
+          "YYYY-MM-DD hh:mm"
+        );
       });
-    },
-    getDateTimeFormat(datetime) {
-      const date = new Date(Date.parse(datetime));
-      return (
-        date.getHours() +
-        ":" +
-        date.getMinutes() +
-        "  " +
-        date.getDate() +
-        "/" +
-        (date.getMonth() + 1) +
-        "/" +
-        date.getFullYear()
-      );
     }
+    /**End format time created */
   },
   mounted() {
-    this.formatListCampaign();
+    // this.$axios({
+    //   method: "get",
+    //   url: "api/campaign"
+    // })
+    axios
+      .get(`http://34.87.31.23:8066/api/campaign`)
+      .then(rs => {
+        this.listCampaigns = rs.data;
+        this.formatListCampaign();
+        console.log(rs.data);
+      })
+      .catch(er => {
+        console.log(er);
+      });
+    // this.formatListContent();
   }
 };
 </script>
 <style scoped>
 .search-filter {
-  height: 56px;
+  height: 40px;
   display: flex;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 /* Style the search icons */
@@ -234,16 +238,13 @@ export default {
 }
 
 .filter {
-  height: 56px;
+  height: 40px;
   display: flex;
 }
-.customer-inner-table {
-  font-weight: bold;
-}
+
 .customer-inner-table:hover {
   color: rgb(83, 138, 255);
-  transform: translateX(8px) scale(1.2);
-  transition: 1s;
+  transition: 0.5s;
   cursor: pointer;
 }
 /**Begin Status - line */
@@ -263,19 +264,9 @@ export default {
   border-left: 4px solid #ff5252;
   height: 100%;
 }
-/**End Status - line */
-
-.campaign-details h3 {
+/** End Status - line */
+.campaign-details span {
   font-weight: bold;
-  /**line-clamp */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-}
-.campaign-details h4 {
-  font-weight: 300;
   /**line-clamp */
   overflow: hidden;
   text-overflow: ellipsis;
@@ -293,7 +284,7 @@ export default {
   margin-right: 3px;
 }
 .tag-campaign-details:hover {
-  cursor: pointer;
+  /* cursor: pointer; */
   font-weight: bold;
   transition: 0.5s;
 }

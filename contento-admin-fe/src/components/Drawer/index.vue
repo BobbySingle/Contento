@@ -53,7 +53,7 @@ export default {
         {
           title: "Customer",
           icon: "people",
-          link: "/CustomertManagement",
+          link: "/CustomerManagement",
           role: "Maketer"
         },
         {

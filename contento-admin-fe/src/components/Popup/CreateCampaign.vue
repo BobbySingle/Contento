@@ -1,17 +1,17 @@
 <template>
   <v-dialog v-model="dialog" persistent width="1000px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" large v-on="on">Create Campaign</v-btn>
+      <v-btn color="primary"  v-on="on" class="text__14">Create Campaign</v-btn>
     </template>
     <v-card>
       <v-row class="mx-4 mb-4" justify="center">
-        <v-card-title class="heading">Add New Campaign</v-card-title>
+        <v-card-title class="text__h1">Add New Campaign</v-card-title>
       </v-row>
       <v-row no-gutters class="mx-10">
         <v-col md="12">
           <v-row>
             <v-col md="6">
-              <v-text-field :counter="255" label="Title:" required></v-text-field>
+              <v-text-field :counter="255" label="Title:" required class="text__14"></v-text-field>
             </v-col>
             <v-spacer></v-spacer>
             <v-col md="5">
@@ -21,7 +21,7 @@
                 </v-col>
 
                 <v-col md="11">
-                  <datetime title="End Time" type="datetime" v-model="endtime" class="endtime"></datetime>
+                  <datetime title="End Time" type="datetime" v-model="endtime" class="endtime text__14"></datetime>
                 </v-col>
               </v-row>
             </v-col>
@@ -65,7 +65,7 @@
                     color="blue"
                     class="chips"
                   >
-                    <strong>{{ item }}</strong>
+                    <strong class="text__14">{{ item }}</strong>
                   </v-chip>
                 </template>
               </v-combobox>
@@ -80,8 +80,8 @@
       </v-row>
       <v-card-actions>
         <div class="flex-grow-1"></div>
-        <v-btn color="warning" @click="dialog = false">Cancel</v-btn>
-        <v-btn color="success" @click="dialog = false, update()">Update</v-btn>
+        <v-btn  color="warning" @click="dialog = false" class="text__14">Cancel</v-btn>
+        <v-btn  color="success" @click="dialog = false , update()" class="text__14">Create</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -140,9 +140,4 @@ export default {
  .chips {
   color: white !important;
 }
-/* .chips:hover {
-  background-color: rgba(100, 100, 100, 0.5) !important;
-  color: black !important;
-  transition: 0.5s;
-} */ 
 </style>

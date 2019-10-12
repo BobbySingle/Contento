@@ -1,90 +1,108 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col sm="12" md="12">
+    <v-row justify="center" no-gutters class="mx-4">
+      <v-col cols="12" sm="8" md="9" style="display:flex; justify-content:center;">
+        <h1 class="text__h1">List Customer</h1>
+      </v-col>
+      <v-col cols="12" sm="4" md="3">
         <v-row class="ml-1 mb-5">
-          <v-col cols="4" style="display: flex;
-    justify-content: flex-start;">
-            <h3 style="color:grey;">List Task</h3>
+          <v-col cols="12" style="display: flex;
+    justify-content: center;">
+            <popup-create-customer :isSmallBtn="false" />
           </v-col>
-          <v-col cols="8" style="display: flex;
-    justify-content: flex-end;">
-            <popup-create-customer :isSmallBtn="false"/>
-          </v-col>
-        </v-row>
-        <v-row class="mx-4">
-          <v-data-table :headers="headers" :items="listCampaigns" style="width:100%;">
-            <template v-slot:item.fullname="{item}">
-              <!-- <v-row
-                style="height:100px;"
-                justify="center"
-                align="center"
-                v-bind:class="{ campaign_success:item.status== 1, campaign_on_going:item.status == 2,campaign_overdue:item.status == 3}"
-              >
-              <v-col>-->
-              <div style="text-align:left">{{item.fullname}}</div>
-              <!-- </v-col>
-              </v-row>-->
-            </template>
-            <template v-slot:item.action="{item}">
-              <v-row justify="center">
-                <v-btn color="warning" class="mr-2">Edit</v-btn>
-                <v-btn color="primary">Details</v-btn>
-              </v-row>
-            </template>
-          </v-data-table>
         </v-row>
       </v-col>
+      <v-row class="mx-4">
+        <v-data-table
+          :headers="headers"
+          :items="listCampaigns"
+          style="width:100%;"
+          class="text__14"
+          :mobile-breakpoint="600"
+          :page.sync="page"
+          :items-per-page="itemsPerPage"
+          hide-default-footer
+          @page-count="pageCount = $event"
+        >
+          <template v-slot:item.fullname="{item}">
+            <div style="text-align:left">{{item.fullname}}</div>
+          </template>
+          <template v-slot:item.action="{item}">
+            <v-row justify="center" class="flex-nowrap">
+              <popup-edit-customer :customer="item"></popup-edit-customer>
+              <v-btn color="primary" router to="/CustomerCampaigns" class="text__14">Details</v-btn>
+            </v-row>
+          </template>
+        </v-data-table>
+        <v-row justify="center">
+          <div class="text-center pt-2">
+            <v-pagination v-model="page" :length="pageCount"></v-pagination>
+          </div>
+        </v-row>
+      </v-row>
     </v-row>
   </v-container>
 </template>
 <script>
 import PopupCreateCustomer from "../../../components/Popup/CreateCustomer.vue";
+import PopupEditCustomer from "../../../components/Popup/EditCustomer.vue";
 export default {
-  components: { PopupCreateCustomer },
+  components: { PopupCreateCustomer, PopupEditCustomer },
   data() {
     return {
+      /**Begin Pagination */
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 5,
+      /**End Pagination */
       headers: [
         { text: "Fullname", value: "fullname", align: "center" },
         { text: "Email", value: "email", align: "center" },
         { text: "Company", value: "company", align: "center" },
-        { text: "Action", value: "action", align: "center" }
+        { text: "Phone", value: "phone", align: "center" },
+        { text: "Action", value: "action", align: "center" ,sortable:false}
       ],
       listCampaigns: [
         {
           id: 5,
           fullname: "Hachiko",
           email: "Hachiko@gmail.com",
+          phone: "0123456789",
           company: "Hachiko lnc"
         },
         {
           id: 6,
           fullname: "Cậu Vàng",
           email: "CauVang@gmail.com",
+          phone: "0123456789",
           company: "Lao Hac lnc"
         },
         {
           id: 9,
           fullname: "Big Pull",
           email: "BigPull@gmail.com",
+          phone: "0123456789",
           company: "Pet lnc"
         },
-                {
+        {
           id: 19,
           fullname: "Big Pull",
           email: "BigPull@gmail.com",
+          phone: "0123456789",
           company: "Pet lnc"
         },
-                {
+        {
           id: 29,
           fullname: "Big Pull",
           email: "BigPull@gmail.com",
+          phone: "0123456789",
           company: "Pet lnc"
         },
-                {
+        {
           id: 39,
           fullname: "Big Pull",
           email: "BigPull@gmail.com",
+          phone: "0123456789",
           company: "Pet lnc"
         }
       ]

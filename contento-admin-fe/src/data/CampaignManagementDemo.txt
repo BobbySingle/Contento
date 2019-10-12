@@ -1,0 +1,224 @@
+<template>
+  <v-container>
+    <!-- /** Begin Create Campaign */ -->
+    <v-row no-gutters class="mb-6" justify="start">
+      <popup-create-campaign></popup-create-campaign>
+    </v-row>
+    <!-- /** End Create Campaign */ -->
+
+    <!-- /**Begin Search & Filter */ -->
+    <v-row>
+      <v-col sm="9" md="10">
+        <div class="search-filter">
+          <v-icon class="icon">searchs</v-icon>
+          <input class="input-field" type="text" placeholder="Customer,Title" name="search" />
+        </div>
+      </v-col>
+      <v-col sm="3" md="2">
+        <div class="filter">
+          <v-select :items="filters" label="Filter"></v-select>
+        </div>
+      </v-col>
+    </v-row>
+    <!-- /** End Search & Filter */ -->
+
+    <!-- /**Begin Table Campaign */ -->
+    <v-card flat v-for="item in campaigns" :key="item.id" class="tr-table-campaign">
+      <v-row no-gutters>
+        <v-col sm="3" md="2">
+          <v-row
+            justify="center"
+            align="center"
+            v-bind:class="{ campaign_success:item.status == 1, campaign_on_going:item.status == 2,campaign_overdue:item.status == 3}"
+          >
+            <v-col>
+              <div>
+                <span
+                  text
+                  @click="clickCampaign(item)"
+                  class="customer-inner-table"
+                >{{item.customerName}}</span>
+              </div>
+              <div>{{item.created}}</div>
+              <div>Deadline: {{item.endDate}}</div>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col sm="5" md="6" align-self="center">
+          <div class="campaign-details py-2" @click="clickCampaign(item)">
+            <div>
+              <h3>{{ item.title }}</h3>
+            </div>
+            <!-- <div>
+              <h4>{{ item.description }}</h4>
+            </div>-->
+          </div>
+          <div>
+            <span v-for="topic in item.listTag" :key="topic" class="tag-campaign-details">#{{topic}}</span>
+          </div>
+        </v-col>
+        <v-col sm="2" md="2">
+          <v-row justify="center" align="center" style="height:100%">
+            <v-chip v-if="item.status === 1" color="success" style="color:white">Success</v-chip>
+            <v-chip v-if="item.status === 2" color="warning" style="color:white">On Going</v-chip>
+            <v-chip v-if="item.status === 3" color="error" style="color:white">Overdue</v-chip>
+          </v-row>
+        </v-col>
+        <v-col sm="2" md="2">
+          <v-row justify="center" align="center" style="height: 100%;">
+            <div>
+              <v-row class="py-1">
+                <!-- <v-btn color="warning" fab small>
+                  <v-icon>edit</v-icon>
+                </v-btn>-->
+                <popup-edit-campaign :campaign="item" />
+                <v-btn color="success" fab small router to="/Calendar" class="mx-3">
+                  <v-icon>event</v-icon>
+                </v-btn>
+              </v-row>
+            </div>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-divider></v-divider>
+    </v-card>
+    <!-- /** End Table Campaign */ -->
+    <!-- /**Begin Pagination */ -->
+    <v-row class="py-4">
+      <v-layout>
+        <v-pagination v-model="page" :length="4" circle></v-pagination>
+      </v-layout>
+    </v-row>
+    <!-- /** End Pagination */ -->
+  </v-container>
+</template>
+<script>
+import PopupCreateCampaign from "../../../components/Popup/CreateCampaign.vue";
+import PopupEditCampaign from "../../../components/Popup/EditCampaign.vue";
+import axios from "axios";
+export default {
+  components: { PopupCreateCampaign, PopupEditCampaign },
+  data: () => ({
+    page: 1,
+    filters: ["Lasted", "Campaign", "Customer"],
+    campaigns: []
+  }),
+  methods: {
+    clickCampaign: function(event) {
+      localStorage.setItem("Campaign", JSON.stringify(event));
+      this.$router.push("/CampaignDetails");
+    },
+    formatListCampaign() {
+      this.campaigns.forEach(el => {
+        el.endDate = this.$moment(el.endDate).format("YYYY-MM-DD hh:mm");
+        el.created = this.$moment(el.created).format("YYYY-MM-DD hh:mm");
+      });
+    }
+  },
+  mounted() {
+    this.$axios({
+      method: "get",
+      url: "api/campaign"
+    })
+      .then(rs => {
+        this.campaigns = rs.data;
+        this.formatListCampaign();
+      })
+      .catch(er => {
+        console.log(er);
+      });
+  }
+};
+</script>
+<style scoped>
+.search-filter {
+  height: 56px;
+  display: flex;
+  margin-bottom: 15px;
+}
+
+/* Style the search icons */
+.icon {
+  padding-left: 25px;
+  background: rgb(100, 100, 100);
+  color: white;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Style the input fields */
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid rgb(100, 100, 100);
+}
+
+.input-field:focus {
+  box-shadow: 0px 0px 5px 5px rgba(45, 118, 255, 0.6);
+}
+
+.filter {
+  height: 56px;
+  display: flex;
+}
+.customer-inner-table {
+  font-weight: bold;
+}
+.customer-inner-table:hover {
+  color: rgb(83, 138, 255);
+  transform: translateX(8px) scale(1.2);
+  transition: 1s;
+  cursor: pointer;
+}
+/**Begin Status - line */
+
+.campaign_success {
+  /* border-left: 4px solid #3cd1c2; */
+  border-left: 4px solid #4caf50;
+  height: 100%;
+}
+.campaign_on_going {
+  /* border-left: 4px solid orange; */
+  border-left: 4px solid #fb8c00;
+  height: 100%;
+}
+.campaign_overdue {
+  /* border-left: 4px solid tomato; */
+  border-left: 4px solid #ff5252;
+  height: 100%;
+}
+/** End Status - line */
+
+.campaign-details h3 {
+  font-weight: bold;
+  /**line-clamp */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+.campaign-details h4 {
+  font-weight: 300;
+  /**line-clamp */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+.campaign-details:hover {
+  cursor: pointer;
+}
+.tr-table-campaign:hover {
+  background-color: rgba(100, 100, 100, 0.1);
+}
+.tag-campaign-details {
+  margin-right: 3px;
+}
+.tag-campaign-details:hover {
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.5s;
+}
+</style>

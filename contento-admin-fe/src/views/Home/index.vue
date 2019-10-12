@@ -2,6 +2,9 @@
 </template>
 <script>
 export default {
+  created(){
+        localStorage.setItem("role","Maketer");
+  },
   mounted() {
     let role =  localStorage.getItem("role");
     if(role === "Maketer"){
