@@ -192,21 +192,22 @@ export default {
     /**End format time created */
   },
   mounted() {
-    // this.$axios({
-    //   method: "get",
-    //   url: "api/campaign"
-    // })
-    axios
-      .get(`http://34.87.31.23:8066/api/campaign`)
+    /**Begin Get list campaign */
+    this.$axios({
+      method: "get",
+      url: "campaignservice/api/campaign"
+    })
+      // axios
+      //   .get(`http://34.87.31.23:8066/api/campaign`)
       .then(rs => {
         this.listCampaigns = rs.data;
         this.formatListCampaign();
-        console.log(rs.data);
+        // console.log(rs.data);
       })
       .catch(er => {
         console.log(er);
       });
-    // this.formatListContent();
+    /** End Get list campaign */
   }
 };
 </script>

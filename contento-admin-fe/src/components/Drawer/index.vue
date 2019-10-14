@@ -42,19 +42,19 @@ export default {
           title: "Campaign",
           icon: "emoji_events",
           link: "/CampaignManagement",
-          role: "Maketer"
+          role: "Marketer"
         },
         {
           title: "Content",
           icon: "edit",
           link: "/ContentManagement",
-          role: "Maketer"
+          role: "Marketer"
         },
         {
           title: "Customer",
           icon: "people",
           link: "/CustomerManagement",
-          role: "Maketer"
+          role: "Marketer"
         },
         {
           title: "Campaign Request",

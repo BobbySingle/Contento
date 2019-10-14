@@ -1,15 +1,15 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Home from "../views/Home/index.vue";
-import CampaignManagement from "../views/Maketer/CampaignManagement/index.vue";
+import CampaignManagement from "../views/Marketer/CampaignManagement/index.vue";
 import CampaignRequest from "../views/Editor/CampaignRequest/index.vue";
 import TaskManagement from "../views/Writer/TaskManagement/index.vue";
-import CampaignDetails from "../views/Maketer/CampaignDetails/index.vue"
-import PublishChannel from "../views/Maketer/PublishChannel/index.vue"
-import Calendar from "../views/Maketer/Calendar/index.vue"
-import ContentManagement from "../views/Maketer/ContentManagement/index.vue";
-import CustomerManagement from "../views/Maketer/CustomerManagement/index.vue";
-import CustomerCampaigns from "../views/Maketer/CustomerCampaigns/index.vue"
+import CampaignDetails from "../views/Marketer/CampaignDetails/index.vue"
+import PublishChannel from "../views/Marketer/PublishChannel/index.vue"
+import Calendar from "../views/Marketer/Calendar/index.vue"
+import ContentManagement from "../views/Marketer/ContentManagement/index.vue";
+import CustomerManagement from "../views/Marketer/CustomerManagement/index.vue";
+import CustomerCampaigns from "../views/Marketer/CustomerCampaigns/index.vue"
 
 Vue.use(Router);
 

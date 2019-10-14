@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" persistent width="1000px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary"  v-on="on" class="text__14">Create Campaign</v-btn>
+      <v-btn color="primary" v-on="on" class="text__14">Create Campaign</v-btn>
     </template>
     <v-card>
       <v-row class="mx-4 mb-4" justify="center">
@@ -21,7 +21,12 @@
                 </v-col>
 
                 <v-col md="11">
-                  <datetime title="End Time" type="datetime" v-model="endtime" class="endtime text__14"></datetime>
+                  <datetime
+                    title="End Time"
+                    type="datetime"
+                    v-model="endtime"
+                    class="endtime text__14"
+                  ></datetime>
                 </v-col>
               </v-row>
             </v-col>
@@ -30,7 +35,7 @@
             <v-col md="6">
               <v-row no-gutters>
                 <v-col md="10">
-                  <v-select :items="customers" label="Customer"></v-select>
+                  <v-select :items="customers" item-text="name" item-value="id" label="Customer"></v-select>
                 </v-col>
                 <v-col md="2" class="pl-5" style="width:100%;" align-self="center">
                   <!-- <v-btn fab color="primary" small>
@@ -44,13 +49,15 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col md="5">
-              <v-select :items="editors" label="Editor"></v-select>
+              <v-select :items="editors" item-text="name" item-value="id" label="Editor"></v-select>
             </v-col>
           </v-row>
           <v-row>
             <v-col md="12">
               <v-combobox
                 v-model="chips"
+                item-text="name"
+                item-value="id"
                 :items="categorys"
                 chips
                 clearable
@@ -65,7 +72,7 @@
                     color="blue"
                     class="chips"
                   >
-                    <strong class="text__14">{{ item }}</strong>
+                    <strong class="text__14">{{ item.name }}</strong>
                   </v-chip>
                 </template>
               </v-combobox>
@@ -80,8 +87,8 @@
       </v-row>
       <v-card-actions>
         <div class="flex-grow-1"></div>
-        <v-btn  color="warning" @click="dialog = false" class="text__14">Cancel</v-btn>
-        <v-btn  color="success" @click="dialog = false , update()" class="text__14">Create</v-btn>
+        <v-btn color="warning" @click="dialog = false" class="text__14">Cancel</v-btn>
+        <v-btn color="success" @click="dialog = false , update()" class="text__14">Create</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -98,19 +105,46 @@ export default {
     return {
       dialog: false,
       menu: false,
-      customers: ["Customer 1", "Customer 2", "Customer 3"],
-      editors: ["Editor 1", "Editor 2", "Editor 3"],
+      customers: [
+        { id: 1, name: "Customer 1" },
+        { id: 2, name: "Customer 2" },
+        { id: 3, name: "Customer 3" },
+        { id: 4, name: "Customer 4" }
+      ],
+      editors: [
+        { id: 1, name: "Editor 1" },
+        { id: 2, name: "Editor 2" },
+        { id: 3, name: "Editor 3" },
+        { id: 4, name: "Editor 4" }
+      ],
       chips: [],
-      categorys: ["Sport", "Travel", "Food & Drink", "2Tek", "Social","Business","Film"],
+      categorys: [
+        {
+          id: 1,
+          name: "DU LỊCH"
+        },
+        {
+          id: 2,
+          name: "THỂ THAO"
+        },
+        {
+          id: 3,
+          name: "ĂN UỐNG"
+        },
+        {
+          id: 4,
+          name: "HỌC TẬP"
+        },
+        {
+          id: 5,
+          name: "LÀM VIỆC"
+        }
+      ],
       endtime: new Date().toISOString(),
       content: ""
     };
   },
   methods: {
-    // remove(item) {
-    //   this.chips.splice(this.chips.indexOf(item), 1);
-    //   this.chips = [...this.chips];
-    // },
     update() {
       console.log(this.$refs.ckeditor.editorData);
     }
@@ -137,7 +171,7 @@ export default {
   height: 32px;
   width: 100%;
 }
- .chips {
+.chips {
   color: white !important;
 }
 </style>

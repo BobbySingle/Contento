@@ -48,9 +48,11 @@
                 <v-col md="10">
                   <v-select
                     :items="customers"
+                    item-text="name"
+                    item-value="id"
                     label="Customer"
-                    v-model="customerName"
-                    :value="campaign.customerName"
+                    v-model="idCustomer"
+                    :value="campaign.idCustomer"
                     class="text__14"
                   ></v-select>
                 </v-col>
@@ -58,13 +60,23 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col md="5">
-              <v-select :items="editors" label="Editor" v-model="editor" :value="'Editor 2'" class="text__14"></v-select>
+              <v-select
+                :items="editors"
+                item-text="name"
+                item-value="id"
+                label="Editor"
+                v-model="idEditor"
+                :value="campaign.idEditor"
+                class="text__14"
+              ></v-select>
             </v-col>
           </v-row>
           <v-row>
             <v-col md="12">
               <v-combobox
                 v-model="listTag"
+                item-text="name"
+                item-value="id"
                 :value="campaign.listTag"
                 :items="categorys"
                 chips
@@ -114,48 +126,78 @@ export default {
     return {
       dialog: false,
       menu: false,
-      customers: ["Customer 1", "Customer 2", "Customer 3", "Customer 4"],
-      editors: ["Editor 1", "Editor 2", "Editor 3"],
+      customers: [
+        { id: 5, name: "Customer 1" },
+        { id: 6, name: "Customer 2" },
+        { id: 7, name: "Customer 3" },
+        { id: 8, name: "Customer 5" },
+        { id: 9, name: "Customer 4" }
+      ],
+      editors: [
+        { id: 5, name: "Editor 1" },
+        { id: 6, name: "Editor 2" },
+        { id: 7, name: "Editor 3" },
+        { id: 8, name: "Editor 4" },
+        { id: 9, name: "Editor 5" }
+      ],
       listTag: [],
       categorys: [
-        "Sport",
-        "Travel",
-        "Food & Drink",
-        "2Tek",
-        "Social",
-        "Business",
-        "Film"
+        {
+          id: 1,
+          name: "DU LỊCH"
+        },
+        {
+          id: 2,
+          name: "THỂ THAO"
+        },
+        {
+          id: 3,
+          name: "ĂN UỐNG"
+        },
+        {
+          id: 4,
+          name: "HỌC TẬP"
+        },
+        {
+          id: 5,
+          name: "LÀM VIỆC"
+        }
       ],
       endDate: "",
       content: "",
       title: "",
       customerName: "",
+      idCustomer: "",
+      idEditor: "",
       editor: "",
       ckeditor: ""
     };
   },
   methods: {
-    // remove(item) {
-    //   this.chipsEditor.splice(this.chipsEditor.indexOf(item), 1);
-    //   this.chipsEditor = [...this.chipsEditor];
-    // },
     update() {
       console.log(this.$refs.ckeditor.editorData);
       console.log(this.title);
       console.log(this.customerName);
+      console.log(this.idCustomer);
+      console.log(this.idEditor);
+      console.log(this.listTag);
       console.log(this.editor);
       console.log(this.listTag);
-      console.log(this.ennDate);
+      console.log(this.endDate);
     }
   },
   mounted() {
     this.content =
-            '<h2>1. Coke’s&nbsp;“Share A Coke”&nbsp;Campaign</h2><p>If you&nbsp;haven’t seen or heard of <a href="http://www.coca-colacompany.com/stories/share-a-coke-how-the-groundbreaking-campaign-got-its-start-down-under/"><u>this campaign</u></a>, then&nbsp;you’ve probably been living under a rock.</p><p>Welcome back to the world.</p><p>Coke’s&nbsp;“Share A Coke” campaign gave everyone the&nbsp;opportunity to personalize their favorite drink.</p><p>They took the 150 most popular names in Australia and added them to the side of the bottles. And, well… people went crazy for it.</p><p>Everyone was talking about Coke.</p><figure class="image"><img src="https://firebasestorage.googleapis.com/v0/b/contento-admin.appspot.com/o/images%2Fcontent%2Fcoke-campaignpng.png?alt=media&amp;token=509516b7-18c3-4c20-913e-1400949446a3"></figure><p>Since then, the campaign has spread all around the world.</p><p>Why was it so successful? <a href="https://marketingland.com/4-steps-successful-content-personalization-96854"><u>Personalization</u></a>.</p><p>Coke made you feel special. It was just you and your bottle against the world.</p><p>And this personal touch is&nbsp;the crux of content marketing.</p><p>Coke wasn’t tracking online behavior, (re)targeting customers or looking at vanity metrics.</p><p>Instead, they targeted the most important thing to customers — <strong>their name</strong>. After all, everyone’s favorite subject is themselves. And if you want to get someone to pay attention, using their name is a great place to start.</p><p><a href="https://econsultancy.com/reports/quarterly-digital-intelligence-briefing-personalisation-trust-and-roi"><u>Research</u></a> shows that 74 percent of marketers know personalization increases customer engagement. But, <a href="https://econsultancy.com/blog/63212-three-major-benefits-of-using-personalisation-in-marketing/"><u>only 19 percent of them</u></a> ever use it.</p><p>That’s like <i>knowing </i>you’ve got a clean diaper in your bag but never actually changing the baby.</p><p>Coke&nbsp;revolutionized <strong>emotional connections</strong> by asking people to “share” its product. It’s a viral campaign in a bottle.</p><h3>What You Can Learn:</h3><p>Think of your customers as people with emotions, just like you. How do you want to make them <i>feel?&nbsp;</i>Personalization and emotional connection are key.</p>';
+      '<h2>1. Coke’s&nbsp;“Share A Coke”&nbsp;Campaign</h2><p>If you&nbsp;haven’t seen or heard of <a href="http://www.coca-colacompany.com/stories/share-a-coke-how-the-groundbreaking-campaign-got-its-start-down-under/"><u>this campaign</u></a>, then&nbsp;you’ve probably been living under a rock.</p><p>Welcome back to the world.</p><p>Coke’s&nbsp;“Share A Coke” campaign gave everyone the&nbsp;opportunity to personalize their favorite drink.</p><p>They took the 150 most popular names in Australia and added them to the side of the bottles. And, well… people went crazy for it.</p><p>Everyone was talking about Coke.</p><figure class="image"><img src="https://firebasestorage.googleapis.com/v0/b/contento-admin.appspot.com/o/images%2Fcontent%2Fcoke-campaignpng.png?alt=media&amp;token=509516b7-18c3-4c20-913e-1400949446a3"></figure><p>Since then, the campaign has spread all around the world.</p><p>Why was it so successful? <a href="https://marketingland.com/4-steps-successful-content-personalization-96854"><u>Personalization</u></a>.</p><p>Coke made you feel special. It was just you and your bottle against the world.</p><p>And this personal touch is&nbsp;the crux of content marketing.</p><p>Coke wasn’t tracking online behavior, (re)targeting customers or looking at vanity metrics.</p><p>Instead, they targeted the most important thing to customers — <strong>their name</strong>. After all, everyone’s favorite subject is themselves. And if you want to get someone to pay attention, using their name is a great place to start.</p><p><a href="https://econsultancy.com/reports/quarterly-digital-intelligence-briefing-personalisation-trust-and-roi"><u>Research</u></a> shows that 74 percent of marketers know personalization increases customer engagement. But, <a href="https://econsultancy.com/blog/63212-three-major-benefits-of-using-personalisation-in-marketing/"><u>only 19 percent of them</u></a> ever use it.</p><p>That’s like <i>knowing </i>you’ve got a clean diaper in your bag but never actually changing the baby.</p><p>Coke&nbsp;revolutionized <strong>emotional connections</strong> by asking people to “share” its product. It’s a viral campaign in a bottle.</p><h3>What You Can Learn:</h3><p>Think of your customers as people with emotions, just like you. How do you want to make them <i>feel?&nbsp;</i>Personalization and emotional connection are key.</p>';
     this.title = this.campaign.title;
     this.customerName = this.campaign.customerName;
-    this.editor = "Editor 2";
+    this.editor =  this.campaign.editorName;
     this.endDate = this.$moment(this.campaign.endDate).toISOString();
     this.listTag = this.campaign.listTag;
+    this.idCustomer = this.campaign.idCustomer;
+    this.idEditor = this.campaign.idEditor;
+    console.log(this.idCustomer);
+    console.log(this.idEditor);
   }
 };
 </script>

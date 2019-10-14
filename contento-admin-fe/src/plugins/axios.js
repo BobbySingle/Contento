@@ -2,8 +2,7 @@ import axios from 'axios';
 export default{
     install(Vue){
         Vue.prototype.$axios = axios.create({
-            baseURL: "",
-            // baseURL: "http://localhost:5000",          
+            baseURL: "http://34.87.79.47:8760",
             headers:{
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "*",
