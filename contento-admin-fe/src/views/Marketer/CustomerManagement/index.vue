@@ -60,7 +60,7 @@ export default {
         { text: "Email", value: "email", align: "center" },
         { text: "Company", value: "company", align: "center" },
         { text: "Phone", value: "phone", align: "center" },
-        { text: "Action", value: "action", align: "center" ,sortable:false}
+        { text: "Action", value: "action", align: "center", sortable: false }
       ],
       listCampaigns: [
         {
@@ -107,6 +107,12 @@ export default {
         }
       ]
     };
+  },
+  created() {
+    let role = localStorage.getItem("role");
+    if (role !== "Marketer") {
+      this.$router.push("/403");
+    }
   }
 };
 </script>

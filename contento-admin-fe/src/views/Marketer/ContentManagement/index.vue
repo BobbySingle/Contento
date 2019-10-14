@@ -142,6 +142,12 @@ export default {
     }
     /**End format time releaseDate */
   },
+  created() {
+    let role = localStorage.getItem("role");
+    if (role !== "Marketer") {
+      this.$router.push("/403");
+    }
+  },
   mounted() {
     this.formatListContent();
   }

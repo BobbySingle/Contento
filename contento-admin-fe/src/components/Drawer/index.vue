@@ -20,12 +20,19 @@
     <v-divider class="mx-auto" inset></v-divider>
 
     <v-list dense>
-      <v-list-item v-for="item in items" :key="item.title" link v-if="item.role === role" router :to="item.link">
+      <v-list-item
+        v-for="item in items"
+        :key="item.title"
+        link
+        v-if="item.role === role"
+        router
+        :to="item.link"
+      >
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -59,10 +66,17 @@ export default {
         {
           title: "Campaign Request",
           icon: "flag",
-          link: "/CampaignManagement",
-          role: "Editor"
+          link: "/CampaignRequest",
+          // role: "Editor"
+          role: "Marketer"
         },
-        { title: "Content Request", icon: "notes", link: "/", role: "Editor" },
+        {
+          title: "Content Request",
+          icon: "notes",
+          link: "/ContentRequest",
+          // role: "Editor"
+          role: "Marketer"
+        },
         {
           title: "Task Managerment",
           icon: "view_list",

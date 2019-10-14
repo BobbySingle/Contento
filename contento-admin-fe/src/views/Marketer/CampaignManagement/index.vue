@@ -18,7 +18,7 @@
         </div>
       </v-col>
       <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;">
-        <popup-create-campaign></popup-create-campaign>
+        <popup-create-campaign @createCampaign="createCampaign" />
       </v-col>
     </v-row>
     <!-- /** End Search */ -->
@@ -37,17 +37,17 @@
             hide-default-footer
             @page-count="pageCount = $event"
           >
-            <template v-slot:item.customerName="{item}">
+            <template v-slot:item.customer="{item}">
               <v-col
                 class="text__14"
                 style="display:flex; align-items:center;"
-                v-bind:class="{ campaign_success:item.idStatus == 1, campaign_on_going:item.idStatus == 2,campaign_overdue:item.idStatus == 3}"
+                v-bind:class="{ campaign_success:item.status.id == 1, campaign_on_going:item.status.id == 2,campaign_overdue:item.status.id == 3}"
               >
                 <div>
                   <span
                     @click="clickCampaign(item)"
                     class="customer-inner-table text__14"
-                  >{{item.customerName}}</span>
+                  >{{item.customer.name}}</span>
                 </div>
               </v-col>
             </template>
@@ -60,35 +60,35 @@
               <div>
                 <span
                   v-for="topic in item.listTag"
-                  :key="topic"
+                  :key="topic.id"
                   class="tag-campaign-details text__14"
-                >#{{topic}}</span>
+                >#{{topic.name}}</span>
               </div>
             </template>
-            <template v-slot:item.idStatus="{ item }">
+            <template v-slot:item.status="{ item }">
               <v-chip
-                v-if="item.idStatus === 1"
+                v-if="item.status.id === 1"
                 color="success"
                 style="color:white;"
                 class="text__14"
-              >Success</v-chip>
+              >{{item.status.name}}</v-chip>
               <v-chip
-                v-if="item.idStatus === 2"
+                v-if="item.status.id === 2"
                 color="warning"
                 style="color:white;"
                 class="text__14"
-              >On Going</v-chip>
+              >{{item.status.name}}</v-chip>
               <v-chip
-                v-if="item.idStatus === 3"
+                v-if="item.status.id === 3"
                 color="error"
                 style="color:white;"
                 class="text__14"
-              >Overdue</v-chip>
+              >{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.action="{item}">
               <v-row class="flex-nowrap">
-                <popup-edit-campaign :campaign="item" />
-                <v-btn color="success" fab small router to="/Calendar" class="mx-3">
+                <popup-edit-campaign :campaign="item" @editCampaign="editCampaign" />
+                <v-btn color="success" fab small @click="clickCalendar(item)" class="mx-3">
                   <v-icon>event</v-icon>
                 </v-btn>
               </v-row>
@@ -127,54 +127,24 @@ export default {
         {
           text: "Customer",
           align: "center",
-          value: "customerName",
+          value: "customer",
           width: "15%"
         },
         { text: "Title", value: "title", sortable: false, width: "35%" },
         { text: "Start", value: "startedDate", align: "center", width: "15%" },
         { text: "End", value: "endDate", align: "center", width: "15%" },
-        { text: "Status", value: "idStatus", align: "center", width: "10%" },
+        { text: "Status", value: "status", align: "center", width: "10%" },
         { text: "Action", value: "action", align: "center", width: "10%" }
       ],
-      listCampaigns: [
-        // {
-        //   id: 2,
-        //   customerName: "Customer 1",
-        //   created: "2019-09-07T15:20:03.146Z",
-        //   endDate: "2019-10-17T15:20:03.146Z",
-        //   idStatus: 1,
-        //   title: "What are you doing?",
-        //   description:
-        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        //   listTag: ["Film", "Social", "Food & Drink"]
-        // },
-        // {
-        //   id: 3,
-        //   customerName: "Customer 1",
-        //   created: "2019-09-10T15:20:03.146Z",
-        //   endDate: "2019-10-17T15:20:03.146Z",
-        //   idStatus: 2,
-        //   title: "How to Launch a Successful Marketing Campaign",
-        //   description:
-        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        //   listTag: ["Film", "Social", "Food & Drink"]
-        // },
-        // {
-        //   id: 4,
-        //   customerName: "Customer 1",
-        //   created: "2019-09-12T15:20:03.146Z",
-        //   endDate: "2019-10-17T15:20:03.146Z",
-        //   idStatus: 3,
-        //   title: "How to Launch a Successful Marketing Campaign",
-        //   description:
-        //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        //   listTag: ["Film", "Social", "Food & Drink"]
-        // }
-      ]
+      listCampaigns: []
     };
   },
   methods: {
-    clickCampaign: function(event) {
+    clickCalendar(event) {
+      localStorage.setItem("Campaign", JSON.stringify(event));
+      this.$router.push("/Calendar");
+    },
+    clickCampaign(event) {
       localStorage.setItem("Campaign", JSON.stringify(event));
       this.$router.push("/CampaignDetails");
     },
@@ -188,26 +158,43 @@ export default {
           "YYYY-MM-DD hh:mm"
         );
       });
-    }
+    },
     /**End format time created */
+    createCampaign() {
+      alert("Create success!");
+      this.fetchData();
+    },
+    editCampaign() {
+      alert("Edit success!");
+      this.fetchData();
+    },
+    fetchData() {
+      /**Begin Get list campaign */
+      this.$axios({
+        method: "get",
+        url: "campaignservice/api/campaign"
+      })
+        // axios
+        //   .get(`http://34.87.31.23:8066/api/campaign`)
+        .then(rs => {
+          this.listCampaigns = rs.data.reverse();
+          this.formatListCampaign();
+          console.log(rs.data);
+        })
+        .catch(er => {
+          console.log(er);
+        });
+      /** End Get list campaign */
+    }
+  },
+  created() {
+    let role = localStorage.getItem("role");
+    if (role !== "Marketer") {
+      this.$router.push("/403");
+    }
   },
   mounted() {
-    /**Begin Get list campaign */
-    this.$axios({
-      method: "get",
-      url: "campaignservice/api/campaign"
-    })
-      // axios
-      //   .get(`http://34.87.31.23:8066/api/campaign`)
-      .then(rs => {
-        this.listCampaigns = rs.data;
-        this.formatListCampaign();
-        // console.log(rs.data);
-      })
-      .catch(er => {
-        console.log(er);
-      });
-    /** End Get list campaign */
+    this.fetchData();
   }
 };
 </script>

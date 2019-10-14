@@ -63,7 +63,7 @@
             :activator="selectedElement"
             offset-y
           >
-            <v-card color="grey lighten-4" min-width="250px" max-width="250px" flat>
+            <v-card color="grey lighten-4" min-width="250px" max-width="250px" flat v-if="selectedEvent">
               <!-- /**Begin Event endDate */ -->
               <v-row class="pa-2" style="background-color:#1976d2" no-gutters>
                 <v-col cols="6">
@@ -76,7 +76,7 @@
                 <v-col
                   cols="6"
                   style="display:flex; justify-content:flex-end; color:white;font-size:12px; font-weight:bold;"
-                >{{selectedEvent.endDate | moment("hh:mm")}}</v-col>
+                >{{selectedEvent.deadline | moment("hh:mm")}}</v-col>
               </v-row>
               <!-- /**End Event endDate */ -->
               <!-- /**Begin Event Title */ -->
@@ -92,40 +92,35 @@
                 <v-col cols="6">
                   <v-row class="px-2">
                     <v-icon color="#1976d2">edit</v-icon>
-                    <span class="px-2 event__writer">{{selectedEvent.writer}}</span>
+                    <span class="px-2 event__writer">{{selectedEvent.writer.name}}</span>
                   </v-row>
                 </v-col>
                 <v-col cols="6">
                   <span
                     class="event__status"
-                    v-if="selectedEvent.status === 1"
+                    v-if="selectedEvent.status.idStatus === 1"
                     style="color:#4caf50;"
-                  >Completed</span>
+                  >{{selectedEvent.status.name}}</span>
                   <span
                     class="event__status"
-                    v-if="selectedEvent.status === 2"
+                    v-if="selectedEvent.status.idStatus === 2"
                     style="color:#fb8c00;"
-                  >Final Approval</span>
+                  >{{selectedEvent.status.name}}</span>
                   <span
                     class="event__status"
-                    v-if="selectedEvent.status === 3"
+                    v-if="selectedEvent.status.idStatus === 3"
                     style="color:#fb8c00;"
-                  >Under Review</span>
+                  >{{selectedEvent.status.name}}</span>
                   <span
                     class="event__status"
-                    v-if="selectedEvent.status === 4"
+                    v-if="selectedEvent.status.idStatus === 4"
                     style="color:#fb8c00;"
-                  >In Progress</span>
+                  >{{selectedEvent.status.name}}</span>
                   <span
                     class="event__status"
-                    v-if="selectedEvent.status === 5"
+                    v-if="selectedEvent.status.idStatus === 5"
                     style="color:#ff5252;"
-                  >Overdue</span>
-                  <span
-                    class="event__status"
-                    v-if="selectedEvent.status === 6"
-                    style="color:#1976d2;"
-                  >Publishing</span>
+                  >{{selectedEvent.status.name}}</span>
                 </v-col>
               </v-row>
               <!-- /**End Event Writer & Status  */ -->
@@ -180,59 +175,10 @@ export default {
     },
     start: null,
     end: null,
-    selectedEvent: {},
+    selectedEvent: undefined,
     selectedElement: null,
     selectedOpen: false,
-    events: [
-      {
-        id: 1,
-        title:
-          "Content Number 1 With Topic Lorem ipsum is placeholder text commonly used in the graphic",
-        writer: "Writer 1",
-        endDate: "2019-10-10T15:20:03.146Z",
-        status: 1
-      },
-      {
-        id: 2,
-        title:
-          "Content Number 2 With Topic Lorem ipsum is placeholder text commonly used in the graphic",
-        writer: "Writer 2",
-        endDate: "2019-10-08T15:20:03.146Z",
-        status: 2
-      },
-      {
-        id: 3,
-        title:
-          "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-        writer: "Writer 3",
-        endDate: "2019-10-11T15:45:03.146Z",
-        status: 3
-      },
-      {
-        id: 4,
-        title:
-          "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-        writer: "Writer 4",
-        endDate: "2019-10-11T15:00:45.146Z",
-        status: 5
-      },
-      {
-        id: 5,
-        title:
-          "Lorem ipsum is placeholder text commonly used in the graphic, print,...",
-        writer: "Writer 1",
-        endDate: "2019-10-11T15:15:15.146Z",
-        status: 3
-      },
-      {
-        id: 6,
-        title:
-          "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-        writer: "Writer 2",
-        endDate: "2019-10-11T15:30:03.146Z",
-        status: 6
-      }
-    ]
+    events: []
   }),
   computed: {
     title() {
@@ -272,18 +218,39 @@ export default {
   },
   mounted() {
     this.$refs.calendar.checkChange();
+
     var currentDate = new Date();
     this.today = this.$moment(String(currentDate)).format("YYYY-MM-DD hh:mm");
+
+    let campaign = JSON.parse(localStorage["Campaign"].toString());
+    /**Begin Get list tasks */
+    this.$axios({
+      method: "get",
+      url: `contentproccessservice/api/contentprocess/task/campaign/${campaign.id}`
+    })
+      .then(rs => {
+        this.events = rs.data;
+        this.formatListContent();
+        console.log(this.events);
+      })
+      .catch(er => {
+        console.log(er);
+      });
+    /** End Get list campaign */
   },
   beforeMount() {
     this.formatListContent();
   },
   methods: {
+    click(event){
+      console.log(event);
+    },
     /**Begin format time endDate */
     formatListContent() {
       this.events.forEach(el => {
         el.name = el.title;
-        el.start = this.$moment(String(el.endDate)).format("YYYY-MM-DD hh:mm");
+        el.start = this.$moment(String(el.publishTime)).format("YYYY-MM-DD hh:mm");
+        el.deadline = this.$moment(String(el.deadline)).format("YYYY-MM-DD hh:mm");
       });
     },
     /**End format time endDate */
@@ -315,6 +282,7 @@ export default {
     },
     showEvent({ nativeEvent, event }) {
       const open = () => {
+        console.log(event)
         this.selectedEvent = event;
         this.selectedElement = nativeEvent.target;
         setTimeout(() => (this.selectedOpen = true), 10);

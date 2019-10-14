@@ -30,13 +30,13 @@
                 <v-col sm="6" md="6">
                   <span style="color:grey; font-weight:300; font-size:12px;">Customer</span>
                   <br />
-                  <span class="text__14">{{customerName}}</span>
+                  <span class="text__14">{{customer.name}}</span>
                 </v-col>
                 <v-spacer></v-spacer>
                 <v-col sm="5" md="5">
                   <span style="color:grey; font-weight:300; font-size:12px;">Editor</span>
                   <br />
-                  <span class="text__14">{{editor}}</span>
+                  <span class="text__14">{{editor.name}}</span>
                 </v-col>
               </v-row>
               <v-row>
@@ -46,10 +46,10 @@
                   <v-chip
                     class="text__14 chips ma-1"
                     v-for="item in listTag"
-                    :key="item"
+                    :key="item.id"
                     color="blue"
                     :input-value="item"
-                  >{{item}}</v-chip>
+                  >{{item.name}}</v-chip>
                 </v-col>
               </v-row>
             </v-col>
@@ -70,36 +70,36 @@
                   @page-count="pageCount = $event"
                 >
                   <template v-slot:item.status="{ item }">
-                    <v-chip class="text__14" color="success" dark v-if="item.status === 1">Completed</v-chip>
+                    <v-chip class="text__14" color="success" dark v-if="item.status.idStatus === 1">{{item.status.name}}</v-chip>
                     <v-chip
                       class="text__14"
                       color="warning"
                       dark
-                      v-if="item.status === 2"
-                    >Under Review</v-chip>
+                      v-if="item.status.idStatus === 2"
+                    >{{item.status.name}}</v-chip>
                     <v-chip
                       class="text__14"
                       color="warning"
                       dark
-                      v-if="item.status === 3"
-                    >In Progress</v-chip>
-                    <v-chip class="text__14" color="error" dark v-if="item.status === 4">Overdue</v-chip>
+                      v-if="item.status.idStatus === 3"
+                    >{{item.status.name}}</v-chip>
+                    <v-chip class="text__14" color="error" dark v-if="item.status.idStatus === 4">{{item.status.name}}</v-chip>
                     <v-chip
                       class="text__14"
                       color="secondary"
                       dark
-                      v-if="item.status === 5"
-                    >Publishing</v-chip>
-                    <v-chip class="text__14" color="primary" dark v-if="item.status === 6">Published</v-chip>
+                      v-if="item.status.idStatus === 5"
+                    >{{item.status.name}}</v-chip>
+                    <v-chip class="text__14" color="primary" dark v-if="item.status.idStatus === 6">{{item.status.name}}</v-chip>
                   </template>
                   <template v-slot:item.action="{item}">
                     <v-btn
                       class="text__14"
                       color="primary"
-                      v-if="item.status === 1"
+                      v-if="item.status.idStatus === 1"
                       @click="publish(item)"
                     >Publish</v-btn>
-                    <v-btn class="text__14" disabled v-if="item.status != 1">Publish</v-btn>
+                    <v-btn class="text__14" disabled v-if="item.status.idStatus != 1">Publish</v-btn>
                   </template>
                 </v-data-table>
                 <v-row justify="center">
@@ -129,19 +129,10 @@ export default {
       /**End Expension Panel */
       dialog: false,
       menu: false,
-      listTag: [],
-      categorys: [
-        "Sport",
-        "Travel",
-        "Food & Drink",
-        "2Tek",
-        "Social",
-        "Business",
-        "Film"
-      ],
       endDate: "",
       title: "",
-      customerName: "",
+      listTag:[],
+      customer: "",
       editor: "",
       /**List Tasks */
       headers: [
@@ -154,69 +145,36 @@ export default {
         { text: "Task", value: "title", sortable: false, width: "40%" },
         {
           text: "Current Assignee",
-          value: "writer",
+          value: "writer.name",
           align: "center",
           width: "16%"
         },
         { text: "Deadline", value: "deadline", align: "center", width: "16%" },
         { text: "Status", value: "status", align: "center", width: "10%" },
-        { text: "Action", value: "action", align: "center", width: "10%" ,sortable:false}
+        {
+          text: "Action",
+          value: "action",
+          align: "center",
+          width: "10%",
+          sortable: false
+        }
       ],
       listtasks: [
-        {
-          id: 1,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 1",
-          deadline: "2019-10-17T15:20:03.146Z",
-          status: 1
-        },
-        {
-          id: 2,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 2",
-          deadline: "2019-10-17T15:20:03.146Z",
-          status: 2
-        },
-        {
-          id: 3,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 3",
-          deadline: "2019-10-17T15:20:03.146Z",
-          status: 3
-        },
-        {
-          id: 4,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 4",
-          deadline: "2019-10-17T15:20:03.146Z",
-          status: 5
-        },
-        {
-          id: 5,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 1",
-          deadline: "2019-10-17T15:20:03.146Z",
-          status: 3
-        },
-        {
-          id: 6,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 2",
-          deadline: "2019-10-17T15:20:03.146Z",
-          status: 6
-        }
+        // {
+        //   id: 1,
+        //   title:
+        //     "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
+        //   writer: "Writer 1",
+        //   deadline: "2019-10-17T15:20:03.146Z",
+        //   status: 1
+        // },
       ]
     };
   },
   methods: {
     publish(event) {
       localStorage.setItem("Content", JSON.stringify(event));
+      localStorage.setItem("ContentEditor", JSON.stringify(this.editor));
       this.$router.push("/PublishChannel");
     },
     /**Begin format time created */
@@ -229,17 +187,37 @@ export default {
     }
     /**End format time created */
   },
+  created() {
+    let role = localStorage.getItem("role");
+    if (role !== "Marketer") {
+      this.$router.push("/403");
+    }
+  },
   mounted() {
     /**Begin Load data campaign details */
     let campaign = JSON.parse(localStorage["Campaign"].toString());
     this.title = campaign.title;
-    this.customerName = campaign.customerName;
-    this.editor = "Editor 2";
+    this.customer = campaign.customer;
+    this.editor = campaign.editor;
     /**Convert Date to ISO */
     this.endDate = campaign.endDate;
     this.listTag = campaign.listTag;
-    this.formatListTask();
     /**End Load data campaign details */
+
+    /**Begin Get list tasks */
+    this.$axios({
+      method: "get",
+      url: `contentproccessservice/api/contentprocess/task/campaign/${campaign.id}`,
+    })
+      .then(rs => {
+        this.listtasks = rs.data;
+        this.formatListTask();
+        console.log(rs.data);
+      })
+      .catch(er => {
+        console.log(er);
+      });
+    /** End Get list campaign */
   }
 };
 </script>
