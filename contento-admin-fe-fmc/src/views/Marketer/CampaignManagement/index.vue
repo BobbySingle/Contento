@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1 class="text__h1">Campaign Request</h1>
+      <h1 class="text__h1">Campaign Management</h1>
     </v-row>
     <!-- /**Begin Search  */ -->
     <v-row no-gutters class="mx-10">
@@ -11,13 +11,14 @@
           <input
             class="input-field text__14"
             type="text"
-            placeholder="Title"
+            placeholder="Customer,Title"
             name="search"
             v-model="search"
           />
         </div>
       </v-col>
       <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;">
+        <popup-create-campaign/>
       </v-col>
     </v-row>
     <!-- /** End Search */ -->
@@ -27,10 +28,12 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listCampaigns"
+            :items="campaignsFormatDate"
             :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
+            :loading="loadingData"
+            loading-text="Loading Data"
             :page.sync="page"
             :items-per-page="itemsPerPage"
             hide-default-footer
@@ -84,6 +87,14 @@
                 class="text__14"
               >{{item.status.name}}</v-chip>
             </template>
+            <template v-slot:item.action="{item}">
+              <v-row class="flex-nowrap">
+                <popup-edit-campaign :campaign="item"/>
+                <v-btn color="success" fab small @click="clickCalendar(item)" class="mx-3">
+                  <v-icon>event</v-icon>
+                </v-btn>
+              </v-row>
+            </template>
           </v-data-table>
           <v-row justify="center">
             <div class="text-center pt-2">
@@ -95,10 +106,12 @@
     </v-row>
   </v-container>
 </template>
-
 <script>
-import axios from 'axios'
+import PopupCreateCampaign from "../../../components/Popup/CreateCampaign.vue";
+import PopupEditCampaign from "../../../components/Popup/EditCampaign.vue";
+import { mapGetters, mapActions } from "vuex";
 export default {
+  components: { PopupCreateCampaign, PopupEditCampaign },
   data() {
     return {
       /**Begin Pagination */
@@ -122,51 +135,44 @@ export default {
         { text: "Start", value: "startedDate", align: "center", width: "15%" },
         { text: "End", value: "endDate", align: "center", width: "15%" },
         { text: "Status", value: "status", align: "center", width: "10%" },
+        { text: "Action", value: "action", align: "center", width: "10%" }
       ],
-      listCampaigns: []
     };
   },
+  computed: {
+    ...mapGetters(["loadingData", "campaignsFormatDate"])
+  },
   methods: {
-    clickCampaign: function(event) {
-      localStorage.setItem("CampaignRequest", JSON.stringify(event));
-      this.$router.push("/CampaignRequestDetails");
+    clickCalendar(event) {
+      localStorage.setItem("Campaign", JSON.stringify(event));
+      this.$router.push("/Calendar");
     },
-    /**Begin format time created */
-    formatListCampaign() {
-      this.listCampaigns.forEach(el => {
-        el.startedDate = this.$moment(String(el.startedDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-        el.endDate = this.$moment(String(el.endDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-      });
+    clickCampaign(event) {
+      localStorage.setItem("Campaign", JSON.stringify(event));
+      this.$router.push("/CampaignDetails");
+    },
+    ...mapActions({
+      getCampaigns: "campaign/getCampaigns",
+      getListTags : "select/getListTags",
+      getListCustomers : "select/getListCustomers",
+      getListEditors : "select/getListEditors",
+    }),
+     fetchData() {
+       this.getCampaigns(10);
+       this.getListTags();
+       this.getListCustomers(0);
+       this.getListEditors(0);
+
     }
-    /**End format time created */
   },
   created() {
-    // let role = localStorage.getItem("role");
-    // if (role !== "Marketer") {
-    //   this.$router.push("/403");
-    // }
+    let role = localStorage.getItem("role");
+    if (role !== "Marketer") {
+      this.$router.push("/403");
+    }
   },
   mounted() {
-    /**Begin Get list campaign */
-    // this.$axios({
-    //   method: "get",
-    //   url: "campaignservice/api/campaign"
-    // })
-      axios
-        .get("http://34.87.31.23:5001/api/campaign/campaigns/marketers/10")
-      .then(rs => {
-        this.listCampaigns = rs.data;
-        this.formatListCampaign();
-        console.log(rs.data);
-      })
-      .catch(er => {
-        console.log(er);
-      });
-    /** End Get list campaign */
+    this.fetchData();
   }
 };
 </script>

@@ -163,7 +163,11 @@ export default {
   width: 100%;
   border: 2px solid grey;
 }
-::v-deep .content img {
+.content img{
+  max-width: 100%;
+  max-height: 100%;
+}
+/* ::v-deep .content img {
   position: relative;
   overflow: hidden;
   -webkit-box-flex: 1;
@@ -173,5 +177,5 @@ export default {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-}
+} */
 </style>

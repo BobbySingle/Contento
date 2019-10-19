@@ -78,11 +78,10 @@ export default {
           // role: "Marketer"
         },
         {
-          title: "Task Management",
+          title: "Task Managerment",
           icon: "view_list",
-          link: "/TaskManagement",
+          link: "/",
           role: "Writer"
-          // role: "Editor"
         }
       ],
       mini: true
