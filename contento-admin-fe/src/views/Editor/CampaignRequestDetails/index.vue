@@ -63,7 +63,7 @@
               <v-expansion-panel-content class="py-2">
                 <div class="work">
                   <v-row class="my-2" justify="center">
-                    <create-task />
+                    <create-task @createTask="createTask" />
                   </v-row>
                   <v-data-table
                     :headers="headers"
@@ -81,7 +81,7 @@
                     </template>
                     <template v-slot:item.action="{ item }">
                       <v-row class="flex-nowrap" justify="center">
-                        <edit-task v-if="item.status.id !== 5" />
+                        <edit-task v-if="item.status.id !== 5" :taskID="item.id" @editTask="editTask"/>
                         <v-btn text icon color="error" v-if="item.status.id == 1">
                           <v-icon>delete</v-icon>
                         </v-btn>
@@ -155,23 +155,40 @@ export default {
         this.campaign_tags = rs.data.listTag;
         this.campaign_customer = rs.data.customer;
         this.campaign_enddate = rs.data.endDate;
+        localStorage.setItem("Task-MaxTime", rs.data.endDate);
         this.campaign_content = rs.data.description;
       })
       .catch(er => {
         console.log(er);
       });
-    /**Load list task */
-    axios
-      .get(
-        `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`
-      )
-      .then(rs => {
-        this.listTasks = rs.data;
-        console.log(this.listTasks);
-      })
-      .catch(er => {
-        console.log(er);
-      });
+      this.fetchData();
+  },
+  methods: {
+    /**fetch data - dialog process success */
+    createTask() {
+      alert("Create task success!");
+      this.fetchData();
+    },
+     editTask() {
+      alert("Edit task success!");
+      this.fetchData();
+    },
+
+    fetchData() {
+      /**Load list task */
+      let campaignID = JSON.parse(localStorage.getItem("Campaign").toString());
+      axios
+        .get(
+          `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`
+        )
+        .then(rs => {
+          this.listTasks = rs.data.reverse();
+          console.log(this.listTasks);
+        })
+        .catch(er => {
+          console.log(er);
+        });
+    }
   }
 };
 </script>

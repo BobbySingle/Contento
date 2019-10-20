@@ -90,7 +90,7 @@ export default {
           companyName: this.company,
         })
         .then(rs => {
-          alert("Success!");
+          this.$emit("editCustomer");
         })
         .catch(er => {
           console.log(er);

@@ -75,11 +75,11 @@
           <v-row>
             <v-col md="12">
               <v-combobox
-                v-model="listTag"
+                v-model="selectedTag"
                 item-text="name"
                 item-value="id"
-                :value="campaign.listTag"
-                :items="categorys"
+                :value="selectedTag"
+                :items="listTag"
                 chips
                 clearable
                 label="Category"
@@ -130,8 +130,8 @@ export default {
       menu: false,
       customers: [],
       editors: [],
+      selectedTag: [],
       listTag: [],
-      categorys: [],
       minDate: new Date().toISOString(),
       endDate: "",
       content: "",
@@ -150,22 +150,47 @@ export default {
           title: this.title,
           description: this.$refs.ckeditor.editorData,
           endDate: this.endDate,
-          tags: this.listTag,
+          tags: this.selectedTag,
           editor: this.editor,
           customer: this.customer
         })
         .then(rs => {
           console.log(rs);
-          this.$emit("emitCampaign");
+          this.$emit("editCampaign");
         })
         .catch(er => {
           alert("Edit failed!");
           console.log(er);
         });
+      /**Clear Data */
+      this.selectedTag = [];
+      this.content = "";
+      this.title = "";
+      this.customer = "";
+      this.editor = "";
+      this.endDate = "";
+      this.id = "";
       this.dialog = false;
     }
   },
   mounted() {
+    /**Begin Get details campaign */
+    axios
+      .get(`http://34.87.31.23:5001/api/campaign/campaigns/${this.campaign.id}`)
+      .then(rs => {
+        this.selectedTag = rs.data.listTag;
+        this.content = rs.data.description;
+        this.title = rs.data.title;
+        this.customer = rs.data.customer;
+        this.editor = rs.data.editor;
+        this.endDate = rs.data.endDate;
+        this.id = rs.data.id;
+      })
+      .catch(er => {
+        console.log(er);
+      });
+    /**End Get details campaign */
+
     /**Begin Get list customer */
     axios
       .get(
@@ -194,7 +219,7 @@ export default {
     axios
       .get(`http://34.87.31.23:5002/api/contentprocess/tags`)
       .then(rs => {
-        this.categorys = rs.data;
+        this.listTag = rs.data;
       })
       .catch(er => {
         console.log(er);
@@ -206,11 +231,10 @@ export default {
         this.content = rs.data.description;
         this.title = rs.data.title;
         this.endDate = this.$moment(rs.data.endDate).toISOString();
-        this.listTag = rs.data.listTag;
+        this.selectedTag = rs.data.listTag;
         this.customer = rs.data.customer;
         this.editor = rs.data.editor;
         this.id = rs.data.id;
-        
       })
       .catch(er => {
         console.log(er);

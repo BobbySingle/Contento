@@ -71,7 +71,7 @@ export default {
           idMarketer:10
         })
         .then(rs => {
-          alert("Success!");
+          this.$emit("createCustomer");
         })
         .catch(er => {
           console.log(er);

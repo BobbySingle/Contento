@@ -10,10 +10,10 @@
         <v-btn icon dark @click="dialog = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-toolbar-title>Create Task</v-toolbar-title>
+        <v-toolbar-title>Edit Task</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="dialog = false">Save</v-btn>
+          <v-btn dark text @click="dialog = false,  update()">Save</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
@@ -65,10 +65,10 @@
             <v-row>
               <v-col cols="6">
                 <v-combobox
-                  v-model="tags"
+                  v-model="selectedTag"
                   item-text="name"
                   item-value="id"
-                  :items="categorys"
+                  :items="listTag"
                   chips
                   clearable
                   label="Category"
@@ -118,18 +118,15 @@
           </v-col>
         </v-row>
       </v-card-text>
-      <!-- <v-card-actions>
-        <div class="flex-grow-1"></div>
-        <v-btn color="warning" @click="dialog = false" class="text__14">Cancel</v-btn>
-        <v-btn type="submit" @click="dialog = false, reset()" color="success" class="text__14">Create</v-btn>
-      </v-card-actions>-->
     </v-card>
   </v-dialog>
 </template>
 
 <script>
 import CKEditor from "../CKEditor/Ckeditor5";
+import axios from "axios";
 export default {
+  props: ["taskID"],
   components: {
     CKEditor
   },
@@ -137,31 +134,103 @@ export default {
     return {
       dialog: false,
       menu: false,
-      writers: [
-        { id: 1, name: "writers 1" },
-        { id: 2, name: "writers 2" },
-        { id: 3, name: "writers 3" },
-        { id: 4, name: "writers 4" }
-      ],
-      tags: [{ id: 1, name: "DU LỊCH" }, { id: 2, name: "THỂ THAO" }],
-      categorys: [
-        { id: 1, name: "DU LỊCH" },
-        { id: 2, name: "THỂ THAO" },
-        { id: 3, name: "ĂN UỐNG" }
-      ],
+      writers: [],
+      selectedTag: [],
+      listTag: [],
       endtime: "",
-      publishDate: "2019-10-20T15:20:03.146Z",
-      mintime: "2019-10-18T15:20:03.146Z",
-      maxtime: "2019-10-20T15:20:03.146Z",
+      publishDate: "",
+      mintime: "",
+      maxtime: "",
       content: "Write Content ...",
-      writer: { id: 1, name: "writers 1" },
-      title: "Title Task 1"
+      writer: "",
+      title: "",
+      id: ""
     };
   },
   mounted() {
     let now = new Date();
-    this.endtime = now.toISOString();
     this.mintime = now.toISOString();
+    this.maxtime = localStorage.getItem("Task-MaxTime").toString();
+
+    let campaignID = JSON.parse(localStorage.getItem("Campaign").toString());
+    let editorID = 7;
+    /**Begin Get list writer by editor id */
+    axios
+      .get(
+        `http://34.87.31.23:5000/api/authentication/writers/editors/${editorID}`
+      )
+      .then(rs => {
+        this.writers = rs.data;
+      })
+      .catch(er => {
+        console.log(er);
+      });
+    /**End  Get list writer by editor id */
+
+    /**Begin Get list tag by campaign id */
+    axios
+      .get(
+        `http://34.87.31.23:5002/api/contentprocess/tags/campaign/${campaignID}`
+      )
+      .then(rs => {
+        this.listTag = rs.data;
+      })
+      .catch(er => {
+        console.log(er);
+      });
+    /**End Get list tag by campaign id */
+
+    /**Begin Get details task */
+    axios
+      .get(
+        `http://34.87.31.23:5002/api/contentprocess/task-detail-update/campaign/${this.taskID}`
+      )
+      .then(rs => {
+        this.selectedTag = rs.data.tags;
+        this.endtime = rs.data.deadline;
+        this.publishDate = rs.data.publishTime;
+        this.content = rs.data.description;
+        this.writer = rs.data.writer;
+        this.title = rs.data.title;
+        this.id = rs.data.id;
+      })
+      .catch(er => {
+        console.log("Marketer - Edit Campaign - LoadData [ERROR]");
+        console.log(er);
+      });
+
+    /**End Get details task  */
+  },
+  methods: {
+    update() {
+      axios
+        .put(`http://34.87.31.23:5002/api/contentprocess/task`, {
+          idTask: this.id,
+          idWriter: this.writer,
+          title: this.title,
+          description: this.$refs.ckeditor.editorData,
+          deadline: this.endtime,
+          publishTime: this.publishTime,
+          tags: this.selectedTag
+        })
+        .then(rs => {
+          console.log("Editor - Edit Task");
+          console.log(rs.data);
+          this.$emit("editTask");
+        })
+        .catch(er => {
+          console.log("Marketer - Edit Campaign  [ERROR]");
+          console.log(er);
+        });
+         this.id ="";
+         this.writer="";
+         this.title="";
+         this.content="Write Content ...";
+         this.endtime="";
+         this.publishTime="";
+         this.selectedTags=[];
+    }
+    
   }
 };
 </script>

@@ -11,7 +11,7 @@
         <v-toolbar-title>Create Task</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="dialog = false">Save</v-btn>
+          <v-btn dark text @click="dialog = false,  create()">Create</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
@@ -96,8 +96,8 @@
                       title="End Time"
                       placeholder="Select Publish Date"
                       type="datetime"
-                      v-model="publishDate"
-                      :value="publishDate"
+                      v-model="publishTime"
+                      :value="publishTime"
                       class="text__14"
                       input-class="datetime"
                       input-style="cursor:pointer;"
@@ -116,11 +116,6 @@
           </v-col>
         </v-row>
       </v-card-text>
-      <!-- <v-card-actions>
-        <div class="flex-grow-1"></div>
-        <v-btn color="warning" @click="dialog = false" class="text__14">Cancel</v-btn>
-        <v-btn type="submit" @click="dialog = false, reset()" color="success" class="text__14">Create</v-btn>
-      </v-card-actions>-->
     </v-card>
   </v-dialog>
 </template>
@@ -139,9 +134,9 @@ export default {
       selectedTags: [],
       listTag: [],
       endtime: "",
-      publishDate: "",
+      publishTime: "",
       mintime: "",
-      maxtime: "2019-10-20T15:20:03.146Z",
+      maxtime: "",
       content: "",
       customer: [],
       writers: [],
@@ -152,6 +147,7 @@ export default {
   mounted() {
     let now = new Date();
     this.mintime = now.toISOString();
+    this.maxtime = localStorage.getItem("Task-MaxTime").toString();
 
     let campaignID = JSON.parse(localStorage.getItem("Campaign").toString());
     let editorID = 7;
@@ -170,7 +166,9 @@ export default {
 
     /**Begin Get list tag by campaign id */
     axios
-      .get(`http://34.87.31.23:5002/api/contentprocess/tags`)
+      .get(
+        `http://34.87.31.23:5002/api/contentprocess/tags/campaign/${campaignID}`
+      )
       .then(rs => {
         this.listTag = rs.data;
       })
@@ -179,7 +177,39 @@ export default {
       });
     /**End Get list tag by campaign id */
   },
-  methods: {}
+  methods: {
+    create() {
+      let campaignID = JSON.parse(localStorage.getItem("Campaign").toString());
+
+      axios
+        .post(`http://34.87.31.23:5002/api/contentprocess/task`, {
+          idCampaign: campaignID,
+          idWriter: this.writer,
+          title: this.title,
+          description: this.$refs.ckeditor.editorData,
+          deadline: this.endtime,
+          publishTime: this.publishTime,
+          tags: this.selectedTags
+        })
+        .then(rs => {
+          console.log("Editor - Create Task");
+          console.log(rs.data);
+          this.$emit("createTask");
+        })
+        .catch(er => {
+          console.log("Editor - Create Task [ERROR]");
+          console.log(er);
+        });
+      /**Clear Data */
+      this.selectedTags = [];
+      this.endtime = "";
+      this.publishTime = "";
+      this.content = "";
+      this.customer = [];
+      this.writer = [];
+      this.title = "";
+    }
+  }
 };
 </script>
 

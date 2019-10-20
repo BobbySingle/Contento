@@ -8,7 +8,7 @@
         <v-row class="ml-1 mb-5">
           <v-col cols="12" style="display: flex;
     justify-content: center;">
-            <popup-create-customer :isSmallBtn="false" />
+            <popup-create-customer :isSmallBtn="false" @createCustomer="createCustomer" />
           </v-col>
         </v-row>
       </v-col>
@@ -29,7 +29,7 @@
           </template>
           <template v-slot:item.action="{item}">
             <v-row justify="center" class="flex-nowrap">
-              <popup-edit-customer :customer="item"></popup-edit-customer>
+              <popup-edit-customer :customer="item" @editCustomer="editCustomer"></popup-edit-customer>
               <v-btn color="primary" @click="details(item.id)" class="text__14">Details</v-btn>
             </v-row>
           </template>
@@ -73,19 +73,30 @@ export default {
     }
   },
   mounted() {
-    axios
-      .get(`http://34.87.31.23:5000/api/authentication/customers/marketers/0`)
-      .then(rs => {
-        this.listCustomers = rs.data;
-      })
-      .catch(er => {
-        console.log(er);
-      });
+    this.fetchData();
   },
-  methods:{
-    details(event){
+  methods: {
+    details(event) {
       localStorage.setItem("customerID", event);
       this.$router.push("/CustomerCampaigns");
+    },
+    createCustomer() {
+      alert("Create customer success!");
+      this.fetchData();
+    },
+    editCustomer() {
+      alert("Edite customer success!");
+      this.fetchData();
+    },
+    fetchData() {
+      axios
+        .get(`http://34.87.31.23:5000/api/authentication/customers/marketers/0`)
+        .then(rs => {
+          this.listCustomers = rs.data.reverse();
+        })
+        .catch(er => {
+          console.log(er);
+        });
     }
   }
 };
