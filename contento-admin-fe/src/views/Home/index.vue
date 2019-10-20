@@ -26,7 +26,7 @@ export default {
     //   .catch(er => {
     //     console.log(er);
     //   });
-    localStorage.setItem("role","Editor");
+    localStorage.setItem("role","Marketer");
   },
   mounted() {
     let role = localStorage.getItem("role");

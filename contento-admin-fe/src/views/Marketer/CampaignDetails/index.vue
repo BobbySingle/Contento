@@ -70,36 +70,51 @@
                   @page-count="pageCount = $event"
                 >
                   <template v-slot:item.status="{ item }">
-                    <v-chip class="text__14" color="success" dark v-if="item.status.idStatus === 1">{{item.status.name}}</v-chip>
                     <v-chip
                       class="text__14"
-                      color="warning"
+                      color="success"
                       dark
-                      v-if="item.status.idStatus === 2"
+                      v-if="item.status.id === 1"
                     >{{item.status.name}}</v-chip>
                     <v-chip
                       class="text__14"
                       color="warning"
                       dark
-                      v-if="item.status.idStatus === 3"
+                      v-if="item.status.id === 2"
                     >{{item.status.name}}</v-chip>
-                    <v-chip class="text__14" color="error" dark v-if="item.status.idStatus === 4">{{item.status.name}}</v-chip>
+                    <v-chip
+                      class="text__14"
+                      color="warning"
+                      dark
+                      v-if="item.status.id === 3"
+                    >{{item.status.name}}</v-chip>
+                    <v-chip
+                      class="text__14"
+                      color="error"
+                      dark
+                      v-if="item.status.id === 4"
+                    >{{item.status.name}}</v-chip>
                     <v-chip
                       class="text__14"
                       color="secondary"
                       dark
-                      v-if="item.status.idStatus === 5"
+                      v-if="item.status.id === 5"
                     >{{item.status.name}}</v-chip>
-                    <v-chip class="text__14" color="primary" dark v-if="item.status.idStatus === 6">{{item.status.name}}</v-chip>
+                    <v-chip
+                      class="text__14"
+                      color="primary"
+                      dark
+                      v-if="item.status.id === 6"
+                    >{{item.status.name}}</v-chip>
                   </template>
                   <template v-slot:item.action="{item}">
                     <v-btn
                       class="text__14"
                       color="primary"
-                      v-if="item.status.idStatus === 1"
-                      @click="publish(item)"
+                      v-if="item.status.id === 5"
+                      @click="publish(item.id)"
                     >Publish</v-btn>
-                    <v-btn class="text__14" disabled v-if="item.status.idStatus != 1">Publish</v-btn>
+                    <v-btn class="text__14" disabled v-if="item.status.id != 5">Publish</v-btn>
                   </template>
                 </v-data-table>
                 <v-row justify="center">
@@ -116,6 +131,7 @@
   </v-container>
 </template>
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
@@ -131,7 +147,7 @@ export default {
       menu: false,
       endDate: "",
       title: "",
-      listTag:[],
+      listTag: [],
       customer: "",
       editor: "",
       /**List Tasks */
@@ -144,7 +160,7 @@ export default {
         },
         { text: "Task", value: "title", sortable: false, width: "40%" },
         {
-          text: "Current Assignee",
+          text: "Implementer",
           value: "writer.name",
           align: "center",
           width: "16%"
@@ -173,8 +189,7 @@ export default {
   },
   methods: {
     publish(event) {
-      localStorage.setItem("Content", JSON.stringify(event));
-      localStorage.setItem("ContentEditor", JSON.stringify(this.editor));
+      localStorage.setItem("ContentID", JSON.stringify(event));
       this.$router.push("/PublishChannel");
     },
     /**Begin format time created */
@@ -195,20 +210,27 @@ export default {
   },
   mounted() {
     /**Begin Load data campaign details */
-    let campaign = JSON.parse(localStorage["Campaign"].toString());
-    this.title = campaign.title;
-    this.customer = campaign.customer;
-    this.editor = campaign.editor;
-    /**Convert Date to ISO */
-    this.endDate = campaign.endDate;
-    this.listTag = campaign.listTag;
+    let campaignID = JSON.parse(localStorage["CampaignID"].toString());
+    axios
+      .get(`http://34.87.31.23:5001/api/campaign/campaigns/${campaignID}`)
+      .then(rs => {
+        this.title = rs.data.title;
+        this.customer = rs.data.customer;
+        this.editor = rs.data.editor;
+        /**Convert Date to ISO */
+        this.endDate = rs.data.endDate;
+        this.listTag = rs.data.listTag;
+      })
+      .catch(er => {
+        console.log(er);
+      });
     /**End Load data campaign details */
 
     /**Begin Get list tasks */
-    this.$axios({
-      method: "get",
-      url: `contentproccessservice/api/contentprocess/task/campaign/${campaign.id}`,
-    })
+    axios
+      .get(
+        `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`
+      )
       .then(rs => {
         this.listtasks = rs.data;
         this.formatListTask();

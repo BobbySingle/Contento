@@ -35,6 +35,7 @@
                     title="End Time"
                     type="datetime"
                     :value="campaign.endDate"
+                    :min-datetime="minDate"
                     v-model="endDate"
                     class="endtime text__14"
                   ></datetime>
@@ -116,6 +117,7 @@
 <script>
 import CKEditor from "../CKEditor/Ckeditor5";
 import PopupCreateCustomer from "./CreateCustomer.vue";
+import axios from "axios";
 export default {
   props: ["campaign"],
   components: {
@@ -130,6 +132,7 @@ export default {
       editors: [],
       listTag: [],
       categorys: [],
+      minDate: new Date().toISOString(),
       endDate: "",
       content: "",
       title: "",
@@ -141,10 +144,8 @@ export default {
   },
   methods: {
     update() {
-      this.$axios({
-        method: "put",
-        url: "campaignservice/api/campaign/campaign",
-        data: {
+      axios
+        .put(`http://34.87.31.23:5001/api/campaign/campaign`, {
           id: this.id,
           title: this.title,
           description: this.$refs.ckeditor.editorData,
@@ -152,8 +153,7 @@ export default {
           tags: this.listTag,
           editor: this.editor,
           customer: this.customer
-        }
-      })
+        })
         .then(rs => {
           console.log(rs);
           this.$emit("emitCampaign");
@@ -167,10 +167,10 @@ export default {
   },
   mounted() {
     /**Begin Get list customer */
-    this.$axios({
-      method: "get",
-      url: "authenticationservice/api/authentication/list-customer/0"
-    })
+    axios
+      .get(
+        `http://34.87.31.23:5000/api/authentication/customers/marketers-basic/0`
+      )
       .then(rs => {
         this.customers = rs.data;
       })
@@ -180,10 +180,8 @@ export default {
     /**End Get list customer */
 
     /**Begin Get list editor */
-    this.$axios({
-      method: "get",
-      url: "authenticationservice/api/authentication/list-editor/0"
-    })
+    axios
+      .get(`http://34.87.31.23:5000/api/authentication/editors/marketers/10`)
       .then(rs => {
         this.editors = rs.data;
       })
@@ -192,25 +190,31 @@ export default {
       });
     /**End Get list editor */
 
-    /**Begin Get list editor */
-    this.$axios({
-      method: "get",
-      url: "contentproccessservice/api/contentprocess/tags"
-    })
+    /**Begin Get list tags */
+    axios
+      .get(`http://34.87.31.23:5002/api/contentprocess/tags`)
       .then(rs => {
         this.categorys = rs.data;
       })
       .catch(er => {
         console.log(er);
       });
-    /**End Get list editor */
-    this.content = this.campaign.description;
-    this.title = this.campaign.title;
-    this.endDate = this.$moment(this.campaign.endDate).toISOString();
-    this.listTag = this.campaign.listTag;
-    this.customer = this.campaign.customer;
-    this.editor = this.campaign.editor;
-    this.id = this.campaign.id;
+    /**End Get list tags */
+    axios
+      .get(`http://34.87.31.23:5001/api/campaign/campaigns/${this.campaign}`)
+      .then(rs => {
+        this.content = rs.data.description;
+        this.title = rs.data.title;
+        this.endDate = this.$moment(rs.data.endDate).toISOString();
+        this.listTag = rs.data.listTag;
+        this.customer = rs.data.customer;
+        this.editor = rs.data.editor;
+        this.id = rs.data.id;
+        
+      })
+      .catch(er => {
+        console.log(er);
+      });
   }
 };
 </script>

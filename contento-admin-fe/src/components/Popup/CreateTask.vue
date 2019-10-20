@@ -36,7 +36,6 @@
                   item-text="name"
                   item-value="id"
                   label="Writer"
-                  @change="clickSelect(writer)"
                 ></v-select>
               </v-col>
               <v-col cols="6">
@@ -64,10 +63,10 @@
             <v-row>
               <v-col cols="6">
                 <v-combobox
-                  v-model="tags"
+                  v-model="selectedTags"
                   item-text="name"
                   item-value="id"
-                  :items="categorys"
+                  :items="listTag"
                   chips
                   clearable
                   label="Category"
@@ -128,6 +127,7 @@
 
 <script>
 import CKEditor from "../CKEditor/Ckeditor5";
+import axios from "axios";
 export default {
   components: {
     CKEditor
@@ -136,24 +136,15 @@ export default {
     return {
       dialog: false,
       menu: false,
-      writers: [
-        { id: 1, name: "writers 1" },
-        { id: 2, name: "writers 2" },
-        { id: 3, name: "writers 3" },
-        { id: 4, name: "writers 4" }
-      ],
-      tags: [],
-      categorys: [
-        { id: 1, name: "DU LỊCH" },
-        { id: 2, name: "THỂ THAO" },
-        { id: 3, name: "ĂN UỐNG" }
-      ],
+      selectedTags: [],
+      listTag: [],
       endtime: "",
       publishDate: "",
       mintime: "",
       maxtime: "2019-10-20T15:20:03.146Z",
       content: "",
       customer: [],
+      writers: [],
       writer: [],
       title: ""
     };
@@ -161,12 +152,34 @@ export default {
   mounted() {
     let now = new Date();
     this.mintime = now.toISOString();
+
+    let campaignID = JSON.parse(localStorage.getItem("Campaign").toString());
+    let editorID = 7;
+    /**Begin Get list writer by editor id */
+    axios
+      .get(
+        `http://34.87.31.23:5000/api/authentication/writers/editors/${editorID}`
+      )
+      .then(rs => {
+        this.writers = rs.data;
+      })
+      .catch(er => {
+        console.log(er);
+      });
+    /**End  Get list writer by editor id */
+
+    /**Begin Get list tag by campaign id */
+    axios
+      .get(`http://34.87.31.23:5002/api/contentprocess/tags`)
+      .then(rs => {
+        this.listTag = rs.data;
+      })
+      .catch(er => {
+        console.log(er);
+      });
+    /**End Get list tag by campaign id */
   },
-  methods: {
-    clickSelect(event){
-      alert(event);
-    }
-  }
+  methods: {}
 };
 </script>
 

@@ -47,7 +47,7 @@
             color="primary"
             interval-height="100"
             :events="events"
-            :event-color="getEventColor"
+            event-color="black"
             :event-margin-bottom="3"
             :now="today"
             :type="type"
@@ -63,20 +63,22 @@
             :activator="selectedElement"
             offset-y
           >
-            <v-card color="grey lighten-4" min-width="250px" max-width="250px" flat v-if="selectedEvent">
+            <v-card
+              color="grey lighten-4"
+              min-width="250px"
+              max-width="250px"
+              flat
+              v-if="selectedEvent"
+            >
               <!-- /**Begin Event endDate */ -->
-              <v-row class="pa-2" style="background-color:#1976d2" no-gutters>
+              <v-row class="flex-nowrap pa-2" style="background-color:#1976d2" no-gutters>
                 <v-col cols="6">
-                  <v-icon
-                    size="20px"
-                    style="display:flex; justify-content:flex-start;"
-                    color="white"
-                  >event</v-icon>
+                  <span class="pl-1" style="color:white">Deadline</span>
                 </v-col>
                 <v-col
                   cols="6"
-                  style="display:flex; justify-content:flex-end; color:white;font-size:12px; font-weight:bold;"
-                >{{selectedEvent.deadline | moment("hh:mm")}}</v-col>
+                  style="color:white;font-size:14px; font-weight:bold;"
+                >{{selectedEvent.deadline | moment("hh:mm DD/MM/YYYY")}}</v-col>
               </v-row>
               <!-- /**End Event endDate */ -->
               <!-- /**Begin Event Title */ -->
@@ -98,28 +100,7 @@
                 <v-col cols="6">
                   <span
                     class="event__status"
-                    v-if="selectedEvent.status.idStatus === 1"
-                    style="color:#4caf50;"
-                  >{{selectedEvent.status.name}}</span>
-                  <span
-                    class="event__status"
-                    v-if="selectedEvent.status.idStatus === 2"
-                    style="color:#fb8c00;"
-                  >{{selectedEvent.status.name}}</span>
-                  <span
-                    class="event__status"
-                    v-if="selectedEvent.status.idStatus === 3"
-                    style="color:#fb8c00;"
-                  >{{selectedEvent.status.name}}</span>
-                  <span
-                    class="event__status"
-                    v-if="selectedEvent.status.idStatus === 4"
-                    style="color:#fb8c00;"
-                  >{{selectedEvent.status.name}}</span>
-                  <span
-                    class="event__status"
-                    v-if="selectedEvent.status.idStatus === 5"
-                    style="color:#ff5252;"
+                    :style="{'color':selectedEvent.status.color}"
                   >{{selectedEvent.status.name}}</span>
                 </v-col>
               </v-row>
@@ -133,13 +114,14 @@
                     color="#1976d2"
                     style="font-size:12px;"
                     disabled
-                    v-if="selectedEvent.status != 1"
+                    v-if="selectedEvent.status.id != 5"
                   >Publish</v-btn>
                   <v-btn
                     text
                     color="#1976d2"
                     style="font-size:12px;"
-                    v-if="selectedEvent.status == 1"
+                    v-if="selectedEvent.status.id == 5"
+                    @click="publish(selectedEvent.id)"
                   >Publish</v-btn>
                 </v-col>
                 <v-col cols="6" class="pa-0" style="display:flex; justify-content:center;">
@@ -162,6 +144,7 @@
 </template>
 <script>
 import moment from "moment";
+import axios from "axios";
 export default {
   data: () => ({
     today: "2019-10-10",
@@ -222,16 +205,15 @@ export default {
     var currentDate = new Date();
     this.today = this.$moment(String(currentDate)).format("YYYY-MM-DD hh:mm");
 
-    let campaign = JSON.parse(localStorage["Campaign"].toString());
-    /**Begin Get list tasks */
-    this.$axios({
-      method: "get",
-      url: `contentproccessservice/api/contentprocess/task/campaign/${campaign.id}`
-    })
+    let campaignID = JSON.parse(localStorage["CampaignID"].toString());
+    axios
+      .get(
+        `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`
+      )
       .then(rs => {
         this.events = rs.data;
-        this.formatListContent();
         console.log(this.events);
+        this.formatListContent();
       })
       .catch(er => {
         console.log(er);
@@ -242,15 +224,23 @@ export default {
     this.formatListContent();
   },
   methods: {
-    click(event){
+    publish(event) {
+      localStorage.setItem("ContentID", JSON.stringify(event));
+      this.$router.push("/PublishChannel");
+    },
+    click(event) {
       console.log(event);
     },
     /**Begin format time endDate */
     formatListContent() {
       this.events.forEach(el => {
         el.name = el.title;
-        el.start = this.$moment(String(el.publishTime)).format("YYYY-MM-DD hh:mm");
-        el.deadline = this.$moment(String(el.deadline)).format("YYYY-MM-DD hh:mm");
+        el.start = this.$moment(String(el.publishTime)).format(
+          "YYYY-MM-DD hh:mm"
+        );
+        el.deadline = this.$moment(String(el.deadline)).format(
+          "YYYY-MM-DD hh:mm"
+        );
       });
     },
     /**End format time endDate */
@@ -258,19 +248,19 @@ export default {
       this.focus = date;
       this.type = "day";
     },
-    /**Begin set event color */
-    getEventColor(event) {
-      if (event.status == 1) {
-        return "#4caf50";
-      } else if (2 <= event.status <= 4) {
-        return "#fb8c00";
-      } else if (event.status == 5) {
-        return "#ff5252";
-      } else {
-        return "#1976d2";
-      }
-    },
-    /**End set event color */
+    // /**Begin set event color */
+    // getEventColor(event) {
+    //   if (event.status == 1) {
+    //     return "#4caf50";
+    //   } else if (2 <= event.status <= 4) {
+    //     return "#fb8c00";
+    //   } else if (event.status == 5) {
+    //     return "#ff5252";
+    //   } else {
+    //     return "#1976d2";
+    //   }
+    // },
+    // /**End set event color */
     setToday() {
       this.focus = this.today;
     },
@@ -282,7 +272,7 @@ export default {
     },
     showEvent({ nativeEvent, event }) {
       const open = () => {
-        console.log(event)
+        console.log(event);
         this.selectedEvent = event;
         this.selectedElement = nativeEvent.target;
         setTimeout(() => (this.selectedOpen = true), 10);

@@ -67,22 +67,22 @@ export default {
           title: "Campaign Request",
           icon: "flag",
           link: "/CampaignRequest",
-          role: "Editor"
-          // role: "Marketer"
+          // role: "Editor"
+          role: "Marketer"
         },
         {
           title: "Content Request",
           icon: "notes",
           link: "/ContentRequest",
-          role: "Editor"
-          // role: "Marketer"
+          // role: "Editor"
+          role: "Marketer"
         },
         {
           title: "Task Management",
           icon: "view_list",
           link: "/TaskManagement",
-          role: "Writer"
-          // role: "Editor"
+          // role: "Writer"
+          role: "Marketer"
         }
       ],
       mini: true

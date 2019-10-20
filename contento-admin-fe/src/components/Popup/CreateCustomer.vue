@@ -38,6 +38,7 @@
   </v-dialog>
 </template>
 <script>
+import axios from "axios";
 export default {
   props: {
     isSmallBtn: Boolean
@@ -53,19 +54,28 @@ export default {
   },
   methods: {
     createNewCustomer() {
-      this.$axios({
-        method: "post",
-        url: "authenticationservice/api/authentication/customer-account",
-        data:{
+      // this.$axios({
+      //   method: "post",
+      //   url: "authenticationservice/api/authentication/customer-account",
+      //   data:{
+      //     email: this.email,
+      //     fullName: this.fullname,
+      //     companyName: this.company
+      //   }
+      // })
+      axios
+        .post(`http://34.87.31.23:5000/api/authentication/customers`, {
           email: this.email,
           fullName: this.fullname,
-          companyName: this.company
-        }
-      }).then(rs => {
-        alert("Success!");
-      }).catch(er => {
-        console.log(er);
-      });
+          companyName: this.company,
+          idMarketer:10
+        })
+        .then(rs => {
+          alert("Success!");
+        })
+        .catch(er => {
+          console.log(er);
+        });
     }
   }
 };

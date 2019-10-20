@@ -17,16 +17,16 @@
             @page-count="pageCount = $event"
           >
             <template v-slot:item.status="{ item }">
-              <v-chip color="success" dark v-if="item.status === 1" class="text__14">Completed</v-chip>
+              <v-chip color="success" dark class="text__14">Completed</v-chip>
             </template>
             <template v-slot:item.action="{item}">
               <v-btn
                 class="text__14"
                 color="primary"
-                v-if="item.status === 1"
-                @click="publish(item)"
+                v-if="item.status.id === 5"
+                @click="publish(item.id)"
               >Publish</v-btn>
-              <v-btn class="text__14" disabled v-if="item.status != 1">Publish</v-btn>
+              <v-btn class="text__14" disabled v-if="item.status.id != 5">Publish</v-btn>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -40,6 +40,7 @@
   </v-container>
 </template>
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
@@ -59,10 +60,15 @@ export default {
           width: "8%"
         },
         { text: "Title", value: "title", sortable: false, width: "40%" },
-        { text: "Implementer", value: "writer", align: "center", width: "16%" },
         {
-          text: "ReleaseDate",
-          value: "releaseDate",
+          text: "Implementer",
+          value: "writer.name",
+          align: "center",
+          width: "16%"
+        },
+        {
+          text: "Publish Time",
+          value: "publishTime",
           align: "center",
           width: "16%"
         },
@@ -83,59 +89,19 @@ export default {
           writer: "Writer 1",
           releaseDate: "2019-10-17T15:20:03.146Z",
           status: 1
-        },
-        {
-          id: 125,
-          title:
-            "Content 2: Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 2",
-          releaseDate: "2019-10-17T15:20:03.146Z",
-          status: 1
-        },
-        {
-          id: 96,
-          title:
-            "Content 3: Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 3",
-          releaseDate: "2019-10-17T15:20:03.146Z",
-          status: 1
-        },
-        {
-          id: 325,
-          title:
-            "Content 4: Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 4",
-          releaseDate: "2019-10-17T15:20:03.146Z",
-          status: 1
-        },
-        {
-          id: 45,
-          title:
-            "Content 5: Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 1",
-          releaseDate: "2019-10-17T15:20:03.146Z",
-          status: 1
-        },
-        {
-          id: 55,
-          title:
-            "Content 6:Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 2",
-          releaseDate: "2019-10-17T15:20:03.146Z",
-          status: 1
         }
       ]
     };
   },
   methods: {
     publish(event) {
-      localStorage.setItem("Content", JSON.stringify(event));
+      localStorage.setItem("ContentID", JSON.stringify(event));
       this.$router.push("/PublishChannel");
     },
     /**Begin format time releaseDate */
     formatListContent() {
       this.listtasks.forEach(el => {
-        el.releaseDate = this.$moment(String(el.releaseDate)).format(
+        el.publishTime = this.$moment(String(el.publishTime)).format(
           "YYYY-MM-DD hh:mm"
         );
       });
@@ -149,7 +115,15 @@ export default {
     }
   },
   mounted() {
-    this.formatListContent();
+    axios
+      .get(`http://34.87.31.23:5002/api/contentprocess/task/marketer/10`)
+      .then(rs => {
+        this.listtasks = rs.data;
+        this.formatListContent();
+      })
+      .catch(er => {
+        console.log(er);
+      });
   }
 };
 </script>

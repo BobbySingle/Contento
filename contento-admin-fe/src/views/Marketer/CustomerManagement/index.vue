@@ -15,7 +15,7 @@
       <v-row class="mx-4">
         <v-data-table
           :headers="headers"
-          :items="listCampaigns"
+          :items="listCustomers"
           style="width:100%;"
           class="text__14"
           :mobile-breakpoint="600"
@@ -30,7 +30,7 @@
           <template v-slot:item.action="{item}">
             <v-row justify="center" class="flex-nowrap">
               <popup-edit-customer :customer="item"></popup-edit-customer>
-              <v-btn color="primary" router to="/CustomerCampaigns" class="text__14">Details</v-btn>
+              <v-btn color="primary" @click="details(item.id)" class="text__14">Details</v-btn>
             </v-row>
           </template>
         </v-data-table>
@@ -46,6 +46,7 @@
 <script>
 import PopupCreateCustomer from "../../../components/Popup/CreateCustomer.vue";
 import PopupEditCustomer from "../../../components/Popup/EditCustomer.vue";
+import axios from "axios";
 export default {
   components: { PopupCreateCustomer, PopupEditCustomer },
   data() {
@@ -56,62 +57,35 @@ export default {
       itemsPerPage: 5,
       /**End Pagination */
       headers: [
-        { text: "Fullname", value: "fullname", align: "center" },
+        { text: "Fullname", value: "fullName", align: "center" },
         { text: "Email", value: "email", align: "center" },
-        { text: "Company", value: "company", align: "center" },
+        { text: "Company", value: "companyName", align: "center" },
         { text: "Phone", value: "phone", align: "center" },
         { text: "Action", value: "action", align: "center", sortable: false }
       ],
-      listCampaigns: [
-        {
-          id: 5,
-          fullname: "Hachiko",
-          email: "Hachiko@gmail.com",
-          phone: "0123456789",
-          company: "Hachiko lnc"
-        },
-        {
-          id: 6,
-          fullname: "Cậu Vàng",
-          email: "CauVang@gmail.com",
-          phone: "0123456789",
-          company: "Lao Hac lnc"
-        },
-        {
-          id: 9,
-          fullname: "Big Pull",
-          email: "BigPull@gmail.com",
-          phone: "0123456789",
-          company: "Pet lnc"
-        },
-        {
-          id: 19,
-          fullname: "Big Pull",
-          email: "BigPull@gmail.com",
-          phone: "0123456789",
-          company: "Pet lnc"
-        },
-        {
-          id: 29,
-          fullname: "Big Pull",
-          email: "BigPull@gmail.com",
-          phone: "0123456789",
-          company: "Pet lnc"
-        },
-        {
-          id: 39,
-          fullname: "Big Pull",
-          email: "BigPull@gmail.com",
-          phone: "0123456789",
-          company: "Pet lnc"
-        }
-      ]
+      listCustomers: []
     };
   },
   created() {
     let role = localStorage.getItem("role");
     if (role !== "Marketer") {
       this.$router.push("/403");
+    }
+  },
+  mounted() {
+    axios
+      .get(`http://34.87.31.23:5000/api/authentication/customers/marketers/0`)
+      .then(rs => {
+        this.listCustomers = rs.data;
+      })
+      .catch(er => {
+        console.log(er);
+      });
+  },
+  methods:{
+    details(event){
+      localStorage.setItem("customerID", event);
+      this.$router.push("/CustomerCampaigns");
     }
   }
 };

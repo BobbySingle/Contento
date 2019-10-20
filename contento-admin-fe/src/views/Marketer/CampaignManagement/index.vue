@@ -52,7 +52,7 @@
               </v-col>
             </template>
             <template v-slot:item.title="{item}">
-              <div class="campaign-details py-2" @click="clickCampaign(item)">
+              <div class="campaign-details py-2" @click="clickCampaign(item.id)">
                 <div>
                   <span class="text__14">{{ item.title }}</span>
                 </div>
@@ -67,28 +67,15 @@
             </template>
             <template v-slot:item.status="{ item }">
               <v-chip
-                v-if="item.status.id === 1"
-                color="success"
-                style="color:white;"
-                class="text__14"
-              >{{item.status.name}}</v-chip>
-              <v-chip
-                v-if="item.status.id === 2"
-                color="warning"
-                style="color:white;"
-                class="text__14"
-              >{{item.status.name}}</v-chip>
-              <v-chip
-                v-if="item.status.id === 3"
-                color="error"
-                style="color:white;"
+                :color="item.status.color"
+                style="color:white"
                 class="text__14"
               >{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.action="{item}">
               <v-row class="flex-nowrap">
-                <popup-edit-campaign :campaign="item" @editCampaign="editCampaign" />
-                <v-btn color="success" fab small @click="clickCalendar(item)" class="mx-3">
+                <popup-edit-campaign :campaign="item.id" @editCampaign="editCampaign" />
+                <v-btn color="success" fab small @click="clickCalendar(item.id)" class="mx-3">
                   <v-icon>event</v-icon>
                 </v-btn>
               </v-row>
@@ -141,11 +128,11 @@ export default {
   },
   methods: {
     clickCalendar(event) {
-      localStorage.setItem("Campaign", JSON.stringify(event));
+      localStorage.setItem("CampaignID", JSON.stringify(event));
       this.$router.push("/Calendar");
     },
     clickCampaign(event) {
-      localStorage.setItem("Campaign", JSON.stringify(event));
+      localStorage.setItem("CampaignID", JSON.stringify(event));
       this.$router.push("/CampaignDetails");
     },
     /**Begin format time created */
@@ -170,12 +157,12 @@ export default {
     },
     fetchData() {
       /**Begin Get list campaign */
-      this.$axios({
-        method: "get",
-        url: "campaignservice/api/campaign"
-      })
-        // axios
-        //   .get(`http://34.87.31.23:8066/api/campaign`)
+      // this.$axios({
+      //   method: "get",
+      //   url: "campaignservice/api/campaign"
+      // })
+        axios
+          .get(`http://34.87.31.23:5001/api/campaign/campaigns/marketers/10`)
         .then(rs => {
           this.listCampaigns = rs.data.reverse();
           this.formatListCampaign();

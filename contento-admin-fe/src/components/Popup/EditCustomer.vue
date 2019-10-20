@@ -54,12 +54,13 @@
       <v-card-actions>
         <div class="flex-grow-1"></div>
         <v-btn color="warning" @click="dialog = false" class="text__14">Cancel</v-btn>
-        <v-btn color="success" @click="dialog = false" class="text__14">Update</v-btn>
+        <v-btn color="success" @click="dialog = false, update()" class="text__14">Update</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 <script>
+import axios from 'axios';
 export default {
   props: ["customer"],
   data() {
@@ -68,14 +69,33 @@ export default {
       fullname: "",
       email: "",
       phone: "",
-      company: ""
+      company: "",
+      id:""
     };
   },
   mounted() {
-    this.fullname = this.customer.fullname;
+    this.fullname = this.customer.fullName;
     this.email = this.customer.email;
     this.phone = this.customer.phone;
-    this.company = this.customer.company;
+    this.company = this.customer.companyName;
+    this.id = this.customer.id;
+  },
+  methods:{
+    update(){
+      axios
+        .put(`http://34.87.31.23:5000/api/authentication/customers`, {
+          id: this.id,
+          email: this.email,
+          fullName: this.fullname,
+          companyName: this.company,
+        })
+        .then(rs => {
+          alert("Success!");
+        })
+        .catch(er => {
+          console.log(er);
+        });
+    }
   }
 };
 </script>

@@ -128,7 +128,7 @@ export default {
   },
   methods: {
     clickCampaign: function(event) {
-      localStorage.setItem("CampaignRequest", JSON.stringify(event));
+      localStorage.setItem("Campaign", JSON.stringify(event.id));
       this.$router.push("/CampaignRequestDetails");
     },
     /**Begin format time created */
@@ -156,8 +156,9 @@ export default {
     //   method: "get",
     //   url: "campaignservice/api/campaign"
     // })
+      let editorID = 7;
       axios
-        .get("http://34.87.31.23:5001/api/campaign/campaigns/marketers/10")
+        .get(`http://34.87.31.23:5001/api/campaign/campaigns/editor/${editorID}`)
       .then(rs => {
         this.listCampaigns = rs.data;
         this.formatListCampaign();
