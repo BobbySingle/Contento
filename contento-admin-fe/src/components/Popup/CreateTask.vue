@@ -147,14 +147,13 @@ export default {
   mounted() {
     let now = new Date();
     this.mintime = now.toISOString();
-    this.maxtime = localStorage.getItem("Task-MaxTime").toString();
+    this.maxtime = localStorage.getItem("Task-MaxTime");
 
-    let campaignID = JSON.parse(localStorage.getItem("Campaign").toString());
-    let editorID = 7;
+    let campaignID = localStorage.getItem("CampaignID");
     /**Begin Get list writer by editor id */
     axios
       .get(
-        `http://34.87.31.23:5000/api/authentication/writers/editors/${editorID}`
+        `http://34.87.31.23:5000/api/authentication/writers/editors/${this.$store.getters.getUser.id}`
       )
       .then(rs => {
         this.writers = rs.data;
@@ -179,7 +178,7 @@ export default {
   },
   methods: {
     create() {
-      let campaignID = JSON.parse(localStorage.getItem("Campaign").toString());
+      let campaignID = localStorage.getItem("CampaignID");
 
       axios
         .post(`http://34.87.31.23:5002/api/contentprocess/task`, {

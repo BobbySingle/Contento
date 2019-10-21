@@ -1,11 +1,12 @@
 <template>
   <v-app>
-    <v-content class="mt-4">
+    <login v-if="!$store.state.authentication.isAuthen" />
+    <v-content class="mt-4" v-if="$store.state.authentication.isAuthen">
       <Header />
       <Drawer />
       <router-view />
     </v-content>
-    <Footer />
+    <Footer v-if="$store.state.authentication.isAuthen" />
   </v-app>
 </template>
 
@@ -13,16 +14,17 @@
 import Header from "@/components/Header/index";
 import Drawer from "@/components/Drawer/index";
 import Footer from "@/components/Footer/index";
+import Login from "./views/Login/index.vue";
+import { mapGetters } from "vuex";
 export default {
   name: "App",
   components: {
     Header,
     Drawer,
-    Footer
+    Footer,
+    Login
   },
-  data: () => ({
-    //
-  })
+  data: () => ({}),
 };
 </script>
 <style>

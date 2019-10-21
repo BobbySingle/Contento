@@ -131,6 +131,7 @@
   </v-container>
 </template>
 <script>
+import { mapGetters } from "vuex";
 import axios from "axios";
 export default {
   data() {
@@ -202,8 +203,11 @@ export default {
     }
     /**End format time created */
   },
+  computed: {
+    ...mapGetters(["getUser"])
+  },
   created() {
-    let role = localStorage.getItem("role");
+    let role = this.getUser.role;
     if (role !== "Marketer") {
       this.$router.push("/403");
     }
@@ -211,6 +215,9 @@ export default {
   mounted() {
     /**Begin Load data campaign details */
     let campaignID = JSON.parse(localStorage["CampaignID"].toString());
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+
     axios
       .get(`http://34.87.31.23:5001/api/campaign/campaigns/${campaignID}`)
       .then(rs => {

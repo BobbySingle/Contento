@@ -37,6 +37,8 @@
                     :value="campaign.endDate"
                     :min-datetime="minDate"
                     v-model="endDate"
+                    value-zone="Asia/Ho_Chi_Minh"
+                    zone="Asia/Ho_Chi_Minh"
                     class="endtime text__14"
                   ></datetime>
                 </v-col>
@@ -163,20 +165,12 @@ export default {
           console.log(er);
         });
       /**Clear Data */
-      this.selectedTag = [];
-      this.content = "";
-      this.title = "";
-      this.customer = "";
-      this.editor = "";
-      this.endDate = "";
-      this.id = "";
-      this.dialog = false;
     }
   },
   mounted() {
     /**Begin Get details campaign */
     axios
-      .get(`http://34.87.31.23:5001/api/campaign/campaigns/${this.campaign.id}`)
+      .get(`http://34.87.31.23:5001/api/campaign/campaigns/${this.campaign}`)
       .then(rs => {
         this.selectedTag = rs.data.listTag;
         this.content = rs.data.description;
@@ -194,7 +188,7 @@ export default {
     /**Begin Get list customer */
     axios
       .get(
-        `http://34.87.31.23:5000/api/authentication/customers/marketers-basic/0`
+        `http://34.87.31.23:5000/api/authentication/customers/marketers-basic/${this.$store.getters.getUser.id}`
       )
       .then(rs => {
         this.customers = rs.data;
@@ -206,7 +200,7 @@ export default {
 
     /**Begin Get list editor */
     axios
-      .get(`http://34.87.31.23:5000/api/authentication/editors/marketers/10`)
+      .get(`http://34.87.31.23:5000/api/authentication/editors/marketers/${this.$store.getters.getUser.id}`)
       .then(rs => {
         this.editors = rs.data;
       })
@@ -225,20 +219,7 @@ export default {
         console.log(er);
       });
     /**End Get list tags */
-    axios
-      .get(`http://34.87.31.23:5001/api/campaign/campaigns/${this.campaign}`)
-      .then(rs => {
-        this.content = rs.data.description;
-        this.title = rs.data.title;
-        this.endDate = this.$moment(rs.data.endDate).toISOString();
-        this.selectedTag = rs.data.listTag;
-        this.customer = rs.data.customer;
-        this.editor = rs.data.editor;
-        this.id = rs.data.id;
-      })
-      .catch(er => {
-        console.log(er);
-      });
+
   }
 };
 </script>

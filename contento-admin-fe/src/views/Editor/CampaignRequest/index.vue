@@ -128,7 +128,7 @@ export default {
   },
   methods: {
     clickCampaign: function(event) {
-      localStorage.setItem("Campaign", JSON.stringify(event.id));
+      localStorage.setItem("CampaignID", JSON.stringify(event.id));
       this.$router.push("/CampaignRequestDetails");
     },
     /**Begin format time created */
@@ -156,9 +156,10 @@ export default {
     //   method: "get",
     //   url: "campaignservice/api/campaign"
     // })
-      let editorID = 7;
+     axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
       axios
-        .get(`http://34.87.31.23:5001/api/campaign/campaigns/editor/${editorID}`)
+        .get(`http://34.87.31.23:5001/api/campaign/campaigns/editor/${this.$store.getters.getUser.id}`)
       .then(rs => {
         this.listCampaigns = rs.data;
         this.formatListCampaign();

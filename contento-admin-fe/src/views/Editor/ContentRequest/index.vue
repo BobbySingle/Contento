@@ -46,6 +46,8 @@
                 </div>
               </v-col>
             </template>
+            <template v-slot:item.modifiedDate="{item}">{{item.modifiedDate | moment("DD/MM/YYYY")}}</template>
+            <template v-slot:item.deadline="{item}"> {{item.deadline| moment("DD/MM/YYYY")}}</template>
             <template v-slot:item.contentTitle="{item}">
               <div class="content_details">
                 <div>
@@ -55,26 +57,13 @@
             </template>
             <template v-slot:item.status="{ item }">
               <v-chip
-                v-if="item.status.id === 1"
-                color="success"
-                style="color:white;"
-                class="text__14"
-              >{{item.status.name}}</v-chip>
-              <v-chip
-                v-if="item.status.id === 2"
-                color="warning"
-                style="color:white;"
-                class="text__14"
-              >{{item.status.name}}</v-chip>
-              <v-chip
-                v-if="item.status.id === 3"
-                color="error"
-                style="color:white;"
+                :color="item.status.color"
+                style="color:white"
                 class="text__14"
               >{{item.status.name}}</v-chip>
             </template>
-            <template  v-slot:item.action="{ item }">
-                <v-btn color="primary" v-if="item.status.id === 1" @click="changeToReview()">Review</v-btn>
+            <template v-slot:item.action="{ item }">
+              <v-btn color="primary" v-if="item.status.id === 3" @click="changeToReview(item.id)">Review</v-btn>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -89,6 +78,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 import axios from "axios";
 export default {
   data() {
@@ -110,83 +100,36 @@ export default {
           value: "campaign",
           width: "15%"
         },
-        { text: "Title", value: "contentTitle", sortable: false, width: "30%" },
+        { text: "Title", value: "title", sortable: false, width: "30%" },
         {
           text: "Release",
-          value: "releaseDate",
+          value: "modifiedDate",
           align: "center",
           width: "12.5%"
         },
-        { text: "End", value: "endDate", align: "center", width: "12.5%" },
+        { text: "End", value: "deadline", align: "center", width: "12.5%" },
         { text: "Status", value: "status", align: "center", width: "10%" },
         { text: "Action", value: "action", align: "center", width: "10%" }
       ],
       listContents: [
-        {
-          id: 1,
-          campaign: "Campaign 1",
-          contentTitle:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          releaseDate: "2019-10-18T15:20:03.146Z",
-          endDate: "2019-10-18T15:20:03.146Z",
-          status: {
-            id: 1,
-            name: "Under Review"
-          }
-        },
-        {
-          id: 2,
-          campaign: "Campaign 2",
-          contentTitle:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          releaseDate: "2019-10-18T15:20:03.146Z",
-          endDate: "2019-10-18T15:20:03.146Z",
-          status: {
-            id: 1,
-            name: "Under Review"
-          }
-        },
-        {
-          id: 3,
-          campaign: "Campaign 3",
-          contentTitle:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          releaseDate: "2019-10-18T15:20:03.146Z",
-          endDate: "2019-10-18T15:20:03.146Z",
-          status: {
-            id: 1,
-            name: "Under Review"
-          }
-        },
-        {
-          id: 4,
-          campaign: "Campaign 4",
-          contentTitle:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          releaseDate: "2019-10-18T15:20:03.146Z",
-          endDate: "2019-10-18T15:20:03.146Z",
-          status: {
-            id: 2,
-            name: "In Process"
-          }
-        },
-        {
-          id: 5,
-          campaign: "Campaign 5",
-          contentTitle:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          releaseDate: "2019-10-18T15:20:03.146Z",
-          endDate: "2019-10-18T15:20:03.146Z",
-          status: {
-            id: 2,
-            name: "In Process"
-          }
-        }
+        // {
+        //   id: 1,
+        //   campaign: "Campaign 1",
+        //   contentTitle:
+        //     "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
+        //   releaseDate: "2019-10-18T15:20:03.146Z",
+        //   endDate: "2019-10-18T15:20:03.146Z",
+        //   status: {
+        //     id: 1,
+        //     name: "Under Review"
+        //   }
+        // }
       ]
     };
   },
   methods: {
-    changeToReview(){
+    changeToReview(event) {
+      localStorage.setItem("ContentRequestID", event)
       this.$router.push("/ReviewContent");
     },
     /**Begin format time created */
@@ -209,6 +152,22 @@ export default {
     // }
   },
   mounted() {
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+
+    /**Load Content Request */
+    axios
+      .get(
+        `http://34.87.31.23:5002/api/contentprocess/task/editor/${this.$store.getters.getUser.id}`
+      )
+      .then(rs => {
+        console.log(rs.data);
+        this.listContents = rs.data;
+      })
+      .catch(er => {
+        console.log(er);
+      });
+
     this.formatDate();
   }
 };

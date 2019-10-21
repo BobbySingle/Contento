@@ -1,35 +1,12 @@
 <template></template>
 <script>
+import { mapGetters } from "vuex";
 export default {
-  created() {
-    // this.$axios({
-    //   method: "post",
-    //   url: "authenticationservice/api/authentication/login",
-    //   data: {
-    //     email: "hieuntse62694@gmail.com",
-    //     password: "Hieunguyen1@"
-    //   }
-    // })
-    //   // axios
-    //   //   .get(`http://34.87.31.23:8066/api/campaign`)
-    //   .then(rs => {
-    //     let token = rs.data.token;
-    //     let profile = {
-    //       fullname: rs.data.fullName,
-    //       imagePath: rs.data.imagePath,
-    //       role: rs.data.role
-    //     };
-    //     localStorage.setItem("access-token", token);
-    //     this.$axios.defaults.headers["Authorization"] = token;
-    //     localStorage.setItem("role", profile.role);
-    //   })
-    //   .catch(er => {
-    //     console.log(er);
-    //   });
-    localStorage.setItem("role","Marketer");
+  computed: {
+    ...mapGetters(["getUser"])
   },
   mounted() {
-    let role = localStorage.getItem("role");
+    let role = this.getUser.role;
     if (role === "Marketer") {
       this.$router.push("/CampaignManagement");
     } else if (role === "Editor") {

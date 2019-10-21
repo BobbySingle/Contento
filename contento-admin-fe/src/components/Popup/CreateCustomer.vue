@@ -54,21 +54,12 @@ export default {
   },
   methods: {
     createNewCustomer() {
-      // this.$axios({
-      //   method: "post",
-      //   url: "authenticationservice/api/authentication/customer-account",
-      //   data:{
-      //     email: this.email,
-      //     fullName: this.fullname,
-      //     companyName: this.company
-      //   }
-      // })
       axios
         .post(`http://34.87.31.23:5000/api/authentication/customers`, {
           email: this.email,
           fullName: this.fullname,
           companyName: this.company,
-          idMarketer:10
+          idMarketer: this.$store.getters.getUser.id
         })
         .then(rs => {
           this.$emit("createCustomer");

@@ -39,6 +39,7 @@
   </v-navigation-drawer>
 </template>
 <script>
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -67,29 +68,32 @@ export default {
           title: "Campaign Request",
           icon: "flag",
           link: "/CampaignRequest",
-          // role: "Editor"
-          role: "Marketer"
+          role: "Editor"
+          // role: "Marketer"
         },
         {
           title: "Content Request",
           icon: "notes",
           link: "/ContentRequest",
-          // role: "Editor"
-          role: "Marketer"
+          role: "Editor"
+          // role: "Marketer"
         },
         {
           title: "Task Management",
           icon: "view_list",
           link: "/TaskManagement",
-          // role: "Writer"
-          role: "Marketer"
+          role: "Writer"
+          // role: "Marketer"
         }
       ],
       mini: true
     };
   },
+  computed: {
+    ...mapGetters(["getUser"])
+  },
   mounted() {
-    this.role = localStorage.getItem("role");
+    this.role = this.getUser.role;
   }
 };
 </script>

@@ -74,7 +74,7 @@
             </template>
             <template v-slot:item.action="{item}">
               <v-row class="flex-nowrap">
-                <popup-edit-campaign :campaign="item" @editCampaign="editCampaign" />
+                <popup-edit-campaign :campaign="item.id" @editCampaign="editCampaign" />
                 <v-btn color="success" fab small @click="clickCalendar(item)" class="mx-3">
                   <v-icon>event</v-icon>
                 </v-btn>
@@ -93,7 +93,9 @@
 </template>
 <script>
 import PopupEditCampaign from "../../../components/Popup/EditCampaign.vue";
+import { mapGetters } from "vuex";
 import axios from "axios";
+
 export default {
   components: { PopupEditCampaign },
   data() {
@@ -145,17 +147,21 @@ export default {
     }
     /**End format time created */
   },
+  computed: {
+    ...mapGetters(["getUser"])
+  },
   created() {
-    let role = localStorage.getItem("role");
+    let role = this.getUser.role;
     if (role !== "Marketer") {
       this.$router.push("/403");
     }
   },
   mounted() {
-     
-    let customerID =  localStorage.getItem("customerID");
+    let customerID = localStorage.getItem("customerID");
     axios
-      .get(`http://34.87.31.23:5001/api/campaign/campaigns/customers/${customerID}`)
+      .get(
+        `http://34.87.31.23:5001/api/campaign/campaigns/customers/${customerID}`
+      )
       .then(rs => {
         this.listCampaigns = rs.data.reverse();
         this.formatListCampaign();

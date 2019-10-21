@@ -33,7 +33,7 @@
             <v-row>
               <v-col cols="6">
                 <v-select
-                  v-model="writer"
+                  v-model="writer.id"
                   :items="writers"
                   item-text="name"
                   item-value="id"
@@ -152,12 +152,11 @@ export default {
     this.mintime = now.toISOString();
     this.maxtime = localStorage.getItem("Task-MaxTime").toString();
 
-    let campaignID = JSON.parse(localStorage.getItem("Campaign").toString());
-    let editorID = 7;
+    let campaignID = localStorage.getItem("CampaignID");
     /**Begin Get list writer by editor id */
     axios
       .get(
-        `http://34.87.31.23:5000/api/authentication/writers/editors/${editorID}`
+        `http://34.87.31.23:5000/api/authentication/writers/editors/${this.$store.getters.getUser.id}`
       )
       .then(rs => {
         this.writers = rs.data;
@@ -206,11 +205,11 @@ export default {
       axios
         .put(`http://34.87.31.23:5002/api/contentprocess/task`, {
           idTask: this.id,
-          idWriter: this.writer,
+          idWriter: this.writer.id,
           title: this.title,
           description: this.$refs.ckeditor.editorData,
           deadline: this.endtime,
-          publishTime: this.publishTime,
+          publishTime: this.publishDate,
           tags: this.selectedTag
         })
         .then(rs => {
@@ -222,15 +221,7 @@ export default {
           console.log("Marketer - Edit Campaign  [ERROR]");
           console.log(er);
         });
-         this.id ="";
-         this.writer="";
-         this.title="";
-         this.content="Write Content ...";
-         this.endtime="";
-         this.publishTime="";
-         this.selectedTags=[];
     }
-    
   }
 };
 </script>

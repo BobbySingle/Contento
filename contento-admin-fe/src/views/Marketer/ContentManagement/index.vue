@@ -40,6 +40,7 @@
   </v-container>
 </template>
 <script>
+import { mapGetters } from "vuex";
 import axios from "axios";
 export default {
   data() {
@@ -108,15 +109,23 @@ export default {
     }
     /**End format time releaseDate */
   },
+  computed: {
+    ...mapGetters(["getUser"])
+  },
   created() {
-    let role = localStorage.getItem("role");
+    let role = this.getUser.role;
     if (role !== "Marketer") {
       this.$router.push("/403");
     }
   },
   mounted() {
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+
     axios
-      .get(`http://34.87.31.23:5002/api/contentprocess/task/marketer/10`)
+      .get(
+        `http://34.87.31.23:5002/api/contentprocess/task/marketer/${this.$store.getters.getUser.id}`
+      )
       .then(rs => {
         this.listtasks = rs.data;
         this.formatListContent();

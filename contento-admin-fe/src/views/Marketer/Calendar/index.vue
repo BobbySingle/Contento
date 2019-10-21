@@ -206,6 +206,9 @@ export default {
     this.today = this.$moment(String(currentDate)).format("YYYY-MM-DD hh:mm");
 
     let campaignID = JSON.parse(localStorage["CampaignID"].toString());
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+
     axios
       .get(
         `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`

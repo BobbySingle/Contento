@@ -81,8 +81,18 @@
                     </template>
                     <template v-slot:item.action="{ item }">
                       <v-row class="flex-nowrap" justify="center">
-                        <edit-task v-if="item.status.id !== 5" :taskID="item.id" @editTask="editTask"/>
-                        <v-btn text icon color="error" v-if="item.status.id == 1">
+                        <edit-task
+                          v-if="item.status.id !== 5"
+                          :taskID="item.id"
+                          @editTask="editTask"
+                        />
+                        <v-btn
+                          text
+                          icon
+                          color="error"
+                          v-if="item.status.id == 1"
+                          @click="clickDelete(item.id)"
+                        >
                           <v-icon>delete</v-icon>
                         </v-btn>
                       </v-row>
@@ -145,8 +155,10 @@ export default {
   },
   mounted() {
     /**Load campaign information */
-    let campaignID = JSON.parse(localStorage.getItem("Campaign").toString());
-    console.log(campaignID);
+    let campaignID = localStorage.getItem("CampaignID");
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+
     axios
       .get(`http://34.87.31.23:5001/api/campaign/campaigns/${campaignID}`)
       .then(rs => {
@@ -161,22 +173,35 @@ export default {
       .catch(er => {
         console.log(er);
       });
-      this.fetchData();
+    this.fetchData();
   },
   methods: {
     /**fetch data - dialog process success */
+    clickDelete(event) {
+      axios
+        .delete(
+          `http://34.87.31.23:5002/api/contentprocess/task/campaign/${event}`
+        )
+        .then(rs => {
+          alert("Delete task success!");
+          this.fetchData();
+        })
+        .catch(er => {
+          console.log(er);
+        });
+    },
     createTask() {
       alert("Create task success!");
       this.fetchData();
     },
-     editTask() {
+    editTask() {
       alert("Edit task success!");
       this.fetchData();
     },
 
     fetchData() {
       /**Load list task */
-      let campaignID = JSON.parse(localStorage.getItem("Campaign").toString());
+      let campaignID = localStorage.getItem("CampaignID");
       axios
         .get(
           `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`

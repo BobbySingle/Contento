@@ -100,6 +100,8 @@
 </template>
 <script>
 import CKEditor from "../../../components/CKEditor/Ckeditor5.vue";
+import { mapGetters } from "vuex";
+
 import axios from "axios";
 export default {
   components: { CKEditor },
@@ -123,15 +125,21 @@ export default {
     //   this.$refs.ckeditor.changeEditorReadOnly();
     // }
   },
+
+  computed: {
+    ...mapGetters(["getUser"])
+  },
   created() {
-    let role = localStorage.getItem("role");
+    let role = this.getUser.role;
     if (role !== "Marketer") {
       this.$router.push("/403");
     }
   },
   mounted() {
     let contentId = JSON.parse(localStorage.getItem("ContentID"));
-    alert(contentId);
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+
     axios
       .get(`http://34.87.31.23:5002/api/contentprocess/tags`)
       .then(rs => {

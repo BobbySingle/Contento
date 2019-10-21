@@ -94,6 +94,7 @@
 <script>
 import PopupCreateCampaign from "../../../components/Popup/CreateCampaign.vue";
 import PopupEditCampaign from "../../../components/Popup/EditCampaign.vue";
+import { mapGetters } from "vuex";
 import axios from "axios";
 import { timeout } from "q";
 export default {
@@ -157,16 +158,17 @@ export default {
     },
     fetchData() {
       /**Begin Get list campaign */
-      // this.$axios({
-      //   method: "get",
-      //   url: "campaignservice/api/campaign"
-      // })
-        axios
-          .get(`http://34.87.31.23:5001/api/campaign/campaigns/marketers/10`)
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = "Bearer " + this.$store.getters.getAccessToken;
+
+      axios
+        .get(
+          `http://34.87.31.23:5001/api/campaign/campaigns/marketers/${this.$store.getters.getUser.id}`
+        )
         .then(rs => {
           this.listCampaigns = rs.data.reverse();
           this.formatListCampaign();
-          console.log(rs.data);
         })
         .catch(er => {
           console.log(er);
@@ -174,8 +176,11 @@ export default {
       /** End Get list campaign */
     }
   },
+  computed: {
+    ...mapGetters(["getUser"])
+  },
   created() {
-    let role = localStorage.getItem("role");
+    let role = this.getUser.role;
     if (role !== "Marketer") {
       this.$router.push("/403");
     }

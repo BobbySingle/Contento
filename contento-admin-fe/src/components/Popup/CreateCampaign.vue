@@ -131,18 +131,6 @@ export default {
   },
   methods: {
     create() {
-      // this.$axios({
-      //   method: "post",
-      //   url: "campaignservice/api/campaign/campaign",
-      //   data: {
-      //     title: this.title,
-      //     description: this.$refs.ckeditor.editorData,
-      //     endDate: this.endtime,
-      //     tags: this.tags,
-      //     editor: { id: this.editor },
-      //     customer: { id: this.customer }
-      //   }
-      // })
       axios
         .post(`http://34.87.31.23:5001/api/campaign/campaign`, {
           title: this.title,
@@ -151,7 +139,7 @@ export default {
           tags: this.tags,
           editor: { id: this.editor },
           customer: { id: this.customer },
-          idMarketer: 10
+          idMarketer: this.$store.getters.getUser.id
         })
         .then(rs => {
           console.log(rs);
@@ -168,8 +156,12 @@ export default {
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     this.endtime = tomorrow.toISOString();
+
     /**Begin Get list customer */
-      axios.get(`http://34.87.31.23:5000/api/authentication/customers/marketers-basic/0`)
+    axios
+      .get(
+        `http://34.87.31.23:5000/api/authentication/customers/marketers-basic/${this.$store.getters.getUser.id}`
+      )
       .then(rs => {
         this.customers = rs.data;
       })
@@ -179,7 +171,8 @@ export default {
     /**End Get list customer */
 
     /**Begin Get list editor */
-    axios.get(`http://34.87.31.23:5000/api/authentication/editors/marketers/10`)
+    axios
+      .get(`http://34.87.31.23:5000/api/authentication/editors/marketers/${this.$store.getters.getUser.id}`)
       .then(rs => {
         this.editors = rs.data;
       })
@@ -189,7 +182,8 @@ export default {
     /**End Get list editor */
 
     /**Begin Get list editor */
-    axios.get(`http://34.87.31.23:5002/api/contentprocess/tags`)
+    axios
+      .get(`http://34.87.31.23:5002/api/contentprocess/tags`)
       .then(rs => {
         this.categorys = rs.data;
       })
@@ -197,8 +191,7 @@ export default {
         console.log(er);
       });
     /**End Get list editor */
-    this.content =
-      'Write your request here... ';
+    this.content = "Write your request here... ";
   }
 };
 </script>

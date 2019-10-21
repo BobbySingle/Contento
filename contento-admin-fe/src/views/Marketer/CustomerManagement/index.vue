@@ -46,6 +46,7 @@
 <script>
 import PopupCreateCustomer from "../../../components/Popup/CreateCustomer.vue";
 import PopupEditCustomer from "../../../components/Popup/EditCustomer.vue";
+import { mapGetters } from "vuex";
 import axios from "axios";
 export default {
   components: { PopupCreateCustomer, PopupEditCustomer },
@@ -66,13 +67,19 @@ export default {
       listCustomers: []
     };
   },
+  computed: {
+    ...mapGetters(["getUser"])
+  },
   created() {
-    let role = localStorage.getItem("role");
+    let role = this.getUser.role;
     if (role !== "Marketer") {
       this.$router.push("/403");
     }
   },
   mounted() {
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+
     this.fetchData();
   },
   methods: {
@@ -90,7 +97,9 @@ export default {
     },
     fetchData() {
       axios
-        .get(`http://34.87.31.23:5000/api/authentication/customers/marketers/0`)
+        .get(
+          `http://34.87.31.23:5000/api/authentication/customers/marketers/${this.$store.getters.getUser.id}`
+        )
         .then(rs => {
           this.listCustomers = rs.data.reverse();
         })
