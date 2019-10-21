@@ -4,7 +4,7 @@ import router from "@/router/index";
 const state = {
   access_token: "",
   user: [],
-  isAuthen: false
+  loggedUser: false
 };
 const mutations = {
   SET_ACCESS_TOKEN(state, data) {
@@ -13,17 +13,20 @@ const mutations = {
   SET_USER(state, data) {
     state.user = data;
   },
-  SET_ISAUTHEN(state, data) {
-    state.isAuthen = data;
+  SET_LOGGEDUSER(state, data) {
+    state.loggedUser = data;
   }
 };
 const actions = {
   async login({ commit }, payload) {
     await login(payload.email, payload.password)
       .then(rs => {
+        commit("SET_LOGGEDUSER", true);
         commit("SET_ACCESS_TOKEN", rs.data.token);
         commit("SET_USER", rs.data);
-        commit("SET_ISAUTHEN", true);
+        localStorage.setItem("AccessToken", rs.data.token);
+        localStorage.setItem("Profile",JSON.stringify(rs.data));
+        localStorage.setItem("loggedUser", true);
         alert("Login Success");
         // localStorage.setItem("isAuthen", true);
         if (rs.data.role === "Marketer") {
@@ -45,6 +48,16 @@ const actions = {
         console.log("ERROR - LOGIN ACTION");
         console.log(er);
       });
+  },
+
+  setLoggedUser({ commit }, payload) {
+    commit("SET_LOGGEDUSER", payload);
+  },
+  setUser({ commit }, payload) {
+    commit("SET_USER", payload);
+  },
+  setAccessToken({ commit }, payload) {
+    commit("SET_ACCESS_TOKEN", payload);
   }
 };
 

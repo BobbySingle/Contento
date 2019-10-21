@@ -53,19 +53,19 @@
       >
         <template v-slot:activator="{ on }">
           <v-btn text v-on="on">
-            <v-list-item-title style="text-transform: capitalize; color:white;">John Leider</v-list-item-title>
+            <v-list-item-title style="text-transform: capitalize; color:white;">{{fullname}}</v-list-item-title>
             <v-list-item-avatar>
-              <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+              <v-img :src="imageURL" sizes="50"></v-img>
             </v-list-item-avatar>
           </v-btn>
         </template>
         <!--Begin List Menu Profile -->
         <v-list>
           <v-list-item>
-            <v-btn text block ripple="center">Profile</v-btn>
+            <v-btn text block ripple>Profile</v-btn>
           </v-list-item>
           <v-list-item>
-            <v-btn text block ripple="center">Log Out</v-btn>
+            <v-btn text block ripple @click="logout()">Log Out</v-btn>
           </v-list-item>
         </v-list>
         <!-- End List Menu Profile -->
@@ -80,8 +80,18 @@
 </template>
 <script>
 export default {
-  data: () => ({}),
+  data(){
+    return{
+      fullname:"",
+      imageURL:""
+    }
+  },
   methods: {
+    logout(){
+      localStorage.clear();
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
+    },
     validate() {
       if (this.$refs.form.validate()) {
         alert("OK");
@@ -89,6 +99,15 @@ export default {
     },
     reset() {
       this.$refs.form.reset();
+    }
+  },
+  mounted(){
+    let profile = JSON.parse(localStorage.getItem("Profile").toString());
+    this.fullname = profile.fullName;
+    if(profile.imagePath == null){
+      this.imageURL = "https://picsum.photos/id/241/3456/2304"
+    }else{
+      this.imageURL = profile.imagePath;
     }
   }
 };

@@ -1,12 +1,12 @@
 <template>
   <v-app>
-    <login v-if="!$store.state.authentication.isAuthen" />
-    <v-content class="mt-4" v-if="$store.state.authentication.isAuthen">
+    <login v-if="!this.$store.state.authentication.loggedUser" />
+    <v-content class="mt-4" v-if="this.$store.state.authentication.loggedUser">
       <Header />
       <Drawer />
       <router-view />
     </v-content>
-    <Footer v-if="$store.state.authentication.isAuthen" />
+    <Footer v-if="this.$store.state.authentication.loggedUser" />
   </v-app>
 </template>
 
@@ -15,7 +15,7 @@ import Header from "@/components/Header/index";
 import Drawer from "@/components/Drawer/index";
 import Footer from "@/components/Footer/index";
 import Login from "./views/Login/index.vue";
-import { mapGetters } from "vuex";
+import {mapGetters, mapActions } from "vuex";
 export default {
   name: "App",
   components: {
@@ -25,6 +25,27 @@ export default {
     Login
   },
   data: () => ({}),
+  methods:{
+    ...mapActions({
+      loadLoggedUser: "authentication/setLoggedUser",
+      loadUser: "authentication/setUser",
+      loadAccessToken: "authentication/setAccessToken",
+    }),
+  },
+  mounted(){
+    alert("load lai app");
+    if (localStorage.getItem("loggedUser") === "true") {
+      this.loadLoggedUser(true);
+      let user = JSON.parse(localStorage.getItem("Profile").toString());
+      console.log(user);
+      this.loadUser(user);
+      let access_token = localStorage.getItem("AccessToken");
+      console.log(access_token);
+      this.loadAccessToken(access_token);
+    } else {
+     this.loadLoggedUser(false);
+    }
+  }
 };
 </script>
 <style>

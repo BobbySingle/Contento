@@ -158,6 +158,9 @@ export default {
   },
   mounted() {
     let customerID = localStorage.getItem("customerID");
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+
     axios
       .get(
         `http://34.87.31.23:5001/api/campaign/campaigns/customers/${customerID}`

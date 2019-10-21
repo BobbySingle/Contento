@@ -157,6 +157,9 @@ export default {
     tomorrow.setDate(tomorrow.getDate() + 1);
     this.endtime = tomorrow.toISOString();
 
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+
     /**Begin Get list customer */
     axios
       .get(
@@ -172,7 +175,9 @@ export default {
 
     /**Begin Get list editor */
     axios
-      .get(`http://34.87.31.23:5000/api/authentication/editors/marketers/${this.$store.getters.getUser.id}`)
+      .get(
+        `http://34.87.31.23:5000/api/authentication/editors/marketers/${this.$store.getters.getUser.id}`
+      )
       .then(rs => {
         this.editors = rs.data;
       })
