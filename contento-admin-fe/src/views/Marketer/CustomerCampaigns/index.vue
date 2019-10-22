@@ -150,10 +150,13 @@ export default {
   computed: {
     ...mapGetters(["getUser"])
   },
-  created() {
+   created() {
     let role = this.getUser.role;
-    if (role !== "Marketer") {
+    if (role !== "Marketer" && role != null) {
       this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
     }
   },
   mounted() {

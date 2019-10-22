@@ -15,7 +15,7 @@ import Header from "@/components/Header/index";
 import Drawer from "@/components/Drawer/index";
 import Footer from "@/components/Footer/index";
 import Login from "./views/Login/index.vue";
-import {mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 export default {
   name: "App",
   components: {
@@ -25,25 +25,34 @@ export default {
     Login
   },
   data: () => ({}),
-  methods:{
+  methods: {
     ...mapActions({
       loadLoggedUser: "authentication/setLoggedUser",
       loadUser: "authentication/setUser",
-      loadAccessToken: "authentication/setAccessToken",
-    }),
+      loadAccessToken: "authentication/setAccessToken"
+    })
   },
-  mounted(){
-    if (localStorage.getItem("loggedUser") === "true") {
-      this.loadLoggedUser(true);
+  mounted() {
+    if (localStorage.getItem("Profile") != null) {
       let user = JSON.parse(localStorage.getItem("Profile").toString());
-      console.log(user);
-      this.loadUser(user);
-      let access_token = localStorage.getItem("AccessToken");
-      console.log(access_token);
-      this.loadAccessToken(access_token);
-    } else {
-     this.loadLoggedUser(false);
+      if (user != null) {
+        this.loadUser(user);
+        this.loadLoggedUser(true);
+        this.loadAccessToken(user.token);
+      }
     }
+    // if (localStorage.getItem("loggedUser") === "true") {
+    //   this.loadLoggedUser(true);
+
+    //   let user = JSON.parse(localStorage.getItem("Profile").toString());
+    //   this.loadUser(user);
+
+    //   let access_token = localStorage.getItem("AccessToken");
+    //   this.loadAccessToken(access_token);
+
+    // } else {
+    //  this.loadLoggedUser(false);
+    // }
   }
 };
 </script>

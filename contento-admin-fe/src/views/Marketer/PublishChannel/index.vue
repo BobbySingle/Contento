@@ -64,6 +64,9 @@
                   <datetime
                     title="End Time"
                     type="datetime"
+                    placeholder="Select End-date"
+                    input-class="datetime"
+                    input-style="cursor:pointer;"
                     class="endtime text__14"
                     v-model="endDate"
                   ></datetime>
@@ -74,7 +77,7 @@
               <v-combobox
                 v-model="tags"
                 :value="tags"
-                :items="categorys"
+                :items="listTag"
                 item-text="name"
                 item-value="id"
                 chips
@@ -100,7 +103,7 @@
 </template>
 <script>
 import CKEditor from "../../../components/CKEditor/Ckeditor5.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 import axios from "axios";
 export default {
@@ -116,55 +119,41 @@ export default {
       name: "",
       endDate: "",
       writer: "",
-      editor: "",
-      categorys: []
+      editor: ""
     };
   },
   methods: {
-    // changeEditorReadOnly() {
-    //   this.$refs.ckeditor.changeEditorReadOnly();
-    // }
+    ...mapActions({
+      getTaskDetail: "contentprocess/getTaskDetail",
+      getListTag: "dataform/getListTag"
+    }),
+    async fetchData() {
+      let contentID = JSON.parse(sessionStorage.getItem("ContentID"));
+      await this.getTaskDetail(contentID);
+      this.title = this.taskDetail.title;
+      this.endDate = this.$moment(this.taskDetail.publishTime).toISOString();
+      this.writer = this.taskDetail.writer.name;
+      this.editor = this.taskDetail.editor.name;
+      this.content = this.taskDetail.content;
+      this.tags = this.taskDetail.tags;
+      this.name = this.taskDetail.name;
+      this.getListTag();
+    }
   },
-
   computed: {
-    ...mapGetters(["getUser"])
+    ...mapGetters(["getUser", "listTag", "taskDetail"])
   },
   created() {
     let role = this.getUser.role;
-    if (role !== "Marketer") {
+    if (role !== "Marketer" && role != null) {
       this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
     }
   },
   mounted() {
-    let contentId = JSON.parse(localStorage.getItem("ContentID"));
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
-
-    axios
-      .get(`http://34.87.31.23:5002/api/contentprocess/tags`)
-      .then(rs => {
-        this.categorys = rs.data;
-      })
-      .catch(er => {
-        console.log(er);
-      });
-    axios
-      .get(
-        `http://34.87.31.23:5002/api/contentprocess/task-detail/campaign/${contentId}`
-      )
-      .then(rs => {
-        console.log(rs.data);
-        this.title = rs.data.title;
-        this.endDate = this.$moment(rs.data.publishTime).toISOString();
-        this.writer = rs.data.writer.name;
-        this.editor = rs.data.editor.name;
-        this.content = rs.data.content;
-        this.tags = rs.data.tags;
-        this.name = rs.data.name;
-      })
-      .catch(er => {
-        console.log(er);
-      });
+    this.fetchData();
   }
 };
 </script>
@@ -193,15 +182,8 @@ export default {
   max-width: 100%;
   max-height: 100%;
 }
-/* ::v-deep .content img {
-  position: relative;
-  overflow: hidden;
-  -webkit-box-flex: 1;
-  -ms-flex: 1 0 auto;
-  flex: 1 0 auto;
-  max-width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-} */
+.datetime {
+  width: 100%;
+  padding-left: 10px;
+}
 </style>

@@ -46,11 +46,11 @@
                   <v-col cols="11">
                     <datetime
                       title="End Time"
-                      placeholder="Select End-date"
                       type="datetime"
                       v-model="endtime"
                       :value="endtime"
                       class="text__14"
+                      placeholder="Select End-date"
                       input-class="datetime"
                       input-style="cursor:pointer;"
                       :min-datetime="mintime"

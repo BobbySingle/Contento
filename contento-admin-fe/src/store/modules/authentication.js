@@ -24,11 +24,10 @@ const actions = {
         commit("SET_LOGGEDUSER", true);
         commit("SET_ACCESS_TOKEN", rs.data.token);
         commit("SET_USER", rs.data);
-        localStorage.setItem("AccessToken", rs.data.token);
-        localStorage.setItem("Profile",JSON.stringify(rs.data));
-        localStorage.setItem("loggedUser", true);
+        // localStorage.setItem("AccessToken", rs.data.token);
+        localStorage.setItem("Profile", JSON.stringify(rs.data));
+        // localStorage.setItem("loggedUser", true);
         alert("Login Success");
-        // localStorage.setItem("isAuthen", true);
         if (rs.data.role === "Marketer") {
           router.push({
             name: "CampaignManagement"

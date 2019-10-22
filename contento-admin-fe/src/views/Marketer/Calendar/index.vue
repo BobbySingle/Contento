@@ -46,7 +46,7 @@
             v-model="focus"
             color="primary"
             interval-height="100"
-            :events="events"
+            :events="listCampaignTaskNotFormated"
             event-color="black"
             :event-margin-bottom="3"
             :now="today"
@@ -143,8 +143,8 @@
   </v-container>
 </template>
 <script>
-import moment from "moment";
 import axios from "axios";
+import { mapGetters, mapActions } from "vuex";
 export default {
   data: () => ({
     today: "2019-10-10",
@@ -164,6 +164,8 @@ export default {
     events: []
   }),
   computed: {
+    ...mapGetters(["getUser",
+    "listCampaignTaskNotFormated", "listCampaignTaskFormated"]),
     title() {
       const { start, end } = this;
       if (!start || !end) {
@@ -199,54 +201,37 @@ export default {
       });
     }
   },
+  created() {
+    let role = this.getUser.role;
+    if (role !== "Marketer" && role != null) {
+      this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
+    }
+  },
   mounted() {
     this.$refs.calendar.checkChange();
 
     var currentDate = new Date();
     this.today = this.$moment(String(currentDate)).format("YYYY-MM-DD hh:mm");
-
-    let campaignID = JSON.parse(localStorage["CampaignID"].toString());
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
-
-    axios
-      .get(
-        `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`
-      )
-      .then(rs => {
-        this.events = rs.data;
-        console.log(this.events);
-        this.formatListContent();
-      })
-      .catch(er => {
-        console.log(er);
-      });
-    /** End Get list campaign */
-  },
-  beforeMount() {
-    this.formatListContent();
+    this.fetchdata();
   },
   methods: {
+    ...mapActions({
+      getListCampaignTask: "contentprocess/getListCampaignTask"
+    }),
     publish(event) {
-      localStorage.setItem("ContentID", JSON.stringify(event));
+      sessionStorage.setItem("ContentID", JSON.stringify(event));
       this.$router.push("/PublishChannel");
     },
     click(event) {
       console.log(event);
     },
-    /**Begin format time endDate */
-    formatListContent() {
-      this.events.forEach(el => {
-        el.name = el.title;
-        el.start = this.$moment(String(el.publishTime)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-        el.deadline = this.$moment(String(el.deadline)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-      });
+    async fetchdata() {
+      let campaignID = JSON.parse(sessionStorage["CampaignID"].toString());
+      await this.getListCampaignTask(campaignID); 
     },
-    /**End format time endDate */
     viewDay({ date }) {
       this.focus = date;
       this.type = "day";

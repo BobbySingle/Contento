@@ -7,12 +7,16 @@ export default {
   },
   mounted() {
     let role = this.getUser.role;
+    console.log(role);
     if (role === "Marketer") {
+      alert("Here");
       this.$router.push("/CampaignManagement");
     } else if (role === "Editor") {
       this.$router.push("/CampaignRequest");
     } else if (role === "Writer") {
       this.$router.push("/TaskManagement");
+    } else {
+      this.$store.state.authentication.loggedUser = false;
     }
   }
 };

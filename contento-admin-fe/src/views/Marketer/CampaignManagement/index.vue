@@ -18,7 +18,7 @@
         </div>
       </v-col>
       <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;">
-        <popup-create-campaign @createCampaign="createCampaign" />
+        <popup-create-campaign/>
       </v-col>
     </v-row>
     <!-- /** End Search */ -->
@@ -28,7 +28,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listCampaigns"
+            :items="listCampaign"
             :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
@@ -65,6 +65,10 @@
                 >#{{topic.name}}</span>
               </div>
             </template>
+            <template
+              v-slot:item.startedDate="{ item }"
+            >{{item.startedDate | moment("HH:mm DD/MM/YYYY")}}</template>
+            <template v-slot:item.endDate="{ item }">{{item.endDate | moment("HH:mm DD/MM/YYYY")}}</template>
             <template v-slot:item.status="{ item }">
               <v-chip
                 :color="item.status.color"
@@ -74,7 +78,7 @@
             </template>
             <template v-slot:item.action="{item}">
               <v-row class="flex-nowrap">
-                <popup-edit-campaign :campaign="item.id" @editCampaign="editCampaign" />
+                <popup-edit-campaign :campaignID="item.id" />
                 <v-btn color="success" fab small @click="clickCalendar(item.id)" class="mx-3">
                   <v-icon>event</v-icon>
                 </v-btn>
@@ -94,7 +98,8 @@
 <script>
 import PopupCreateCampaign from "../../../components/Popup/CreateCampaign.vue";
 import PopupEditCampaign from "../../../components/Popup/EditCampaign.vue";
-import { mapGetters } from "vuex";
+import moment from "moment";
+import { mapGetters, mapActions } from "vuex";
 import axios from "axios";
 import { timeout } from "q";
 export default {
@@ -123,66 +128,42 @@ export default {
         { text: "End", value: "endDate", align: "center", width: "15%" },
         { text: "Status", value: "status", align: "center", width: "10%" },
         { text: "Action", value: "action", align: "center", width: "10%" }
-      ],
-      listCampaigns: []
+      ]
     };
   },
   methods: {
     clickCalendar(event) {
-      localStorage.setItem("CampaignID", JSON.stringify(event));
+      sessionStorage.setItem("CampaignID", JSON.stringify(event));
       this.$router.push("/Calendar");
     },
     clickCampaign(event) {
-      localStorage.setItem("CampaignID", JSON.stringify(event));
+      sessionStorage.setItem("CampaignID", JSON.stringify(event));
       this.$router.push("/CampaignDetails");
     },
-    /**Begin format time created */
-    formatListCampaign() {
-      this.listCampaigns.forEach(el => {
-        el.startedDate = this.$moment(String(el.startedDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-        el.endDate = this.$moment(String(el.endDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-      });
-    },
-    /**End format time created */
-    createCampaign() {
-      alert("Create success!");
-      this.fetchData();
-    },
-    editCampaign() {
-      alert("Edit success!");
-      this.fetchData();
-    },
-    fetchData() {
-      /**Begin Get list campaign */
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = "Bearer " + this.$store.getters.getAccessToken;
+    ...mapActions({
+      getCampaigns: "campaign/getListCampaign",
+      getListCustomer: "dataform/getListCustomerByMarketerID",
+      getListEditor: "dataform/getListEditorByMarketerID",
+      getListTag: "dataform/getListTag",
+    }),
 
-      axios
-        .get(
-          `http://34.87.31.23:5001/api/campaign/campaigns/marketers/${this.$store.getters.getUser.id}`
-        )
-        .then(rs => {
-          this.listCampaigns = rs.data.reverse();
-          this.formatListCampaign();
-        })
-        .catch(er => {
-          console.log(er);
-        });
-      /** End Get list campaign */
+    fetchData() {
+      this.getCampaigns(this.getUser.id);
+      this.getListCustomer(this.$store.getters.getUser.id);
+      this.getListEditor(this.$store.getters.getUser.id);
+      this.getListTag();
     }
   },
   computed: {
-    ...mapGetters(["getUser"])
+    ...mapGetters(["getUser", "listCampaign"])
   },
   created() {
     let role = this.getUser.role;
-    if (role !== "Marketer") {
+    if (role !== "Marketer" && role != null) {
       this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
     }
   },
   mounted() {

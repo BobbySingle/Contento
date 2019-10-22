@@ -23,7 +23,7 @@
                 <v-col sm="5" md="5">
                   <span style="color:grey; font-weight:300; font-size:12px;">End Date</span>
                   <br />
-                  <span class="text__14">{{endDate}}</span>
+                  <span class="text__14">{{endDate | moment("HH:mm DD/MM/YYYY")}}</span>
                 </v-col>
               </v-row>
               <v-row>
@@ -62,7 +62,7 @@
               <v-row>
                 <v-data-table
                   :headers="headers"
-                  :items="listtasks"
+                  :items="listCampaignTaskNotFormated"
                   style="width:100%;"
                   :page.sync="page"
                   :items-per-page="itemsPerPage"
@@ -131,7 +131,8 @@
   </v-container>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+import moment from "moment";
 import axios from "axios";
 export default {
   data() {
@@ -176,7 +177,7 @@ export default {
           sortable: false
         }
       ],
-      listtasks: [
+      // listtasks: [
         // {
         //   id: 1,
         //   title:
@@ -185,67 +186,75 @@ export default {
         //   deadline: "2019-10-17T15:20:03.146Z",
         //   status: 1
         // },
-      ]
+      // ]
     };
   },
   methods: {
-    publish(event) {
-      localStorage.setItem("ContentID", JSON.stringify(event));
-      this.$router.push("/PublishChannel");
+    ...mapActions({
+      getDetailCampaign: "campaign/getDetailCampaign",
+      getListCampaignTask: "contentprocess/getListCampaignTask"
+    }),
+    async fetchdata() {
+      let campaignID = JSON.parse(sessionStorage["CampaignID"].toString());
+      await this.getDetailCampaign(campaignID);
+      this.title = this.detailCampaign.title;
+      this.customer = this.detailCampaign.customer;
+      this.editor = this.detailCampaign.editor;
+      this.endDate = this.detailCampaign.endDate;
+      this.listTag = this.detailCampaign.listTag;
+      this.getListCampaignTask(campaignID);
     },
-    /**Begin format time created */
-    formatListTask() {
-      this.listtasks.forEach(el => {
-        el.deadline = this.$moment(String(el.deadline)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-      });
+    publish(event) {
+      sessionStorage.setItem("ContentID", JSON.stringify(event));
+      this.$router.push("/PublishChannel");
     }
-    /**End format time created */
   },
   computed: {
-    ...mapGetters(["getUser"])
+    ...mapGetters(["getUser", "detailCampaign", "listCampaignTaskNotFormated"])
   },
   created() {
     let role = this.getUser.role;
-    if (role !== "Marketer") {
+    if (role !== "Marketer" && role != null) {
       this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
     }
   },
   mounted() {
     /**Begin Load data campaign details */
-    let campaignID = JSON.parse(localStorage["CampaignID"].toString());
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
+    this.fetchdata();
+    // axios.defaults.headers.common["Authorization"] =
+    //   "Bearer " + this.$store.getters.getAccessToken;
 
-    axios
-      .get(`http://34.87.31.23:5001/api/campaign/campaigns/${campaignID}`)
-      .then(rs => {
-        this.title = rs.data.title;
-        this.customer = rs.data.customer;
-        this.editor = rs.data.editor;
-        /**Convert Date to ISO */
-        this.endDate = rs.data.endDate;
-        this.listTag = rs.data.listTag;
-      })
-      .catch(er => {
-        console.log(er);
-      });
+    // axios
+    //   .get(`http://34.87.31.23:5001/api/campaign/campaigns/${campaignID}`)
+    //   .then(rs => {
+    //     this.title = rs.data.title;
+    //     this.customer = rs.data.customer;
+    //     this.editor = rs.data.editor;
+    //     /**Convert Date to ISO */
+    //     this.endDate = rs.data.endDate;
+    //     this.listTag = rs.data.listTag;
+    //   })
+    //   .catch(er => {
+    //     console.log(er);
+    //   });
     /**End Load data campaign details */
 
     /**Begin Get list tasks */
-    axios
-      .get(
-        `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`
-      )
-      .then(rs => {
-        this.listtasks = rs.data;
-        this.formatListTask();
-        console.log(rs.data);
-      })
-      .catch(er => {
-        console.log(er);
-      });
+    // axios
+    //   .get(
+    //     `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`
+    //   )
+    //   .then(rs => {
+    //     this.listtasks = rs.data;
+    //     this.formatListTask();
+    //     console.log(rs.data);
+    //   })
+    //   .catch(er => {
+    //     console.log(er);
+    //   });
     /** End Get list campaign */
   }
 };
