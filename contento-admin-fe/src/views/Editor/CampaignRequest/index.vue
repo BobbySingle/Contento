@@ -17,8 +17,7 @@
           />
         </div>
       </v-col>
-      <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;">
-      </v-col>
+      <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;"></v-col>
     </v-row>
     <!-- /** End Search */ -->
 
@@ -27,7 +26,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listCampaigns"
+            :items="listCampaignByEditorID"
             :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
@@ -40,7 +39,6 @@
               <v-col
                 class="text__14"
                 style="display:flex; align-items:center;"
-                v-bind:class="{ campaign_success:item.status.id == 1, campaign_on_going:item.status.id == 2,campaign_overdue:item.status.id == 3}"
               >
                 <div>
                   <span
@@ -64,22 +62,15 @@
                 >#{{topic.name}}</span>
               </div>
             </template>
+            <template v-slot:item.startedDate="{item}">
+              <span>{{item.startedDate | moment("HH:mm DD/MM/YYYY")}}</span>
+            </template>
+            <template v-slot:item.endDate="{item}">
+              <span>{{item.endDate | moment("HH:mm DD/MM/YYYY")}}</span>
+            </template>
             <template v-slot:item.status="{ item }">
               <v-chip
-                v-if="item.status.id === 1"
-                color="success"
-                style="color:white;"
-                class="text__14"
-              >{{item.status.name}}</v-chip>
-              <v-chip
-                v-if="item.status.id === 2"
-                color="warning"
-                style="color:white;"
-                class="text__14"
-              >{{item.status.name}}</v-chip>
-              <v-chip
-                v-if="item.status.id === 3"
-                color="error"
+                :color="item.status.color"
                 style="color:white;"
                 class="text__14"
               >{{item.status.name}}</v-chip>
@@ -97,6 +88,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
 import axios from 'axios'
 export default {
   data() {
@@ -121,54 +113,39 @@ export default {
         { text: "Title", value: "title", sortable: false, width: "35%" },
         { text: "Start", value: "startedDate", align: "center", width: "15%" },
         { text: "End", value: "endDate", align: "center", width: "15%" },
-        { text: "Status", value: "status", align: "center", width: "10%" },
+        { text: "Status", value: "status", align: "center", width: "10%" }
       ],
       listCampaigns: []
     };
   },
-  methods: {
-    clickCampaign: function(event) {
-      localStorage.setItem("CampaignID", JSON.stringify(event.id));
-      this.$router.push("/CampaignRequestDetails");
-    },
-    /**Begin format time created */
-    formatListCampaign() {
-      this.listCampaigns.forEach(el => {
-        el.startedDate = this.$moment(String(el.startedDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-        el.endDate = this.$moment(String(el.endDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-      });
-    }
-    /**End format time created */
+  computed: {
+    ...mapGetters(["getUser", "listCampaignByEditorID"])
   },
   created() {
-    // let role = localStorage.getItem("role");
-    // if (role !== "Marketer") {
-    //   this.$router.push("/403");
-    // }
+    axios.defaults.headers.common["Authorization"] = "Bearer " + this.$store.getters.getAccessToken;
+    let role = this.getUser.role;
+    if (role !== "Editor" && role != null) {
+      this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
+    }
+  },
+  methods: {
+    clickCampaign: function(event) {
+      sessionStorage.setItem("CampaignID", JSON.stringify(event.id));
+      this.$router.push("/CampaignRequestDetails");
+    },
+    ...mapActions({
+      getListCampaign: "campaign/getListCampaignByEditorID",
+      loadUser: "authentication/setUser"
+    }),
+    fetchData() {
+      this.getListCampaign(this.$store.getters.getUser.id);
+    }
   },
   mounted() {
-    /**Begin Get list campaign */
-    // this.$axios({
-    //   method: "get",
-    //   url: "campaignservice/api/campaign"
-    // })
-     axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
-      axios
-        .get(`http://34.87.31.23:5001/api/campaign/campaigns/editor/${this.$store.getters.getUser.id}`)
-      .then(rs => {
-        this.listCampaigns = rs.data;
-        this.formatListCampaign();
-        console.log(rs.data);
-      })
-      .catch(er => {
-        console.log(er);
-      });
-    /** End Get list campaign */
+    this.fetchData();
   }
 };
 </script>
@@ -209,24 +186,6 @@ export default {
   transition: 0.5s;
   cursor: pointer;
 }
-/**Begin Status - line */
-
-.campaign_success {
-  /* border-left: 4px solid #3cd1c2; */
-  border-left: 4px solid #4caf50;
-  height: 100%;
-}
-.campaign_on_going {
-  /* border-left: 4px solid orange; */
-  border-left: 4px solid #fb8c00;
-  height: 100%;
-}
-.campaign_overdue {
-  /* border-left: 4px solid tomato; */
-  border-left: 4px solid #ff5252;
-  height: 100%;
-}
-/** End Status - line */
 .campaign-details span {
   font-weight: bold;
   /**line-clamp */

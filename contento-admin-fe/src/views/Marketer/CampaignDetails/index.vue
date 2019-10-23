@@ -133,7 +133,6 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import moment from "moment";
-import axios from "axios";
 export default {
   data() {
     return {
@@ -194,7 +193,7 @@ export default {
       getDetailCampaign: "campaign/getDetailCampaign",
       getListCampaignTask: "contentprocess/getListCampaignTask"
     }),
-    async fetchdata() {
+    async fetchData() {
       let campaignID = JSON.parse(sessionStorage["CampaignID"].toString());
       await this.getDetailCampaign(campaignID);
       this.title = this.detailCampaign.title;
@@ -223,7 +222,7 @@ export default {
   },
   mounted() {
     /**Begin Load data campaign details */
-    this.fetchdata();
+    this.fetchData();
     // axios.defaults.headers.common["Authorization"] =
     //   "Bearer " + this.$store.getters.getAccessToken;
 

@@ -8,7 +8,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listtasks"
+            :items="listTaskByMarketerID"
             style="width:100%;"
             class="text__14"
             :page.sync="page"
@@ -18,6 +18,9 @@
           >
             <template v-slot:item.status="{ item }">
               <v-chip color="success" dark class="text__14">Completed</v-chip>
+            </template>
+            <template v-slot:item.publishTime="{ item }">
+              <span>{{item.publishTime | moment("HH:mm DD/MM/YYYY")}}</span>
             </template>
             <template v-slot:item.action="{item}">
               <v-btn
@@ -40,8 +43,8 @@
   </v-container>
 </template>
 <script>
-import { mapGetters } from "vuex";
-import axios from "axios";
+import { mapGetters, mapActions } from "vuex";
+import moment from "moment";
 export default {
   data() {
     return {
@@ -81,36 +84,21 @@ export default {
           sortable: false,
           width: "10%"
         }
-      ],
-      listtasks: [
-        {
-          id: 127,
-          title:
-            " Content 1: Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          writer: "Writer 1",
-          releaseDate: "2019-10-17T15:20:03.146Z",
-          status: 1
-        }
       ]
     };
   },
   methods: {
     publish(event) {
-      localStorage.setItem("ContentID", JSON.stringify(event));
+      sessionStorage.setItem("ContentID", JSON.stringify(event));
       this.$router.push("/PublishChannel");
     },
-    /**Begin format time releaseDate */
-    formatListContent() {
-      this.listtasks.forEach(el => {
-        el.publishTime = this.$moment(String(el.publishTime)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-      });
+    ...mapActions({ getListTaskByMarketerID: "contentprocess/getListTaskByMarketerID" }),
+    async fetchData(){
+      await this.getListTaskByMarketerID(this.$store.getters.getUser.id);
     }
-    /**End format time releaseDate */
   },
   computed: {
-    ...mapGetters(["getUser"])
+    ...mapGetters(["getUser", "listTaskByMarketerID"])
   },
   created() {
     let role = this.getUser.role;
@@ -122,20 +110,7 @@ export default {
     }
   },
   mounted() {
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
-
-    axios
-      .get(
-        `http://34.87.31.23:5002/api/contentprocess/task/marketer/${this.$store.getters.getUser.id}`
-      )
-      .then(rs => {
-        this.listtasks = rs.data;
-        this.formatListContent();
-      })
-      .catch(er => {
-        console.log(er);
-      });
+    this.fetchData();
   }
 };
 </script>

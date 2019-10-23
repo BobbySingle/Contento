@@ -59,8 +59,9 @@
             <v-expansion-panel>
               <v-expansion-panel-header class="text__14">Content Details:</v-expansion-panel-header>
               <v-expansion-panel-content class="my-2 py-2">
+                <v-text-field v-model="name" :value="name"></v-text-field>
                 <div class="work">
-                  <CKEditor ref="ckeditor" class="content" :content="content.content" />
+                  <CKEditor ref="ckeditor" class="content" :content="content" />
                 </div>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -95,7 +96,7 @@
 
 <script>
 import CKEditor from "../../../components/CKEditor/Ckeditor5.vue";
-import axios from "axios";
+import { mapGetters, mapActions } from "vuex";
 import moment from "moment";
 export default {
   components: { CKEditor },
@@ -110,51 +111,73 @@ export default {
       campaign: "",
       deadline: "",
       publishTime: "",
-      comment: []
+      comment: [],
+      name: "",
+      idContent: ""
     };
   },
   methods: {
     submit() {
-       let ContentRequestID = localStorage.getItem("ContentRequestID");
-       alert(this.radios);
-      if (this.radios === 'true') {
-        axios
-          .post(`http://34.87.31.23:5002/api/contentprocess/approvals`,{
-            idTask: ContentRequestID,
-            button: true,
-          })
-          .then(rs =>{
-            this.$router.push("/ContentRequest");
-          })
-          .catch(er =>{
-            console.log(er);
-          });
-      } else if (this.radios === 'false') {
+      let ContentRequestID = sessionStorage.getItem("ContentRequestID");
+      alert(this.radios);
+      if (this.radios === "true") {
+        this.setApprovalContentRequest(
+          {
+          idTask: ContentRequestID,
+          idContent: this.idContent,
+          comments: this.$refs.ckeditor.editorData,
+          name: this.name,
+          button: true
+        }
+        );
+
+      } else if (this.radios === "false") {
+        this.setApprovalContentRequest(
+          {
+          idTask: ContentRequestID,
+          idContent: this.idContent,
+          comments: this.$refs.ckeditor.editorData,
+          name: this.name,
+          button: false
+        })
       } else {
         alert("Choose Reject - Accept");
       }
+    },
+    ...mapActions({
+      getTaskDetail: "contentprocess/getTaskDetail",
+      setApprovalContentRequest: "contentprocess/setApprovalContentRequest"
+    }),
+
+    async fetchData() {
+      let ContentRequestID = sessionStorage.getItem("ContentRequestID");
+      await this.getTaskDetail(ContentRequestID);
+      this.requestDetails = this.taskDetail.description;
+      this.content = this.taskDetail.content.content;
+      this.name = this.taskDetail.content.name;
+      this.idContent = this.taskDetail.content.id;
+      this.tags = this.taskDetail.tags;
+      this.title = this.taskDetail.title;
+      this.campaign = this.taskDetail.campaign;
+      this.deadline = this.taskDetail.deadline;
+      this.publishTime = this.taskDetail.publishTime;
+      this.comment = this.taskDetail.comment;
+    }
+  },
+  computed: {
+    ...mapGetters(["getUser", "taskDetail"])
+  },
+  created() {
+    let role = this.getUser.role;
+    if (role !== "Editor" && role != null) {
+      this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
     }
   },
   mounted() {
-    let ContentRequestID = localStorage.getItem("ContentRequestID");
-    axios
-      .get(
-        `http://34.87.31.23:5002/api/contentprocess/task-detail/campaign/${ContentRequestID}`
-      )
-      .then(rs => {
-        this.requestDetails = rs.data.description;
-        this.content = rs.data.content;
-        this.tags = rs.data.tags;
-        this.title = rs.data.title;
-        this.campaign = rs.data.campaign;
-        this.deadline = rs.data.deadline;
-        this.publishTime = rs.data.publishTime;
-        this.comment = rs.data.comment;
-      })
-      .catch(er => {
-        console.log("ERROR - Review Content");
-        console.log(er);
-      });
+    this.fetchData();
   }
 };
 </script>

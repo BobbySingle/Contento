@@ -16,9 +16,9 @@
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
         <v-row no-gutters class="mx-10">
-          <v-col cols="12">
+          <v-col cols="12" sm="12">
             <v-row>
-              <v-col cols="12">
+              <v-col cols="12" sm="12">
                 <v-text-field
                   v-model="title"
                   :counter="255"
@@ -29,21 +29,21 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="6">
+              <v-col cols="12" sm="6">
                 <v-select
                   v-model="writer"
-                  :items="writers"
+                  :items="listWriter"
                   item-text="name"
                   item-value="id"
                   label="Writer"
                 ></v-select>
               </v-col>
-              <v-col cols="6">
+              <v-col cols="12" sm="6">
                 <v-row class="out-endtime flex-nowrap" align="center">
-                  <v-col cols="1">
+                  <v-col class="d-none d-sm-block" sm="1">
                     <v-icon>mdi-calendar-range</v-icon>
                   </v-col>
-                  <v-col cols="11">
+                  <v-col cols="12" sm="11">
                     <datetime
                       title="End Time"
                       type="datetime"
@@ -61,12 +61,12 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="6">
+              <v-col cols="12" sm="6">
                 <v-combobox
                   v-model="selectedTags"
                   item-text="name"
                   item-value="id"
-                  :items="listTag"
+                  :items="listTagByCampaignID"
                   chips
                   clearable
                   label="Category"
@@ -86,12 +86,12 @@
                   </template>
                 </v-combobox>
               </v-col>
-              <v-col cols="6" align-self="center">
+              <v-col cols="12" sm="6" align-self="center">
                 <v-row class="out-endtime flex-nowrap" align="center">
-                  <v-col cols="1">
+                  <v-col class="d-none d-sm-block" sm="1">
                     <v-icon>mdi-calendar-range</v-icon>
                   </v-col>
-                  <v-col cols="11">
+                  <v-col cols="12" sm="11">
                     <datetime
                       title="End Time"
                       placeholder="Select Publish Date"
@@ -109,7 +109,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12">
+              <v-col cols="12" sm="12">
                 <CKEditor ref="ckeditor" :content="content" />
               </v-col>
             </v-row>
@@ -122,7 +122,7 @@
 
 <script>
 import CKEditor from "../CKEditor/Ckeditor5";
-import axios from "axios";
+import { mapGetters, mapActions } from "vuex";
 export default {
   components: {
     CKEditor
@@ -132,56 +132,29 @@ export default {
       dialog: false,
       menu: false,
       selectedTags: [],
-      listTag: [],
       endtime: "",
       publishTime: "",
       mintime: "",
       maxtime: "",
       content: "",
       customer: [],
-      writers: [],
       writer: [],
       title: ""
     };
   },
+  computed:{
+...mapGetters(["listWriter","listTagByCampaignID"])
+  },
   mounted() {
     let now = new Date();
     this.mintime = now.toISOString();
-    this.maxtime = localStorage.getItem("Task-MaxTime");
-
-    let campaignID = localStorage.getItem("CampaignID");
-    /**Begin Get list writer by editor id */
-    axios
-      .get(
-        `http://34.87.31.23:5000/api/authentication/writers/editors/${this.$store.getters.getUser.id}`
-      )
-      .then(rs => {
-        this.writers = rs.data;
-      })
-      .catch(er => {
-        console.log(er);
-      });
-    /**End  Get list writer by editor id */
-
-    /**Begin Get list tag by campaign id */
-    axios
-      .get(
-        `http://34.87.31.23:5002/api/contentprocess/tags/campaign/${campaignID}`
-      )
-      .then(rs => {
-        this.listTag = rs.data;
-      })
-      .catch(er => {
-        console.log(er);
-      });
-    /**End Get list tag by campaign id */
+    this.maxtime = sessionStorage.getItem("Task-MaxTime");
   },
   methods: {
+    ...mapActions({createTask: "contentprocess/createTask"}),
     create() {
-      let campaignID = localStorage.getItem("CampaignID");
-
-      axios
-        .post(`http://34.87.31.23:5002/api/contentprocess/task`, {
+      let campaignID = sessionStorage.getItem("CampaignID");
+      this.createTask({
           idCampaign: campaignID,
           idWriter: this.writer,
           title: this.title,
@@ -189,16 +162,7 @@ export default {
           deadline: this.endtime,
           publishTime: this.publishTime,
           tags: this.selectedTags
-        })
-        .then(rs => {
-          console.log("Editor - Create Task");
-          console.log(rs.data);
-          this.$emit("createTask");
-        })
-        .catch(er => {
-          console.log("Editor - Create Task [ERROR]");
-          console.log(er);
-        });
+      })
       /**Clear Data */
       this.selectedTags = [];
       this.endtime = "";

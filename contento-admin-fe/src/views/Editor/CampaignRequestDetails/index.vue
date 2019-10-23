@@ -63,11 +63,11 @@
               <v-expansion-panel-content class="py-2">
                 <div class="work">
                   <v-row class="my-2" justify="center">
-                    <create-task @createTask="createTask" />
+                    <create-task />
                   </v-row>
                   <v-data-table
                     :headers="headers"
-                    :items="listTasks"
+                    :items="listCampaignTaskNotFormated"
                     :search="search"
                     style="width:100%"
                     :mobile-breakpoint="600"
@@ -81,11 +81,7 @@
                     </template>
                     <template v-slot:item.action="{ item }">
                       <v-row class="flex-nowrap" justify="center">
-                        <edit-task
-                          v-if="item.status.id !== 5"
-                          :taskID="item.id"
-                          @editTask="editTask"
-                        />
+                        <edit-task v-if="item.status.id !== 5" :taskID="item.id" />
                         <v-btn
                           text
                           icon
@@ -115,9 +111,9 @@
 
 <script>
 import moment from "moment";
-import axios from "axios";
 import CreateTask from "../../../components/Popup/CreateTask.vue";
 import EditTask from "../../../components/Popup/EditTask.vue";
+import { mapGetters, mapActions } from "vuex";
 export default {
   components: { CreateTask, EditTask },
   data() {
@@ -149,70 +145,50 @@ export default {
         },
         { text: "End", value: "deadline", sortable: false, width: "20%" },
         { text: "Action", value: "action", align: "center", width: "10%" }
-      ],
-      listTasks: []
+      ]
     };
   },
+  computed: {
+    ...mapGetters(["getUser", "detailCampaign", "listCampaignTaskNotFormated"])
+  },
+  created() {
+    let role = this.getUser.role;
+    if (role !== "Editor" && role != null) {
+      this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
+    }
+  },
   mounted() {
-    /**Load campaign information */
-    let campaignID = localStorage.getItem("CampaignID");
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
-
-    axios
-      .get(`http://34.87.31.23:5001/api/campaign/campaigns/${campaignID}`)
-      .then(rs => {
-        console.log(rs.data);
-        this.campaign_title = rs.data.title;
-        this.campaign_tags = rs.data.listTag;
-        this.campaign_customer = rs.data.customer;
-        this.campaign_enddate = rs.data.endDate;
-        localStorage.setItem("Task-MaxTime", rs.data.endDate);
-        this.campaign_content = rs.data.description;
-      })
-      .catch(er => {
-        console.log(er);
-      });
     this.fetchData();
   },
   methods: {
     /**fetch data - dialog process success */
-    clickDelete(event) {
-      axios
-        .delete(
-          `http://34.87.31.23:5002/api/contentprocess/task/campaign/${event}`
-        )
-        .then(rs => {
-          alert("Delete task success!");
-          this.fetchData();
-        })
-        .catch(er => {
-          console.log(er);
-        });
-    },
-    createTask() {
-      alert("Create task success!");
-      this.fetchData();
-    },
-    editTask() {
-      alert("Edit task success!");
-      this.fetchData();
-    },
 
-    fetchData() {
+    ...mapActions({
+      getDetailCampaign: "campaign/getDetailCampaign",
+      getListCampaignTask: "contentprocess/getListCampaignTask",
+      deleteTaskByID: "contentprocess/deleteTaskByID",
+      getListTagByCampaignID: "contentprocess/getListTagByCampaignID",
+      getListWriter: "authentication/getListWriter"
+    }),
+    clickDelete(id) {
+      this.deleteTaskByID(id);
+    },
+    async fetchData() {
       /**Load list task */
-      let campaignID = localStorage.getItem("CampaignID");
-      axios
-        .get(
-          `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`
-        )
-        .then(rs => {
-          this.listTasks = rs.data.reverse();
-          console.log(this.listTasks);
-        })
-        .catch(er => {
-          console.log(er);
-        });
+      let campaignID = sessionStorage.getItem("CampaignID");
+      await this.getDetailCampaign(campaignID);
+      this.campaign_title = this.detailCampaign.title;
+      this.campaign_tags = this.detailCampaign.listTag;
+      this.campaign_customer = this.detailCampaign.customer;
+      this.campaign_enddate = this.detailCampaign.endDate;
+      sessionStorage.setItem("Task-MaxTime", this.detailCampaign.endDate);
+      this.campaign_content = this.detailCampaign.description;
+      this.getListCampaignTask(campaignID);
+      this.getListTagByCampaignID(campaignID);
+      this.getListWriter(this.$store.getters.getUser.id);
     }
   }
 };

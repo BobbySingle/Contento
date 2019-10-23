@@ -1,7 +1,7 @@
  <template>
   <v-dialog v-model="dialog" persistent width="400px">
     <template v-slot:activator="{ on }">
-      <v-btn color="warning" class="mr-2 text__14" v-on="on" >Edit</v-btn>
+      <v-btn color="warning" class="mr-2 text__14" v-on="on">Edit</v-btn>
     </template>
     <v-card>
       <v-row class="mx-4 mb-4" justify="center">
@@ -60,7 +60,7 @@
   </v-dialog>
 </template>
 <script>
-import axios from 'axios';
+import { mapActions } from "vuex";
 export default {
   props: ["customer"],
   data() {
@@ -70,7 +70,7 @@ export default {
       email: "",
       phone: "",
       company: "",
-      id:""
+      id: ""
     };
   },
   mounted() {
@@ -80,21 +80,30 @@ export default {
     this.company = this.customer.companyName;
     this.id = this.customer.id;
   },
-  methods:{
-    update(){
-      axios
-        .put(`http://34.87.31.23:5000/api/authentication/customers`, {
-          id: this.id,
-          email: this.email,
-          fullName: this.fullname,
-          companyName: this.company,
-        })
-        .then(rs => {
-          this.$emit("editCustomer");
-        })
-        .catch(er => {
-          console.log(er);
-        });
+  methods: {
+    ...mapActions({ editCustomer: "authentication/editCustomer" }),
+
+    update() {
+      console.log(this.id + this.email +  this.fullname +  this.company);
+      this.editCustomer({
+        id: this.id,
+        email: this.email,
+        fullName: this.fullname,
+        companyName: this.company
+      });
+      // axios
+      //   .put(`http://34.87.31.23:5000/api/authentication/customers`, {
+      //     id: this.id,
+      //     email: this.email,
+      //     fullName: this.fullname,
+      //     companyName: this.company,
+      //   })
+      //   .then(rs => {
+      //     this.$emit("editCustomer");
+      //   })
+      //   .catch(er => {
+      //     console.log(er);
+      //   });
     }
   }
 };

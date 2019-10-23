@@ -26,7 +26,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listContents"
+            :items="listContentRequest"
             :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
@@ -38,16 +38,15 @@
             <template v-slot:item.campaign="{item}">
               <v-col
                 class="text__14"
-                style="display:flex; align-items:center;"
-                v-bind:class="{ content_success:item.status.id == 1, content_on_going:item.status.id == 2,content_overdue:item.status.id == 3}"
+                style="display:flex; align-items:center;"            
               >
                 <div>
                   <span class="content-inner-table text__14">{{item.campaign}}</span>
                 </div>
               </v-col>
             </template>
-            <template v-slot:item.modifiedDate="{item}">{{item.modifiedDate | moment("DD/MM/YYYY")}}</template>
-            <template v-slot:item.deadline="{item}"> {{item.deadline| moment("DD/MM/YYYY")}}</template>
+            <template v-slot:item.modifiedDate="{item}">{{item.modifiedDate | moment("HH:mm DD/MM/YYYY")}}</template>
+            <template v-slot:item.deadline="{item}"> {{item.deadline| moment("HH:mm DD/MM/YYYY")}}</template>
             <template v-slot:item.contentTitle="{item}">
               <div class="content_details">
                 <div>
@@ -80,6 +79,7 @@
 <script>
 import moment from 'moment';
 import axios from "axios";
+import {mapGetters, mapActions} from 'vuex'
 export default {
   data() {
     return {
@@ -110,65 +110,33 @@ export default {
         { text: "End", value: "deadline", align: "center", width: "12.5%" },
         { text: "Status", value: "status", align: "center", width: "10%" },
         { text: "Action", value: "action", align: "center", width: "10%" }
-      ],
-      listContents: [
-        // {
-        //   id: 1,
-        //   campaign: "Campaign 1",
-        //   contentTitle:
-        //     "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-        //   releaseDate: "2019-10-18T15:20:03.146Z",
-        //   endDate: "2019-10-18T15:20:03.146Z",
-        //   status: {
-        //     id: 1,
-        //     name: "Under Review"
-        //   }
-        // }
       ]
     };
   },
   methods: {
     changeToReview(event) {
-      localStorage.setItem("ContentRequestID", event)
+      sessionStorage.setItem("ContentRequestID", event);
       this.$router.push("/ReviewContent");
     },
-    /**Begin format time created */
-    formatDate() {
-      this.listContents.forEach(el => {
-        el.releaseDate = this.$moment(String(el.releaseDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-        el.endDate = this.$moment(String(el.endDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-      });
+    ...mapActions({getContentRequest: "contentprocess/getContentRequest"}),
+    fetchData(){
+      this.getContentRequest(this.$store.getters.getUser.id);
     }
-    /**End format time created */
+  },
+  computed: {
+    ...mapGetters(["getUser","listContentRequest"])
   },
   created() {
-    // let role = localStorage.getItem("role");
-    // if (role !== "Marketer") {
-    //   this.$router.push("/403");
-    // }
+    let role = this.getUser.role;
+    if (role !== "Editor" && role != null) {
+      this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
+    }
   },
   mounted() {
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
-
-    /**Load Content Request */
-    axios
-      .get(
-        `http://34.87.31.23:5002/api/contentprocess/task/editor/${this.$store.getters.getUser.id}`
-      )
-      .then(rs => {
-        console.log(rs.data);
-        this.listContents = rs.data;
-      })
-      .catch(er => {
-        console.log(er);
-      });
-
-    this.formatDate();
+    this.fetchData();
   }
 };
 </script>
@@ -209,24 +177,6 @@ export default {
   transition: 0.5s;
   cursor: pointer;
 }
-/**Begin Status - line */
-
-.content_success {
-  /* border-left: 4px solid #3cd1c2; */
-  border-left: 4px solid #4caf50;
-  height: 100%;
-}
-.content_on_going {
-  /* border-left: 4px solid orange; */
-  border-left: 4px solid #fb8c00;
-  height: 100%;
-}
-.content_overdue {
-  /* border-left: 4px solid tomato; */
-  border-left: 4px solid #ff5252;
-  height: 100%;
-}
-/** End Status - line */
 .content_details span {
   /**line-clamp */
   overflow: hidden;

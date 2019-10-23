@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" scrollable width="600px">
     <template v-slot:activator="{ on }">
-      <v-btn text icon color="warning" v-on="on">
+      <v-btn text icon color="warning" v-on="on" @click="clickEdit(taskID)">
         <v-icon>edit</v-icon>
       </v-btn>
     </template>
@@ -34,7 +34,7 @@
               <v-col cols="6">
                 <v-select
                   v-model="writer.id"
-                  :items="writers"
+                  :items="listWriter"
                   item-text="name"
                   item-value="id"
                   label="Writer"
@@ -68,7 +68,7 @@
                   v-model="selectedTag"
                   item-text="name"
                   item-value="id"
-                  :items="listTag"
+                  :items="listTagByCampaignID"
                   chips
                   clearable
                   label="Category"
@@ -124,7 +124,8 @@
 
 <script>
 import CKEditor from "../CKEditor/Ckeditor5";
-import axios from "axios";
+// import axios from "axios";
+import { mapGetters, mapActions } from "vuex";
 export default {
   props: ["taskID"],
   components: {
@@ -134,9 +135,7 @@ export default {
     return {
       dialog: false,
       menu: false,
-      writers: [],
       selectedTag: [],
-      listTag: [],
       endtime: "",
       publishDate: "",
       mintime: "",
@@ -147,80 +146,42 @@ export default {
       id: ""
     };
   },
+  computed: {
+    ...mapGetters(["listWriter", "listTagByCampaignID", "taskDetailUpdate"])
+  },
   mounted() {
     let now = new Date();
     this.mintime = now.toISOString();
-    this.maxtime = localStorage.getItem("Task-MaxTime").toString();
-
-    let campaignID = localStorage.getItem("CampaignID");
-    /**Begin Get list writer by editor id */
-    axios
-      .get(
-        `http://34.87.31.23:5000/api/authentication/writers/editors/${this.$store.getters.getUser.id}`
-      )
-      .then(rs => {
-        this.writers = rs.data;
-      })
-      .catch(er => {
-        console.log(er);
-      });
-    /**End  Get list writer by editor id */
-
-    /**Begin Get list tag by campaign id */
-    axios
-      .get(
-        `http://34.87.31.23:5002/api/contentprocess/tags/campaign/${campaignID}`
-      )
-      .then(rs => {
-        this.listTag = rs.data;
-      })
-      .catch(er => {
-        console.log(er);
-      });
-    /**End Get list tag by campaign id */
-
-    /**Begin Get details task */
-    axios
-      .get(
-        `http://34.87.31.23:5002/api/contentprocess/task-detail-update/campaign/${this.taskID}`
-      )
-      .then(rs => {
-        this.selectedTag = rs.data.tags;
-        this.endtime = rs.data.deadline;
-        this.publishDate = rs.data.publishTime;
-        this.content = rs.data.description;
-        this.writer = rs.data.writer;
-        this.title = rs.data.title;
-        this.id = rs.data.id;
-      })
-      .catch(er => {
-        console.log("Marketer - Edit Campaign - LoadData [ERROR]");
-        console.log(er);
-      });
-
-    /**End Get details task  */
+    this.maxtime = sessionStorage.getItem("Task-MaxTime").toString();
   },
   methods: {
+    ...mapActions({
+      getTaskDetailUpdate: "contentprocess/getTaskDetailUpdate",
+      editTaskByID: "contentprocess/editTaskByID"
+    }),
+    async clickEdit(taskID) {
+      await this.getTaskDetailUpdate(taskID);
+      if (this.taskDetailUpdate != null) {
+        this.selectedTag = this.taskDetailUpdate.tags;
+        this.endtime = this.taskDetailUpdate.deadline;
+        this.publishDate = this.taskDetailUpdate.publishTime;
+        this.content = this.taskDetailUpdate.description;
+        this.writer = this.taskDetailUpdate.writer;
+        this.title = this.taskDetailUpdate.title;
+        this.id = this.taskDetailUpdate.id;
+      }
+    },
+
     update() {
-      axios
-        .put(`http://34.87.31.23:5002/api/contentprocess/task`, {
-          idTask: this.id,
-          idWriter: this.writer.id,
-          title: this.title,
-          description: this.$refs.ckeditor.editorData,
-          deadline: this.endtime,
-          publishTime: this.publishDate,
-          tags: this.selectedTag
-        })
-        .then(rs => {
-          console.log("Editor - Edit Task");
-          console.log(rs.data);
-          this.$emit("editTask");
-        })
-        .catch(er => {
-          console.log("Marketer - Edit Campaign  [ERROR]");
-          console.log(er);
-        });
+      this.editTaskByID({
+        idTask: this.id,
+        idWriter: this.writer.id,
+        title: this.title,
+        description: this.$refs.ckeditor.editorData,
+        deadline: this.endtime,
+        publishTime: this.publishDate,
+        tags: this.selectedTag
+      });
     }
   }
 };

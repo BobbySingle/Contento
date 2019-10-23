@@ -44,7 +44,7 @@
             <v-row class="my-8" style="width:100%;">
               <v-col sm="12" md="12">
                 <div class="content px-12 py-4" style="max-width:795px;margin: 0 auto;">
-                  <span v-html="content.content"></span>
+                  <span v-html="content"></span>
                 </div>
               </v-col>
             </v-row>
@@ -125,7 +125,7 @@ export default {
   methods: {
     ...mapActions({
       getTaskDetail: "contentprocess/getTaskDetail",
-      getListTag: "dataform/getListTag"
+      getListTag: "contentprocess/getListTag"
     }),
     async fetchData() {
       let contentID = JSON.parse(sessionStorage.getItem("ContentID"));
@@ -134,9 +134,9 @@ export default {
       this.endDate = this.$moment(this.taskDetail.publishTime).toISOString();
       this.writer = this.taskDetail.writer.name;
       this.editor = this.taskDetail.editor.name;
-      this.content = this.taskDetail.content;
+      this.content = this.taskDetail.content.content;
       this.tags = this.taskDetail.tags;
-      this.name = this.taskDetail.name;
+      this.name = this.taskDetail.content.name;
       this.getListTag();
     }
   },

@@ -18,8 +18,31 @@ export function getListCustomerByMarketerID(userid) {
   );
 }
 
+export function getListInfoCustomer(userid) {
+  return axios.get(
+    `http://34.87.31.23:5000/api/authentication/customers/marketers/${userid}`
+  );
+}
+
 export function getListEditorByMarketerID(userid) {
   return axios.get(
     `http://34.87.31.23:5000/api/authentication/editors/marketers/${userid}`
+  );
+}
+export function createCustomer(customer) {
+  return axios.post(
+    `http://34.87.31.23:5000/api/authentication/customers`,
+    customer
+  );
+}
+export function editCustomer(customer) {
+  return axios.put(
+    `http://34.87.31.23:5000/api/authentication/customers`,
+    customer
+  );
+}
+export function getListWriter(userid) {
+  return axios.get(
+    `http://34.87.31.23:5000/api/authentication/writers/editors/${userid}`
   );
 }

@@ -26,7 +26,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listContents"
+            :items="listTaskByWriterID"
             :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
@@ -36,46 +36,35 @@
             @page-count="pageCount = $event"
           >
             <template v-slot:item.campaign="{item}">
-              <v-col
-                class="text__14"
-                style="display:flex; align-items:center;"
-                v-bind:class="{ content_success:item.status.id == 1, content_on_going:item.status.id == 2,content_overdue:item.status.id == 3}"
-              >
+              <v-col class="text__14" style="display:flex; align-items:center;">
                 <div>
                   <span class="content-inner-table text__14">{{item.campaign}}</span>
                 </div>
               </v-col>
             </template>
-            <template v-slot:item.contentTitle="{item}">
+            <template v-slot:item.title="{item}">
               <div class="content_details">
                 <div>
-                  <span class="text__14">{{ item.contentTitle }}</span>
+                  <span class="text__14">{{ item.title }}</span>
                 </div>
               </div>
             </template>
+            <template v-slot:item.deadline="{item}">
+              <span>{{item.deadline | moment("HH:mm DD/MM/YYYY")}}</span>
+            </template>
+            <template v-slot:item.modifiedDate="{item}">
+              <span>{{item.modifiedDate | moment("HH:mm DD/MM/YYYY")}}</span>
+            </template>
             <template v-slot:item.status="{ item }">
               <v-chip
-                v-if="item.status.id === 1"
-                color="secondary"
-                style="color:white;"
-                class="text__14"
-              >{{item.status.name}}</v-chip>
-              <v-chip
-                v-if="item.status.id === 2"
-                color="warning"
-                style="color:white;"
-                class="text__14"
-              >{{item.status.name}}</v-chip>
-              <v-chip
-                v-if="item.status.id === 3"
-                color="success"
+                :color="item.status.color"
                 style="color:white;"
                 class="text__14"
               >{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.action="{ item }">
-              <v-btn color="primary" v-if="item.status.id === 2" @click="changeToWork()">Work</v-btn>
-              <v-btn color="secondary" v-if="item.status.id === 1">Start</v-btn>
+              <v-btn color="primary" v-if="item.status.id === 2" @click="changeToWork(item.id)">Work</v-btn>
+              <v-btn color="secondary" v-if="item.status.id === 1"  @click="start(item.id)">Start</v-btn>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -91,6 +80,8 @@
 
 <script>
 import axios from "axios";
+import momemt from "moment";
+import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -111,108 +102,51 @@ export default {
           value: "campaign",
           width: "15%"
         },
-        { text: "Title", value: "contentTitle", sortable: false, width: "30%" },
+        { text: "Title", value: "title", sortable: false, width: "30%" },
         {
-          text: "Start",
-          value: "startDate",
+          text: "Release",
+          value: "modifiedDate",
           align: "center",
           width: "12.5%"
         },
-        { text: "End", value: "endDate", align: "center", width: "12.5%" },
+        { text: "End", value: "deadline", align: "center", width: "12.5%" },
         { text: "Status", value: "status", align: "center", width: "10%" },
         { text: "Action", value: "action", align: "center", width: "10%" }
-      ],
-      listContents: [
-        {
-          id: 1,
-          campaign: "Campaign 1",
-          contentTitle:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          startDate: "",
-          endDate: "2019-10-18T15:20:03.146Z",
-          status: {
-            id: 1,
-            name: "Open"
-          }
-        },
-        {
-          id: 2,
-          campaign: "Campaign 2",
-          contentTitle:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          startDate: "2019-10-18T15:20:03.146Z",
-          endDate: "2019-10-18T15:20:03.146Z",
-          status: {
-            id: 2,
-            name: "In Process"
-          }
-        },
-        {
-          id: 3,
-          campaign: "Campaign 3",
-          contentTitle:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          startDate: "2019-10-18T15:20:03.146Z",
-          endDate: "2019-10-18T15:20:03.146Z",
-          status: {
-            id: 2,
-            name: "In Process"
-          }
-        },
-        {
-          id: 4,
-          campaign: "Campaign 4",
-          contentTitle:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          startDate: "",
-          endDate: "2019-10-18T15:20:03.146Z",
-          status: {
-            id: 1,
-            name: "Open"
-          }
-        },
-        {
-          id: 5,
-          campaign: "Campaign 5",
-          contentTitle:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-          startDate: "",
-          endDate: "2019-10-18T15:20:03.146Z",
-          status: {
-            id: 1,
-            name: "Open"
-          }
-        }
       ]
     };
   },
   methods: {
-    changeToWork() {
+    changeToWork(id) {
+    },
+   async start(id){
+      sessionStorage.setItem("TaskID",id);
+      await this.startTask({idTask:id});
       this.$router.push("/WriteContent");
     },
-    /**Begin format time created */
-    formatDate() {
-      this.listContents.forEach(el => {
-        if (el.startDate != "") {
-          el.startDate = this.$moment(String(el.startDate)).format(
-            "YYYY-MM-DD hh:mm"
-          );
-        }
-        el.endDate = this.$moment(String(el.endDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-      });
+    ...mapActions({
+      getTaskByWriterId: "contentprocess/getTaskByWriterId",
+      startTask: "contentprocess/startTask"
+    }),
+    fetchData() {
+      this.getTaskByWriterId(this.$store.getters.getUser.id);
     }
-    /**End format time created */
+  },
+  computed: {
+    ...mapGetters(["getUser", "listTaskByWriterID"])
   },
   created() {
-    // let role = localStorage.getItem("role");
-    // if (role !== "Marketer") {
-    //   this.$router.push("/403");
-    // }
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+    let role = this.getUser.role;
+    if (role !== "Writer" && role != null) {
+      this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
+    }
   },
   mounted() {
-    this.formatDate();
+    this.fetchData();
   }
 };
 </script>
@@ -253,24 +187,6 @@ export default {
   transition: 0.5s;
   cursor: pointer;
 }
-/**Begin Status - line */
-
-.content_success {
-  /* border-left: 4px solid #3cd1c2; */
-  border-left: 4px solid #4caf50;
-  height: 100%;
-}
-.content_on_going {
-  /* border-left: 4px solid orange; */
-  border-left: 4px solid #fb8c00;
-  height: 100%;
-}
-.content_overdue {
-  /* border-left: 4px solid tomato; */
-  border-left: 4px solid #ff5252;
-  height: 100%;
-}
-/** End Status - line */
 .content_details span {
   /**line-clamp */
   overflow: hidden;

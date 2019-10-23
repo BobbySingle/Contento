@@ -8,14 +8,14 @@
         <v-row class="ml-1 mb-5">
           <v-col cols="12" style="display: flex;
     justify-content: center;">
-            <popup-create-customer :isSmallBtn="false" @createCustomer="createCustomer" />
+            <popup-create-customer :isSmallBtn="false" />
           </v-col>
         </v-row>
       </v-col>
       <v-row class="mx-4">
         <v-data-table
           :headers="headers"
-          :items="listCustomers"
+          :items="listInfoCustomer"
           style="width:100%;"
           class="text__14"
           :mobile-breakpoint="600"
@@ -29,7 +29,7 @@
           </template>
           <template v-slot:item.action="{item}">
             <v-row justify="center" class="flex-nowrap">
-              <popup-edit-customer :customer="item" @editCustomer="editCustomer"></popup-edit-customer>
+              <popup-edit-customer :customer="item"></popup-edit-customer>
               <v-btn color="primary" @click="details(item.id)" class="text__14">Details</v-btn>
             </v-row>
           </template>
@@ -46,8 +46,7 @@
 <script>
 import PopupCreateCustomer from "../../../components/Popup/CreateCustomer.vue";
 import PopupEditCustomer from "../../../components/Popup/EditCustomer.vue";
-import { mapGetters } from "vuex";
-import axios from "axios";
+import { mapGetters, mapActions } from "vuex";
 export default {
   components: { PopupCreateCustomer, PopupEditCustomer },
   data() {
@@ -63,12 +62,11 @@ export default {
         { text: "Company", value: "companyName", align: "center" },
         { text: "Phone", value: "phone", align: "center" },
         { text: "Action", value: "action", align: "center", sortable: false }
-      ],
-      listCustomers: []
+      ]
     };
   },
   computed: {
-    ...mapGetters(["getUser"])
+    ...mapGetters(["getUser","listInfoCustomer"])
   },
   created() {
     let role = this.getUser.role;
@@ -80,35 +78,16 @@ export default {
     }
   },
   mounted() {
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
-
     this.fetchData();
   },
   methods: {
     details(event) {
-      localStorage.setItem("customerID", event);
+      sessionStorage.setItem("customerID", event);
       this.$router.push("/CustomerCampaigns");
     },
-    createCustomer() {
-      alert("Create customer success!");
-      this.fetchData();
-    },
-    editCustomer() {
-      alert("Edite customer success!");
-      this.fetchData();
-    },
-    fetchData() {
-      axios
-        .get(
-          `http://34.87.31.23:5000/api/authentication/customers/marketers/${this.$store.getters.getUser.id}`
-        )
-        .then(rs => {
-          this.listCustomers = rs.data.reverse();
-        })
-        .catch(er => {
-          console.log(er);
-        });
+    ...mapActions({getListInfoCustomer: "authentication/getListInfoCustomer"}),
+    async fetchData() {
+       await this.getListInfoCustomer(this.$store.getters.getUser.id);
     }
   }
 };

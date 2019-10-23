@@ -28,7 +28,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listCampaigns"
+            :items="listCampaignByCustomerID"
             :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
@@ -41,7 +41,6 @@
               <v-col
                 class="text__14"
                 style="display:flex; align-items:center;"
-                v-bind:class="{ campaign_success:item.status.id == 1, campaign_on_going:item.status.id == 2,campaign_overdue:item.status.id == 3}"
               >
                 <div>
                   <span
@@ -52,7 +51,7 @@
               </v-col>
             </template>
             <template v-slot:item.title="{item}">
-              <div class="campaign-details py-2" @click="clickCampaign(item)">
+              <div class="campaign-details py-2" @click="clickCampaign(item.id)">
                 <div>
                   <span class="text__14">{{ item.title }}</span>
                 </div>
@@ -65,6 +64,12 @@
                 >#{{topic.name}}</span>
               </div>
             </template>
+            <template v-slot:item.startedDate="{ item }">
+              <span>{{item.startedDate | moment("HH:mm DD/MM/YYYY")}}</span>
+            </template>
+            <template v-slot:item.endDate="{ item }">
+              <span>{{item.endDate | moment("HH:mm DD/MM/YYYY")}}</span>
+            </template>
             <template v-slot:item.status="{ item }">
               <v-chip
                 :color="item.status.color"
@@ -74,8 +79,8 @@
             </template>
             <template v-slot:item.action="{item}">
               <v-row class="flex-nowrap">
-                <popup-edit-campaign :campaign="item.id" @editCampaign="editCampaign" />
-                <v-btn color="success" fab small @click="clickCalendar(item)" class="mx-3">
+                <popup-edit-campaign :campaignID="item.id" />
+                <v-btn color="success" fab small @click="clickCalendar(item.id)" class="mx-3">
                   <v-icon>event</v-icon>
                 </v-btn>
               </v-row>
@@ -93,9 +98,8 @@
 </template>
 <script>
 import PopupEditCampaign from "../../../components/Popup/EditCampaign.vue";
-import { mapGetters } from "vuex";
-import axios from "axios";
-
+import { mapGetters, mapActions } from "vuex";
+import moment from "moment";
 export default {
   components: { PopupEditCampaign },
   data() {
@@ -115,42 +119,38 @@ export default {
         { text: "End", value: "endDate", align: "center" },
         { text: "Status", value: "status", align: "center" },
         { text: "Action", value: "action", align: "center", sortable: false }
-      ],
-      listCampaigns: []
+      ]
     };
   },
   methods: {
     clickCalendar(event) {
-      localStorage.setItem("Campaign", JSON.stringify(event));
+      sessionStorage.setItem("CampaignID", JSON.stringify(event));
       this.$router.push("/Calendar");
     },
     /**Begin change to campaign details */
     clickCampaign: function(event) {
-      localStorage.setItem("Campaign", JSON.stringify(event));
+      sessionStorage.setItem("CampaignID", JSON.stringify(event));
       this.$router.push("/CampaignDetails");
     },
     /**End change to campaign details */
-    editCampaign() {
-      alert("Edit success!");
-      this.fetchData();
-    },
-    /**Begin format time created */
-    formatListCampaign() {
-      this.listCampaigns.forEach(el => {
-        el.startedDate = this.$moment(String(el.startedDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-        el.endDate = this.$moment(String(el.endDate)).format(
-          "YYYY-MM-DD hh:mm"
-        );
-      });
+    ...mapActions({
+      getListCampaign: "campaign/getListCampaignByCustomerID",
+      getListCustomer: "authentication/getListCustomerByMarketerID",
+      getListEditor: "authentication/getListEditorByMarketerID",
+      getListTag: "contentprocess/getListTag"
+    }),
+    fetchData() {
+      let customerID = sessionStorage.getItem("customerID");
+      this.getListCampaign(customerID);
+      this.getListCustomer(this.$store.getters.getUser.id);
+      this.getListEditor(this.$store.getters.getUser.id);
+      this.getListTag();
     }
-    /**End format time created */
   },
   computed: {
-    ...mapGetters(["getUser"])
+    ...mapGetters(["getUser", "listCampaignByCustomerID"])
   },
-   created() {
+  created() {
     let role = this.getUser.role;
     if (role !== "Marketer" && role != null) {
       this.$router.push("/403");
@@ -160,22 +160,7 @@ export default {
     }
   },
   mounted() {
-    let customerID = localStorage.getItem("customerID");
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
-
-    axios
-      .get(
-        `http://34.87.31.23:5001/api/campaign/campaigns/customers/${customerID}`
-      )
-      .then(rs => {
-        this.listCampaigns = rs.data.reverse();
-        this.formatListCampaign();
-        console.log(rs.data);
-      })
-      .catch(er => {
-        console.log(er);
-      });
+    this.fetchData();
   }
 };
 </script>
@@ -216,24 +201,6 @@ export default {
   transition: 0.5s;
   cursor: pointer;
 }
-/**Begin Status - line */
-
-.campaign_success {
-  /* border-left: 4px solid #3cd1c2; */
-  border-left: 4px solid #4caf50;
-  height: 100%;
-}
-.campaign_on_going {
-  /* border-left: 4px solid orange; */
-  border-left: 4px solid #fb8c00;
-  height: 100%;
-}
-.campaign_overdue {
-  /* border-left: 4px solid tomato; */
-  border-left: 4px solid #ff5252;
-  height: 100%;
-}
-/** End Status - line */
 .campaign-details span {
   font-weight: bold;
   /**line-clamp */

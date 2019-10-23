@@ -18,7 +18,7 @@
         </div>
       </v-col>
       <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;">
-        <popup-create-campaign/>
+        <popup-create-campaign />
       </v-col>
     </v-row>
     <!-- /** End Search */ -->
@@ -41,7 +41,6 @@
               <v-col
                 class="text__14"
                 style="display:flex; align-items:center;"
-                v-bind:class="{ campaign_success:item.status.id == 1, campaign_on_going:item.status.id == 2,campaign_overdue:item.status.id == 3}"
               >
                 <div>
                   <span
@@ -101,7 +100,6 @@ import PopupEditCampaign from "../../../components/Popup/EditCampaign.vue";
 import moment from "moment";
 import { mapGetters, mapActions } from "vuex";
 import axios from "axios";
-import { timeout } from "q";
 export default {
   components: { PopupCreateCampaign, PopupEditCampaign },
   data() {
@@ -142,22 +140,25 @@ export default {
     },
     ...mapActions({
       getCampaigns: "campaign/getListCampaign",
-      getListCustomer: "dataform/getListCustomerByMarketerID",
-      getListEditor: "dataform/getListEditorByMarketerID",
-      getListTag: "dataform/getListTag",
+      getListCustomer: "authentication/getListCustomerByMarketerID",
+      getListEditor: "authentication/getListEditorByMarketerID",
+      getListTag: "contentprocess/getListTag",
+      loadUser: "authentication/setUser"
     }),
 
-    fetchData() {
-      this.getCampaigns(this.getUser.id);
-      this.getListCustomer(this.$store.getters.getUser.id);
-      this.getListEditor(this.$store.getters.getUser.id);
-      this.getListTag();
+    async fetchData() {
+      await this.getCampaigns(this.getUser.id);
+      await this.getListCustomer(this.$store.getters.getUser.id);
+      await this.getListEditor(this.$store.getters.getUser.id);
+      await this.getListTag();
     }
   },
   computed: {
     ...mapGetters(["getUser", "listCampaign"])
   },
   created() {
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
     let role = this.getUser.role;
     if (role !== "Marketer" && role != null) {
       this.$router.push("/403");
@@ -208,24 +209,6 @@ export default {
   transition: 0.5s;
   cursor: pointer;
 }
-/**Begin Status - line */
-
-.campaign_success {
-  /* border-left: 4px solid #3cd1c2; */
-  border-left: 4px solid #4caf50;
-  height: 100%;
-}
-.campaign_on_going {
-  /* border-left: 4px solid orange; */
-  border-left: 4px solid #fb8c00;
-  height: 100%;
-}
-.campaign_overdue {
-  /* border-left: 4px solid tomato; */
-  border-left: 4px solid #ff5252;
-  height: 100%;
-}
-/** End Status - line */
 .campaign-details span {
   font-weight: bold;
   /**line-clamp */

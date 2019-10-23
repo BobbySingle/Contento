@@ -32,13 +32,13 @@
       <v-card-actions>
         <div class="flex-grow-1"></div>
         <v-btn color="warning" @click="dialog = false" class="text__14">Cancel</v-btn>
-        <v-btn color="success" @click="dialog = false, createNewCustomer()" class="text__14">Create</v-btn>
+        <v-btn color="success" @click="dialog = false, create()" class="text__14">Create</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 <script>
-import axios from "axios";
+import { mapActions } from "vuex";
 export default {
   props: {
     isSmallBtn: Boolean
@@ -53,20 +53,16 @@ export default {
     };
   },
   methods: {
-    createNewCustomer() {
-      axios
-        .post(`http://34.87.31.23:5000/api/authentication/customers`, {
-          email: this.email,
-          fullName: this.fullname,
-          companyName: this.company,
-          idMarketer: this.$store.getters.getUser.id
-        })
-        .then(rs => {
-          this.$emit("createCustomer");
-        })
-        .catch(er => {
-          console.log(er);
-        });
+    ...mapActions({
+      createCustomer: "authentication/createCustomer"
+    }),
+    create() {
+      this.createCustomer({
+        email: this.email,
+        fullName: this.fullname,
+        companyName: this.company,
+        idMarketer: this.$store.getters.getUser.id
+      });
     }
   }
 };

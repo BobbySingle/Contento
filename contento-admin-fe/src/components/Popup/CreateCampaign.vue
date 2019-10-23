@@ -60,7 +60,14 @@
                       label="Customer"
                     ></v-select>
                   </v-col>
-                  <v-col cols="2" md="2" class="pl-5" style="width:100%;" align-self="center"  justify-self="center">
+                  <v-col
+                    cols="2"
+                    md="2"
+                    class="pl-5"
+                    style="width:100%;"
+                    align-self="center"
+                    justify-self="center"
+                  >
                     <popup-create-customer :isSmallBtn="true"></popup-create-customer>
                   </v-col>
                 </v-row>
@@ -132,7 +139,8 @@ export default {
       content: "",
       customer: [],
       editor: [],
-      title: ""
+      title: "",
+      firstTimeLoad: true
     };
   },
   computed: {
@@ -161,15 +169,17 @@ export default {
       tomorrow.setDate(tomorrow.getDate() + 1);
       this.mintime = tomorrow.toISOString();
       this.title = "";
-      this.$refs.ckeditor.editorData = "Write your request here... ";
+      if (this.firstTimeLoad) {
+        this.content = "Write your request here... ";
+        this.firstTimeLoad = ! this.firstTimeLoad;
+      }else{
+        this.$refs.ckeditor.editorData = "Write your request here... ";
+      }
       this.endtime = "";
       this.tags = "";
       this.editor = "";
       this.customer = "";
     }
-  },
-  mounted() {
-    this.content = "Write your request here... ";
   }
 };
 </script>

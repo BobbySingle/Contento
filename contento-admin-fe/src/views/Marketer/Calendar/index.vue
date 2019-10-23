@@ -46,7 +46,7 @@
             v-model="focus"
             color="primary"
             interval-height="100"
-            :events="listCampaignTaskNotFormated"
+            :events="listCampaignTaskFormated"
             event-color="black"
             :event-margin-bottom="3"
             :now="today"
@@ -143,7 +143,6 @@
   </v-container>
 </template>
 <script>
-import axios from "axios";
 import { mapGetters, mapActions } from "vuex";
 export default {
   data: () => ({
@@ -165,7 +164,7 @@ export default {
   }),
   computed: {
     ...mapGetters(["getUser",
-    "listCampaignTaskNotFormated", "listCampaignTaskFormated"]),
+    , "listCampaignTaskFormated"]),
     title() {
       const { start, end } = this;
       if (!start || !end) {
@@ -215,7 +214,7 @@ export default {
 
     var currentDate = new Date();
     this.today = this.$moment(String(currentDate)).format("YYYY-MM-DD hh:mm");
-    this.fetchdata();
+    this.fetchData();
   },
   methods: {
     ...mapActions({
@@ -228,7 +227,7 @@ export default {
     click(event) {
       console.log(event);
     },
-    async fetchdata() {
+    async fetchData() {
       let campaignID = JSON.parse(sessionStorage["CampaignID"].toString());
       await this.getListCampaignTask(campaignID); 
     },

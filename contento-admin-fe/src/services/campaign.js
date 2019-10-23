@@ -24,3 +24,13 @@ export function getDetailCampaign(campaignID) {
     `http://34.87.31.23:5001/api/campaign/campaigns/${campaignID}`
   );
 }
+export function getListCampaignByCustomerID(customerID) {
+  return axios.get(
+    `http://34.87.31.23:5001/api/campaign/campaigns/customers/${customerID}`
+  );
+}
+export function getListCampaignByEditorID(editorID) {
+  return axios.get(
+    `http://34.87.31.23:5001/api/campaign/campaigns/editor/${editorID}`
+  );
+}
