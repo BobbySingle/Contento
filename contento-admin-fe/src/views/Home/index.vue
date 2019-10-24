@@ -9,7 +9,6 @@ export default {
     let role = this.getUser.role;
     console.log(role);
     if (role === "Marketer") {
-      alert("Here");
       this.$router.push("/CampaignManagement");
     } else if (role === "Editor") {
       this.$router.push("/CampaignRequest");

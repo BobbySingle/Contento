@@ -146,7 +146,7 @@ export default {
   methods: {
     changeWidth() {
       this.computedWidth = this.computedWidth == "" ? "200%" : "";
-      this.panel = [1];
+      this.panel = [2];
     },
     save() {
       this.saveContent({
