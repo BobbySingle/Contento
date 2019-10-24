@@ -41,18 +41,6 @@ export default {
         this.loadAccessToken(user.token);
       }
     }
-    // if (localStorage.getItem("loggedUser") === "true") {
-    //   this.loadLoggedUser(true);
-
-    //   let user = JSON.parse(localStorage.getItem("Profile").toString());
-    //   this.loadUser(user);
-
-    //   let access_token = localStorage.getItem("AccessToken");
-    //   this.loadAccessToken(access_token);
-
-    // } else {
-    //  this.loadLoggedUser(false);
-    // }
   }
 };
 </script>

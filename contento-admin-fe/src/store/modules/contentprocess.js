@@ -12,7 +12,10 @@ import {
   getContentRequest,
   setApprovalContentRequest,
   getTaskByWriterId,
-  startTask
+  startTask,
+  saveContent,
+  submitContent,
+  getListTaskByEditorID
 } from "../../services/contentprocess";
 
 import router from "@/router/index";
@@ -26,7 +29,7 @@ const state = {
   taskDetailUpdate: [],
   listContentRequest: [],
   listTaskByWriterID: [],
-  writerContentDetail:[],
+  listTaskByEditorID: [],
 };
 
 const mutations = {
@@ -67,9 +70,9 @@ const mutations = {
   SET_LIST_TASK_BY_WRITER_ID(state, data) {
     state.listTaskByWriterID = data;
   },
-  SET_WRITER_CONTENT_DETAIL(state, data){
-    state.writerContentDetail = data;
-  }
+  SET_LIST_TASK_BY_EDITOR_ID(state, data) {
+    state.listTaskByEditorID = data;
+  },
 };
 
 const actions = {
@@ -201,12 +204,45 @@ const actions = {
       console.log(error);
     }
   },
-  async startTask({commit}, payload){
+  async startTask({ commit }, payload) {
     try {
       let rs = await startTask(payload);
-      commit("SET_WRITER_CONTENT_DETAIL", rs.data);
+      commit("SET_TASKDETAIL", rs.data);
     } catch (error) {
       console.log("ERROR - START TASK");
+      console.log(error);
+    }
+  },
+  async saveContent({ commit }, payload) {
+    try {
+      let rs = await saveContent(payload);
+      if (rs.status == 200) {
+        alert("Save Success!");
+      }
+    } catch (error) {
+      console.log("ERROR - SAVE CONTENT");
+      console.log(error);
+    }
+  },
+  async submitContent({ commit }, payload) {
+    try {
+      let rs = await submitContent(payload);
+      if (rs.status == 202) {
+        alert("Submit Success!");
+      }
+    } catch (error) {
+      console.log("ERROR - SUBMIT CONTENT");
+      console.log(error);
+    }
+  },
+  async getListTaskByEditorID({ commit }, payload) {
+    try {
+      let rs = await getListTaskByEditorID(payload);
+      commit("SET_LIST_TASK_BY_EDITOR_ID", rs.data);
+      console.log("LIST TASK BY EDITOR ID -ACTION");
+      console.log(rs.data);
+    } catch (error) {
+      console.log("ERROR - LIST TASK BY EDITOR ID");
       console.log(error);
     }
   }

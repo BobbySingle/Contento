@@ -33,6 +33,6 @@ const getters = {
   taskDetailUpdate: state => state.contentprocess.taskDetailUpdate,
   listContentRequest: state => state.contentprocess.listContentRequest,
   listTaskByWriterID: state => state.contentprocess.listTaskByWriterID,
-  writerContentDetail: state => state.contentprocess.writerContentDetail,
+  listTaskByEditorID: state => state.contentprocess.listTaskByEditorID,
 };
 export default getters;

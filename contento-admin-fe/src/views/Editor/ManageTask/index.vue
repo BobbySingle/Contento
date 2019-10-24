@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1 class="text__h1">Task Management</h1>
+      <h1 class="text__h1">Manage Task</h1>
     </v-row>
     <!-- /**Begin Search  */ -->
     <v-row no-gutters class="mx-10">
-      <v-col cols="12">
+      <v-col sm="8" md="9">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
           <input
@@ -26,7 +26,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listTaskByWriterID"
+            :items="listTaskByEditorID"
             :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
@@ -36,35 +36,33 @@
             @page-count="pageCount = $event"
           >
             <template v-slot:item.campaign="{item}">
-              <v-col class="text__14" style="display:flex; align-items:center;">
+              <v-col
+                class="text__14"
+                style="display:flex; align-items:center;"            
+              >
                 <div>
                   <span class="content-inner-table text__14">{{item.campaign}}</span>
                 </div>
               </v-col>
             </template>
-            <template v-slot:item.title="{item}">
+            <template v-slot:item.modifiedDate="{item}">{{item.modifiedDate | moment("HH:mm DD/MM/YYYY")}}</template>
+            <template v-slot:item.deadline="{item}"> {{item.deadline| moment("HH:mm DD/MM/YYYY")}}</template>
+            <template v-slot:item.contentTitle="{item}">
               <div class="content_details">
                 <div>
-                  <span class="text__14">{{ item.title }}</span>
+                  <span class="text__14">{{ item.contentTitle }}</span>
                 </div>
               </div>
-            </template>
-            <template v-slot:item.deadline="{item}">
-              <span>{{item.deadline | moment("HH:mm DD/MM/YYYY")}}</span>
-            </template>
-            <template v-slot:item.modifiedDate="{item}">
-              <span>{{item.modifiedDate | moment("HH:mm DD/MM/YYYY")}}</span>
             </template>
             <template v-slot:item.status="{ item }">
               <v-chip
                 :color="item.status.color"
-                style="color:white;"
+                style="color:white"
                 class="text__14"
               >{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.action="{ item }">
-              <v-btn color="primary" v-if="item.status.id === 2" @click="changeToWork(item.id)">Work</v-btn>
-              <v-btn color="secondary" v-if="item.status.id === 1" @click="start(item.id)">Start</v-btn>
+              <v-btn color="primary" v-if="item.status.id === 3" @click="changeToReview(item.id)">Review</v-btn>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -79,9 +77,9 @@
 </template>
 
 <script>
+import moment from 'moment';
 import axios from "axios";
-import momemt from "moment";
-import { mapGetters, mapActions } from "vuex";
+import {mapGetters, mapActions} from 'vuex'
 export default {
   data() {
     return {
@@ -116,31 +114,21 @@ export default {
     };
   },
   methods: {
-    changeToWork(id) {
-      sessionStorage.setItem("TaskID", id);
-      this.$router.push("/WriteContent");
+    changeToReview(event) {
+      sessionStorage.setItem("ContentRequestID", event);
+      this.$router.push("/ReviewContent");
     },
-    async start(id) {
-      sessionStorage.setItem("TaskID", id);
-      await this.startTask({ idTask: id });
-      this.$router.push("/WriteContent");
-    },
-    ...mapActions({
-      getTaskByWriterId: "contentprocess/getTaskByWriterId",
-      startTask: "contentprocess/startTask"
-    }),
-    fetchData() {
-      this.getTaskByWriterId(this.$store.getters.getUser.id);
+    ...mapActions({getListTaskByEditorID: "contentprocess/getListTaskByEditorID"}),
+    fetchData(){
+      this.getListTaskByEditorID(this.$store.getters.getUser.id);
     }
   },
   computed: {
-    ...mapGetters(["getUser", "listTaskByWriterID"])
+    ...mapGetters(["getUser","listTaskByEditorID"])
   },
   created() {
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
     let role = this.getUser.role;
-    if (role !== "Writer" && role != null) {
+    if (role !== "Editor" && role != null) {
       this.$router.push("/403");
     } else if (role == null) {
       this.$store.state.authentication.loggedUser = false;

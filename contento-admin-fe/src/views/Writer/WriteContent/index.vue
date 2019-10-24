@@ -54,16 +54,33 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-col>
+        <v-col cols="12">
+          <v-expansion-panel>
+            <v-expansion-panel-header class="text__14">Request Details:</v-expansion-panel-header>
+            <v-expansion-panel-content class="py-2">
+              <div class="my-1">
+                <div v-html="requestData" class="content px-2 py-4"></div>
+              </div>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-col>
         <v-row no-gutters>
           <v-col cols="6">
             <v-expansion-panel>
               <v-expansion-panel-header class="text__14">Content Details:</v-expansion-panel-header>
-              <v-expansion-panel-content class="my-2 py-2">
-                <v-text-field v-model="name" :value="name"></v-text-field>
-                <div class="work">
+              <v-expansion-panel-content
+                class="expansion-bg"
+                v-bind:style="{ width: computedWidth}"
+              >
+                <v-row class=".flex-nowrap" align="center">
+                  <v-text-field v-model="name" :value="name" class="mr-2"></v-text-field>
+                  <v-btn v-on:click="changeWidth()">Normal/Wide Screen</v-btn>
+                </v-row>
+                <div>
                   <CKEditor ref="ckeditor" class="content" :content="content" />
                   <v-row justify="center" class="flex-nowrap my-2">
-                    <v-btn color="warning" class="mx-1" @click="$router.go(-1)">Cancel</v-btn>
+                    <v-btn color="secondary" class="mx-1" @click="$router.go(-1)">Cancel</v-btn>
+                    <v-btn color="warning" class="mx-1" @click="save()">Save</v-btn>
                     <v-btn color="primary" class="mx-1" @click="submit()">Submit</v-btn>
                   </v-row>
                 </div>
@@ -72,17 +89,9 @@
           </v-col>
           <v-col cols="6">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14">Request Details:</v-expansion-panel-header>
-              <v-expansion-panel-content class="py-2">
-                <div class="request my-1">
-                  <div v-html="requestData" class="content px-2 py-4"></div>
-                </div>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-            <v-expansion-panel>
               <v-expansion-panel-header class="text__14">Editor Comment:</v-expansion-panel-header>
               <v-expansion-panel-content class="py-2">
-                <div class="comment my-1">
+                <div class="my-1">
                   <div v-html="commentData" class="content px-2 pt-12"></div>
                 </div>
               </v-expansion-panel-content>
@@ -98,12 +107,12 @@
 <script>
 import CKEditor from "../../../components/CKEditor/Ckeditor5.vue";
 import { mapGetters, mapActions } from "vuex";
-import moment from 'moment';
+import moment from "moment";
 export default {
   components: { CKEditor },
   data() {
     return {
-      panel: [0, 1, 2],
+      panel: [0, 2, 3],
       radios: "",
       requestData: "",
       commentData: "",
@@ -114,20 +123,14 @@ export default {
       deadline: "",
       publishTime: "",
       name: "",
-      idContent: ""
+      idContent: "",
+      computedWidth: ""
     };
   },
-  methods: {
-    submit() {
-      console.log(this.$refs.ckeditor.editorData);
-    }
-  },
   computed: {
-    ...mapGetters(["getUser", "writerContentDetail"])
+    ...mapGetters(["getUser", "taskDetail"])
   },
   created() {
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
     let role = this.getUser.role;
     if (role !== "Writer" && role != null) {
       this.$router.push("/403");
@@ -137,32 +140,62 @@ export default {
     }
   },
   mounted() {
-    this.requestData = this.writerContentDetail.description;
-    this.content = this.writerContentDetail.content.content;
-    this.name = this.writerContentDetail.content.name;
-    this.idContent = this.writerContentDetail.content.id;
-    this.tags = this.writerContentDetail.tags;
-    this.title = this.writerContentDetail.title;
-    this.campaign = this.writerContentDetail.campaign;
-    this.deadline = this.writerContentDetail.deadline;
-    this.publishTime = this.writerContentDetail.publishTime;
-    this.commentData = this.writerContentDetail.comment;
+    this.fetchData();
+  },
+
+  methods: {
+    changeWidth() {
+      this.computedWidth = this.computedWidth == "" ? "200%" : "";
+      this.panel = [1];
+    },
+    save() {
+      this.saveContent({
+        id: this.idContent,
+        name: this.name,
+        content: this.$refs.ckeditor.editorData
+      });
+    },
+    async submit() {
+      let TaskID = sessionStorage.getItem("TaskID");
+      await this.submitContent({
+        idTask: TaskID,
+        idContent: this.idContent,
+        name: this.name,
+        content: this.$refs.ckeditor.editorData
+      });
+      this.$router.push("/TaskManagement");
+    },
+    ...mapActions({
+      getTaskDetail: "contentprocess/getTaskDetail",
+      setApprovalContentRequest: "contentprocess/setApprovalContentRequest",
+      saveContent: "contentprocess/saveContent",
+      submitContent: "contentprocess/submitContent"
+    }),
+    async fetchData() {
+      let TaskID = sessionStorage.getItem("TaskID");
+      await this.getTaskDetail(TaskID);
+      this.requestData = this.taskDetail.description;
+      this.content =
+        this.taskDetail.content.content == null
+          ? ""
+          : this.taskDetail.content.content;
+      this.name = this.taskDetail.content.name;
+      this.idContent = this.taskDetail.content.id;
+      this.tags = this.taskDetail.tags;
+      this.title = this.taskDetail.title;
+      this.campaign = this.taskDetail.campaign;
+      this.deadline = this.taskDetail.deadline;
+      this.publishTime = this.taskDetail.publishTime;
+      this.commentData = this.taskDetail.comment.comment;
+    }
   }
 };
 </script>
 
 <style scoped>
-.comment {
-  min-height: 572px;
-  max-height: 572px;
-}
-.request {
-  min-height: 572px;
-  max-height: 572px;
-}
-.work {
-  min-height: 620px;
-  max-height: 620px;
+.expansion-bg {
+  background-color: white;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
 }
 ::v-deep .content {
   max-height: 500px;

@@ -62,13 +62,13 @@
                 <v-col sm="11" md="11">
                   <span style="color:grey; font-weight:300; font-size:12px;">Publish Time</span>
                   <datetime
-                    title="End Time"
+                    title="Publish Time"
                     type="datetime"
-                    placeholder="Select End-date"
+                    placeholder="Select Publish Time"
                     input-class="datetime"
                     input-style="cursor:pointer;"
                     class="endtime text__14"
-                    v-model="endDate"
+                    v-model="publishTime"
                   ></datetime>
                 </v-col>
               </v-row>
@@ -94,7 +94,7 @@
             </v-col>
           </v-row>
           <v-row justify="end">
-            <v-btn color="primary" class="text__14">Publish</v-btn>
+            <v-btn color="primary" class="text__14" @click="publish()">Publish</v-btn>
           </v-row>
         </v-col>
       </v-row>
@@ -117,7 +117,7 @@ export default {
       tags: [],
       title: "",
       name: "",
-      endDate: "",
+      publishTime: "",
       writer: "",
       editor: ""
     };
@@ -125,19 +125,29 @@ export default {
   methods: {
     ...mapActions({
       getTaskDetail: "contentprocess/getTaskDetail",
-      getListTag: "contentprocess/getListTag"
+      getListTag: "contentprocess/getListTag",
+      publishContent: "batchjob/publishContent"
     }),
     async fetchData() {
       let contentID = JSON.parse(sessionStorage.getItem("ContentID"));
       await this.getTaskDetail(contentID);
       this.title = this.taskDetail.title;
-      this.endDate = this.$moment(this.taskDetail.publishTime).toISOString();
+      this.publishTime = this.$moment(
+        this.taskDetail.publishTime
+      ).toISOString();
       this.writer = this.taskDetail.writer.name;
       this.editor = this.taskDetail.editor.name;
       this.content = this.taskDetail.content.content;
       this.tags = this.taskDetail.tags;
       this.name = this.taskDetail.content.name;
       this.getListTag();
+    },
+    publish() {
+      let contentID = JSON.parse(sessionStorage.getItem("ContentID"));
+      this.publishContent({
+        id: this.taskDetail.content.id,
+        time: this.publishTime
+      });
     }
   },
   computed: {

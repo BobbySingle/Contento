@@ -55,35 +55,41 @@
           </v-expansion-panel>
         </v-col>
         <v-row no-gutters>
-          <v-col cols="6">
+          <v-col cols="12">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14">Content Details:</v-expansion-panel-header>
-              <v-expansion-panel-content class="my-2 py-2">
-                <v-text-field v-model="name" :value="name"></v-text-field>
-                <div class="work">
-                  <CKEditor ref="ckeditor" class="content" :content="content" />
+              <v-expansion-panel-header class="text__14">Request Details:</v-expansion-panel-header>
+              <v-expansion-panel-content class="py-2">
+                <div class="my-1">
+                  <div v-html="requestDetails" class="content px-2 py-4"></div>
                 </div>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="12">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14">Request Details:</v-expansion-panel-header>
-              <v-expansion-panel-content class="py-2">
-                <div class="work my-1">
-                  <div v-html="requestDetails" class="content px-2 py-4"></div>
-
-                  <v-row justify="center" class="flex-nowrap">
-                    <v-radio-group v-model="radios" row>
-                      <v-radio label="Reject" value="false"></v-radio>
-                      <v-radio label="Approve" value="true"></v-radio>
-                    </v-radio-group>
-                  </v-row>
-                  <v-row justify="center" class="flex-nowrap">
-                    <v-btn color="warning" class="mx-1" @click="$router.go(-1)">Cancel</v-btn>
-                    <v-btn color="primary" class="mx-1" @click="submit()">Submit</v-btn>
-                  </v-row>
+              <v-expansion-panel-header class="text__14">Content Details:</v-expansion-panel-header>
+              <v-expansion-panel-content
+                class="my-2 py-2 expansion-bg"
+                v-bind:style="{ width: computedWidth}"
+              >
+                <v-row class=".flex-nowrap" align="center">
+                  <v-text-field v-model="name" :value="name" class="mr-2"></v-text-field>
+                  <!-- <v-btn class="d-none d-md-block" v-on:click="changeWidth()">Normal/Wide Screen</v-btn> -->
+                </v-row>
+                <div class="work">
+                  <CKEditor ref="ckeditor" class="content" :content="content" />
                 </div>
+
+                <v-row justify="center" class="flex-nowrap">
+                  <v-radio-group v-model="radios" row>
+                    <v-radio label="Reject" value="false"></v-radio>
+                    <v-radio label="Approve" value="true"></v-radio>
+                  </v-radio-group>
+                </v-row>
+                <v-row justify="center" class="flex-nowrap">
+                  <v-btn color="warning" class="mx-1" @click="$router.go(-1)">Cancel</v-btn>
+                  <v-btn color="primary" class="mx-1" @click="submit()">Submit</v-btn>
+                </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-col>
@@ -113,33 +119,33 @@ export default {
       publishTime: "",
       comment: [],
       name: "",
-      idContent: ""
+      idContent: "",
+      computedWidth: ""
     };
   },
   methods: {
-    submit() {
+    // changeWidth() {
+    //   this.computedWidth = this.computedWidth == "" ? "200%" : "";
+    //   this.panel = [1];
+    // },
+    async submit() {
       let ContentRequestID = sessionStorage.getItem("ContentRequestID");
-      alert(this.radios);
       if (this.radios === "true") {
-        this.setApprovalContentRequest(
-          {
+        await this.setApprovalContentRequest({
           idTask: ContentRequestID,
           idContent: this.idContent,
           comments: this.$refs.ckeditor.editorData,
           name: this.name,
           button: true
-        }
-        );
-
+        });
       } else if (this.radios === "false") {
-        this.setApprovalContentRequest(
-          {
+        await this.setApprovalContentRequest({
           idTask: ContentRequestID,
           idContent: this.idContent,
           comments: this.$refs.ckeditor.editorData,
           name: this.name,
           button: false
-        })
+        });
       } else {
         alert("Choose Reject - Accept");
       }
@@ -153,7 +159,10 @@ export default {
       let ContentRequestID = sessionStorage.getItem("ContentRequestID");
       await this.getTaskDetail(ContentRequestID);
       this.requestDetails = this.taskDetail.description;
-      this.content = this.taskDetail.content.content;
+      this.content =
+        this.taskDetail.content.content == null
+          ? ""
+          : this.taskDetail.content.content;
       this.name = this.taskDetail.content.name;
       this.idContent = this.taskDetail.content.id;
       this.tags = this.taskDetail.tags;
@@ -161,7 +170,7 @@ export default {
       this.campaign = this.taskDetail.campaign;
       this.deadline = this.taskDetail.deadline;
       this.publishTime = this.taskDetail.publishTime;
-      this.comment = this.taskDetail.comment;
+      this.comment = this.taskDetail.comment.comment;
     }
   },
   computed: {
@@ -183,9 +192,9 @@ export default {
 </script>
 
 <style scoped>
-.work {
-  min-height: 600px;
-  max-height: 600px;
+.expansion-bg {
+  background-color: white;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.75);
 }
 ::v-deep .content {
   max-height: 500px;

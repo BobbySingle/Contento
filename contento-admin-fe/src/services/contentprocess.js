@@ -72,3 +72,15 @@ export function startTask(taskID) {
     `http://34.87.31.23:5002/api/contentprocess/content/task/campaign/start`, taskID
   );
 }
+
+export function saveContent(content) {
+  return axios.put(`http://34.87.31.23:5002/api/contentprocess/content/task/campaign`, content);
+}
+
+export function submitContent(content) {
+  return axios.put(`http://34.87.31.23:5002/api/contentprocess/content/task/campaign/submit`, content);
+}
+
+export function getListTaskByEditorID(editorID) {
+  return axios.get(`http://34.87.31.23:5002/api/contentprocess/all-task/editor/${editorID}`);
+}

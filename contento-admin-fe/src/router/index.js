@@ -15,7 +15,7 @@ import CampaignRequest from "../views/Editor/CampaignRequest/index.vue";
 import ContentRequest from "../views/Editor/ContentRequest/index.vue";
 import CampaignRequestDetails from "../views/Editor/CampaignRequestDetails/index.vue";
 import ReviewContent from "../views/Editor/ReviewContent/index.vue";
-
+import ManageTask from "../views/Editor/ManageTask/index.vue";
 
 Vue.use(Router);
 
@@ -37,16 +37,6 @@ export default new Router({
       path: "/CampaignManagement",
       name: "CampaignManagement",
       component: CampaignManagement
-    },
-    {
-      path: "/TaskManagement",
-      name: "TaskManagement",
-      component: TaskManagement
-    },
-    {
-      path: "/WriteContent",
-      name: "WriteContent",
-      component: WriteContent
     },
     {
       path: "/CampaignDetails",
@@ -98,6 +88,22 @@ export default new Router({
       path: "/ReviewContent",
       name: "ReviewContent",
       component: ReviewContent
+    },
+    {
+      path: "/ManageTask",
+      name: "ManageTask",
+      component: ManageTask
+    },
+    /**Writer */
+    {
+      path: "/TaskManagement",
+      name: "TaskManagement",
+      component: TaskManagement
+    },
+    {
+      path: "/WriteContent",
+      name: "WriteContent",
+      component: WriteContent
     },
   ]
 });
