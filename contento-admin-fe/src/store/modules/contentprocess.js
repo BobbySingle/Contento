@@ -26,6 +26,7 @@ const state = {
   taskDetailUpdate: [],
   listContentRequest: [],
   listTaskByWriterID: [],
+  writerContentDetail:[],
 };
 
 const mutations = {
@@ -65,6 +66,9 @@ const mutations = {
   },
   SET_LIST_TASK_BY_WRITER_ID(state, data) {
     state.listTaskByWriterID = data;
+  },
+  SET_WRITER_CONTENT_DETAIL(state, data){
+    state.writerContentDetail = data;
   }
 };
 
@@ -199,7 +203,8 @@ const actions = {
   },
   async startTask({commit}, payload){
     try {
-      await startTask(payload);
+      let rs = await startTask(payload);
+      commit("SET_WRITER_CONTENT_DETAIL", rs.data);
     } catch (error) {
       console.log("ERROR - START TASK");
       console.log(error);

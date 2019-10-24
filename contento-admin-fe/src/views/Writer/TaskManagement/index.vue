@@ -117,9 +117,10 @@ export default {
   },
   methods: {
     changeToWork(id) {
+        sessionStorage.setItem("TaskID",id);
+        this.$router.push("/WriteContent");
     },
    async start(id){
-      sessionStorage.setItem("TaskID",id);
       await this.startTask({idTask:id});
       this.$router.push("/WriteContent");
     },
