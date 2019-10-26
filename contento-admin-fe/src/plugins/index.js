@@ -1,3 +1,6 @@
 import '@/plugins/vuedatetime.js'
 import '@/plugins/ckeditor.js'
 import '@/plugins/firebase.js'
+import '@/plugins/notification.js'
+import '@/plugins/swal2.js'
+import '@/plugins/vuelidate.js'

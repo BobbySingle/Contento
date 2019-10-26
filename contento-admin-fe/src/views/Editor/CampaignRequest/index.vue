@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1 class="text__h1">Campaign Request</h1>
+      <h1 class="text__h1">Approve request</h1>
     </v-row>
     <!-- /**Begin Search  */ -->
     <v-row no-gutters class="mx-10">
@@ -122,7 +122,6 @@ export default {
     ...mapGetters(["getUser", "listCampaignByEditorID"])
   },
   created() {
-    axios.defaults.headers.common["Authorization"] = "Bearer " + this.$store.getters.getAccessToken;
     let role = this.getUser.role;
     if (role !== "Editor" && role != null) {
       this.$router.push("/403");

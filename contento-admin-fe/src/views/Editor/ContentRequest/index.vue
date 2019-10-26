@@ -102,7 +102,7 @@ export default {
         },
         { text: "Title", value: "title", sortable: false, width: "30%" },
         {
-          text: "Release",
+          text: "Last Update",
           value: "modifiedDate",
           align: "center",
           width: "12.5%"
@@ -127,6 +127,7 @@ export default {
     ...mapGetters(["getUser","listContentRequest"])
   },
   created() {
+     axios.defaults.headers.common["Authorization"] = "Bearer " + this.$store.getters.getAccessToken;
     let role = this.getUser.role;
     if (role !== "Editor" && role != null) {
       this.$router.push("/403");

@@ -19,6 +19,7 @@ import {
 } from "../../services/contentprocess";
 
 import router from "@/router/index";
+import Vue from "vue";
 
 const state = {
   listCampaignTask: [],
@@ -121,10 +122,23 @@ const actions = {
   async createTask({ commit }, data) {
     try {
       let rs = await createTask(data);
-      commit("SET_NEWTASK", rs.data);
-      alert("Create Success");
+      if (rs.status == 202) {
+        commit("SET_NEWTASK", rs.data);
+        Vue.notify({
+          group: 'notice',
+          title: 'Create successful!',
+          text: 'Task has been created successfully!',
+          type: 'suc'
+        });
+        return 202;
+      }
     } catch (error) {
-      alert("Create Fail");
+      Vue.notify({
+        group: 'notice',
+        title: 'Create Failed!',
+        text: 'Task has been created failed!',
+        type: 'warn'
+      });
       console.log("ERROR - CREATE TASK");
       console.log(error);
     }
@@ -132,24 +146,50 @@ const actions = {
   async editTaskByID({ commit }, data) {
     try {
       let rs = await editTaskByID(data);
-      commit("UPDATE_LISTTASK", rs.data);
-      console.log("EDIT LIST TASK - ACTION");
-      console.log(rs.data);
-      alert("Edit Success");
+      if (rs.status == 202) {
+        commit("UPDATE_LISTTASK", rs.data);
+        console.log("EDIT LIST TASK - ACTION");
+        console.log(rs.data);
+        Vue.notify({
+          group: 'notice',
+          title: 'Edit successful!',
+          text: 'Task has been edited successfully!',
+          type: 'suc'
+        });
+        return 202;
+      }
     } catch (error) {
-      alert("Edit Fail");
+      Vue.notify({
+        group: 'notice',
+        title: 'Edit failed!',
+        text: 'Task has been edited failed!',
+        type: 'suc'
+      });
       console.log("ERROR - EDIT TASK");
       console.log(error);
     }
   },
   async deleteTaskByID({ commit }, id) {
     try {
-      await deleteTaskByID(id);
-      commit("DELETE_TASK", id);
-      alert("Delete Success");
+      let rs = await deleteTaskByID(id);
+      if (rs.status == 200) {
+        commit("DELETE_TASK", id);
+        Vue.notify({
+          group: 'notice',
+          title: 'Delete successful!',
+          text: 'Task has been deleted successfully!',
+          type: 'suc'
+        });
+      }
     } catch (error) {
       console.log("ERROR - DELETE TASK");
       console.log(error);
+      Vue.notify({
+        group: 'notice',
+        title: 'Delete Failed!',
+        text: 'Task has been deleted failed!',
+        type: 'warn'
+      });
     }
   },
   async getListTagByCampaignID({ commit }, payload) {

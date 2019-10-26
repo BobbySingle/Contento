@@ -1,7 +1,7 @@
  <template>
   <v-dialog v-model="dialog" persistent width="400px">
     <template v-slot:activator="{ on }">
-      <v-btn color="warning" class="mr-2 text__14" v-on="on">Edit</v-btn>
+      <v-btn color="warning" class="mr-2 text__14" v-on="on" @click="clickEdit()">Edit</v-btn>
     </template>
     <v-card>
       <v-row class="mx-4 mb-4" justify="center">
@@ -54,7 +54,7 @@
       <v-card-actions>
         <div class="flex-grow-1"></div>
         <v-btn color="warning" @click="dialog = false" class="text__14">Cancel</v-btn>
-        <v-btn color="success" @click="dialog = false, update()" class="text__14">Update</v-btn>
+        <v-btn color="success" @click="update()" class="text__14">Update</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -82,28 +82,24 @@ export default {
   },
   methods: {
     ...mapActions({ editCustomer: "authentication/editCustomer" }),
-
-    update() {
-      console.log(this.id + this.email +  this.fullname +  this.company);
-      this.editCustomer({
+    clickEdit() {
+      this.fullname = this.customer.fullName;
+      this.email = this.customer.email;
+      this.phone = this.customer.phone;
+      this.company = this.customer.companyName;
+      this.id = this.customer.id;
+    },
+    async update() {
+      console.log(this.id + this.email + this.fullname + this.company);
+      let status = await this.editCustomer({
         id: this.id,
         email: this.email,
         fullName: this.fullname,
         companyName: this.company
       });
-      // axios
-      //   .put(`http://34.87.31.23:5000/api/authentication/customers`, {
-      //     id: this.id,
-      //     email: this.email,
-      //     fullName: this.fullname,
-      //     companyName: this.company,
-      //   })
-      //   .then(rs => {
-      //     this.$emit("editCustomer");
-      //   })
-      //   .catch(er => {
-      //     console.log(er);
-      //   });
+      if (status == 202) {
+        this.dialog = false;
+      }
     }
   }
 };

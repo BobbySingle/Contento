@@ -102,7 +102,7 @@ export default {
         },
         { text: "Title", value: "title", sortable: false, width: "30%" },
         {
-          text: "Release",
+          text: "Last Update",
           value: "modifiedDate",
           align: "center",
           width: "12.5%"

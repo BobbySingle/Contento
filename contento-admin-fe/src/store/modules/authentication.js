@@ -9,6 +9,8 @@ import {
   getListWriter
 } from "../../services/authentication";
 import router from "@/router/index";
+import Swal from 'sweetalert2';
+import Vue from 'vue'
 
 const state = {
   access_token: "",
@@ -59,26 +61,32 @@ const actions = {
   async login({ commit }, payload) {
     try {
       let rs = await login(payload.email, payload.password);
-      commit("SET_LOGGEDUSER", true);
-      commit("SET_ACCESS_TOKEN", rs.data.token);
-      commit("SET_USER", rs.data);
-      localStorage.setItem("Profile", JSON.stringify(rs.data));
-      alert("Login Success");
-      if (rs.data.role === "Marketer") {
-        router.push({
-          name: "CampaignManagement"
-        });
-      } else if (rs.data.role === "Editor") {
-        router.push({
-          name: "CampaignRequest"
-        });
-      } else if (rs.data.role === "Writer") {
-        router.push({
-          name: "TaskManagement"
-        });
+      if (rs.status == 200) {
+        await Swal.fire({
+          title: 'Success',
+          text: "You have successfully logged in!",
+          type: 'success',
+          confirmButtonText: "OK",
+          timer: 3000,
+          allowOutsideClick: false
+        }).then(result => {
+          commit("SET_LOGGEDUSER", true);
+          commit("SET_ACCESS_TOKEN", rs.data.token);
+          commit("SET_USER", rs.data);
+          localStorage.setItem("Profile", JSON.stringify(rs.data));
+        })
       }
     } catch (error) {
-      alert("Login Fail");
+      Swal.fire(
+        {
+          title: 'Warning',
+          text: "Your email or password is incorrect. Please try again!",
+          type: 'warning',
+          confirmButtonText: "OK",
+          timer: 3000,
+          allowOutsideClick: false
+        }
+      );
       console.log("ERROR - LOGIN ACTION");
       console.log(error);
     }
@@ -98,28 +106,55 @@ const actions = {
   async createCustomer({ commit }, payload) {
     try {
       let rs = await createCustomer(payload);
-      console.log("NEW LIST INFO CUSTOMER - ACTION");
-      console.log(rs.data);
-      commit("SET_NEW_LISTINFOCUSTOMER", rs.data);
-      commit("SET_NEW_LISTCUSTOMER", {
-        id: rs.data.id,
-        name: rs.data.fullName
-      });
-      alert("Create Success");
+      if (rs.status == 202) {
+        console.log("NEW LIST INFO CUSTOMER - ACTION");
+        console.log(rs.data);
+        commit("SET_NEW_LISTINFOCUSTOMER", rs.data);
+        commit("SET_NEW_LISTCUSTOMER", {
+          id: rs.data.id,
+          name: rs.data.fullName
+        });
+        Vue.notify({
+          group: 'notice',
+          title: 'Create successful!',
+          text: 'Customer has been created successfully!',
+          type: 'suc'
+        });
+        return 202;
+      }
     } catch (error) {
       console.log("ERROR - NEW LIST INFO CUSTOMER");
       console.log(error);
-      alert("Create Fail");
+      Vue.notify({
+        group: 'notice',
+        title: 'Create failed!',
+        text: 'Customer has been created failed!',
+        type: 'warn'
+      })
     }
   },
   async editCustomer({ commit }, payload) {
     try {
       let rs = await editCustomer(payload);
-      console.log("EDIT LIST INFO CUSTOMER - ACTION");
-      console.log(rs.data);
-      commit("UPDATE_LISTINFOCUSTOMER", rs.data);
-      alert("Edit Success");
+      if (rs.status == 202) {
+        console.log("EDIT LIST INFO CUSTOMER - ACTION");
+        console.log(rs.data);
+        commit("UPDATE_LISTINFOCUSTOMER", rs.data);
+        Vue.notify({
+          group: 'notice',
+          title: 'Edit successful!',
+          text: 'Customer has been edited successfully!',
+          type: 'suc'
+        })
+        return 202;
+      }
     } catch (error) {
+      Vue.notify({
+        group: 'notice',
+        title: 'Edit failed!',
+        text: 'Customer has been edited failed!',
+        type: 'warn'
+      })
       console.log("ERROR - EDIT LIST INFO CUSTOMER");
       console.log(error);
     }

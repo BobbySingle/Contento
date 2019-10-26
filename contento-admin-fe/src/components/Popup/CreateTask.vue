@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" scrollable width="600px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" v-on="on">Create Task</v-btn>
+      <v-btn color="primary" v-on="on" @click="clickCreate()">Create Task</v-btn>
     </template>
     <v-card>
       <v-toolbar dark color="primary">
@@ -11,7 +11,7 @@
         <v-toolbar-title>Create Task</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="dialog = false,  create()">Create</v-btn>
+          <v-btn dark text @click="create()">Create</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
@@ -139,11 +139,12 @@ export default {
       content: "",
       customer: [],
       writer: [],
-      title: ""
+      title: "",
+      firstTimeLoad: true
     };
   },
-  computed:{
-...mapGetters(["listWriter","listTagByCampaignID"])
+  computed: {
+    ...mapGetters(["listWriter", "listTagByCampaignID"])
   },
   mounted() {
     let now = new Date();
@@ -151,23 +152,32 @@ export default {
     this.maxtime = sessionStorage.getItem("Task-MaxTime");
   },
   methods: {
-    ...mapActions({createTask: "contentprocess/createTask"}),
-    create() {
+    ...mapActions({ createTask: "contentprocess/createTask" }),
+    async create() {
       let campaignID = sessionStorage.getItem("CampaignID");
-      this.createTask({
-          idCampaign: campaignID,
-          idWriter: this.writer,
-          title: this.title,
-          description: this.$refs.ckeditor.editorData,
-          deadline: this.endtime,
-          publishTime: this.publishTime,
-          tags: this.selectedTags
-      })
-      /**Clear Data */
+      let status = await this.createTask({
+        idCampaign: campaignID,
+        idWriter: this.writer,
+        title: this.title,
+        description: this.$refs.ckeditor.editorData,
+        deadline: this.endtime,
+        publishTime: this.publishTime,
+        tags: this.selectedTags
+      });
+      if (status == 202) {
+        this.dialog = false;
+      }
+    },
+    clickCreate() {
       this.selectedTags = [];
       this.endtime = "";
       this.publishTime = "";
-      this.content = "";
+      if (this.firstTimeLoad) {
+        this.content = "Write your request here... ";
+        this.firstTimeLoad = !this.firstTimeLoad;
+      } else {
+        this.$refs.ckeditor.editorData = "Write your request here... ";
+      }
       this.customer = [];
       this.writer = [];
       this.title = "";

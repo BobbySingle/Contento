@@ -63,7 +63,7 @@
               >{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.action="{ item }">
-              <v-btn color="primary" v-if="item.status.id === 2" @click="changeToWork(item.id)">Work</v-btn>
+              <v-btn color="primary" v-if="item.status.id === 2" @click="changeToWork(item.id)">Continue</v-btn>
               <v-btn color="secondary" v-if="item.status.id === 1" @click="start(item.id)">Start</v-btn>
             </template>
           </v-data-table>
@@ -104,7 +104,7 @@ export default {
         },
         { text: "Title", value: "title", sortable: false, width: "30%" },
         {
-          text: "Release",
+          text: "Last Update",
           value: "modifiedDate",
           align: "center",
           width: "12.5%"

@@ -7,7 +7,7 @@ import {
   getListCampaignByCustomerID,
   getListCampaignByEditorID
 } from "../../services/campaign";
-
+import Vue from 'vue'
 const state = {
   listCampaign: [],
   detailCampaign: [],
@@ -53,12 +53,25 @@ const actions = {
   async createCampaign({ commit }, payload) {
     try {
       let rs = await createCampaign(payload);
-      commit("SET_NEWCAMPAIGN", rs.data);
-      console.log("CREATE CAMPAIGN ACTION");
-      console.log(rs.data);
-      alert("Create Success");
+      if (rs.status == 202) {
+        commit("SET_NEWCAMPAIGN", rs.data);
+        console.log("CREATE CAMPAIGN ACTION");
+        console.log(rs.data);
+        Vue.notify({
+          group: 'notice',
+          title: 'Create successful!',
+          text: 'Campaign has been created successfully!',
+          type: 'suc'
+        });
+        return 202;
+      }
     } catch (error) {
-      alert("Create Fails");
+      Vue.notify({
+        group: 'notice',
+        title: 'Create Failed!',
+        text: 'Campaign has been created failed!',
+        type: 'err'
+      });
       console.log("ERROR - CREATE CAMPAIGN ACTION");
       console.log(error);
     }
@@ -66,12 +79,25 @@ const actions = {
   async editCampaign({ commit }, payload) {
     try {
       let rs = await editCampaign(payload);
+      if(rs.status == 202){
       commit("UPDATE_CAMPAIGN", rs.data);
       console.log("UPDATE CAMPAIGN ACTION");
       console.log(rs.data);
-      alert("Update Success");
+      Vue.notify({
+        group: 'notice',
+        title: 'Edit successful!',
+        text: 'Campaign has been edited successfully!',
+        type: 'suc'
+      });
+      return 202;
+      }
     } catch (error) {
-      alert("Update Fails");
+      Vue.notify({
+        group: 'notice',
+        title: 'Edit failed!',
+        text: 'Campaign has been edited failed!',
+        type: 'err'
+      });
       console.log("ERROR - UPDATE CAMPAIGN ACTION");
       console.log(error);
     }

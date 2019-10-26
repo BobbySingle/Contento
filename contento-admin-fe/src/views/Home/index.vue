@@ -11,7 +11,7 @@ export default {
     if (role === "Marketer") {
       this.$router.push("/CampaignManagement");
     } else if (role === "Editor") {
-      this.$router.push("/CampaignRequest");
+      this.$router.push("/ContentRequest");
     } else if (role === "Writer") {
       this.$router.push("/TaskManagement");
     } else {

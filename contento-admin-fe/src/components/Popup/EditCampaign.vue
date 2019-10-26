@@ -13,7 +13,7 @@
         <v-toolbar-title>Edit Campaign</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="dialog = false,  update()">Save</v-btn>
+          <v-btn dark text @click="update()">Save</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
@@ -169,8 +169,8 @@ export default {
         this.id = this.detailCampaign.id;
       }
     },
-    update() {
-      this.editCampaign({
+    async update() {
+      let status = await this.editCampaign({
         id: this.id,
         title: this.title,
         description: this.$refs.ckeditor.editorData,
@@ -179,6 +179,9 @@ export default {
         editor: this.editor,
         customer: this.customer
       });
+      if(status == 202){
+        this.dialog = false;
+      }
     }
   },
   computed: {

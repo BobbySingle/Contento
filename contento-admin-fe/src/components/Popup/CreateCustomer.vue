@@ -2,10 +2,15 @@
   <v-dialog v-model="dialog" persistent width="400px">
     <template v-slot:activator="{ on }">
       <div v-on="on">
-        <v-btn fab color="primary" small v-if="isSmallBtn">
+        <v-btn fab color="primary" small v-if="isSmallBtn" @click="clickCreate()">
           <v-icon color="white">add</v-icon>
         </v-btn>
-        <v-btn color="primary" v-if="!isSmallBtn" class="text__14">Create New Customer</v-btn>
+        <v-btn
+          color="primary"
+          v-if="!isSmallBtn"
+          class="text__14"
+          @click="clickCreate()"
+        >Create New Customer</v-btn>
       </div>
     </template>
     <v-card>
@@ -63,6 +68,12 @@ export default {
         companyName: this.company,
         idMarketer: this.$store.getters.getUser.id
       });
+    },
+    clickCreate() {
+      this.fullname = "";
+      this.phone = "";
+      this.email = "";
+      this.company = "";
     }
   }
 };

@@ -13,7 +13,7 @@
         <v-toolbar-title>Edit Task</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="dialog = false,  update()">Save</v-btn>
+          <v-btn dark text @click="update()">Save</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
@@ -124,7 +124,6 @@
 
 <script>
 import CKEditor from "../CKEditor/Ckeditor5";
-// import axios from "axios";
 import { mapGetters, mapActions } from "vuex";
 export default {
   props: ["taskID"],
@@ -172,8 +171,8 @@ export default {
       }
     },
 
-    update() {
-      this.editTaskByID({
+    async update() {
+      let status = await this.editTaskByID({
         idTask: this.id,
         idWriter: this.writer.id,
         title: this.title,
@@ -182,6 +181,9 @@ export default {
         publishTime: this.publishDate,
         tags: this.selectedTag
       });
+      if(status == 202){
+        this.dialog = false;
+      }
     }
   }
 };
