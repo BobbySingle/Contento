@@ -33,6 +33,7 @@
             :page.sync="page"
             :items-per-page="itemsPerPage"
             hide-default-footer
+            :loading="loading"
             @page-count="pageCount = $event"
           >
             <template v-slot:item.customer="{item}">
@@ -101,7 +102,7 @@ export default {
       dialog: false,
       menu: false,
       search: "",
-      loading: true,
+      loading: false,
       /**List Content */
       headers: [
         {
@@ -139,8 +140,10 @@ export default {
       getListCampaign: "campaign/getListCampaignByEditorID",
       loadUser: "authentication/setUser"
     }),
-    fetchData() {
-      this.getListCampaign(this.$store.getters.getUser.id);
+    async fetchData() {
+      this.loading = true;
+      await this.getListCampaign(this.$store.getters.getUser.id);
+      this.loading = false;
     }
   },
   mounted() {

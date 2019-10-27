@@ -35,6 +35,7 @@
             :page.sync="page"
             :items-per-page="itemsPerPage"
             hide-default-footer
+            :loading="loading"
             @page-count="pageCount = $event"
           >
             <template v-slot:item.customer="{item}">
@@ -112,7 +113,7 @@ export default {
       dialog: false,
       menu: false,
       search: "",
-      loading: true,
+      loading: false,
       /**List Content */
       headers: [
         {
@@ -147,7 +148,9 @@ export default {
     }),
 
     async fetchData() {
+      this.loading = true;
       await this.getCampaigns(this.getUser.id);
+      this.loading = false;
       await this.getListCustomer(this.$store.getters.getUser.id);
       await this.getListEditor(this.$store.getters.getUser.id);
       await this.getListTag();

@@ -22,6 +22,7 @@
           :page.sync="page"
           :items-per-page="itemsPerPage"
           hide-default-footer
+          :loading="loading"
           @page-count="pageCount = $event"
         >
           <template v-slot:item.fullname="{item}">
@@ -55,6 +56,7 @@ export default {
       page: 1,
       pageCount: 0,
       itemsPerPage: 5,
+      loading: false,
       /**End Pagination */
       headers: [
         { text: "Fullname", value: "fullName", align: "center" },
@@ -66,7 +68,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getUser","listInfoCustomer"])
+    ...mapGetters(["getUser", "listInfoCustomer"])
   },
   created() {
     let role = this.getUser.role;
@@ -85,9 +87,13 @@ export default {
       sessionStorage.setItem("customerID", event);
       this.$router.push("/CustomerCampaigns");
     },
-    ...mapActions({getListInfoCustomer: "authentication/getListInfoCustomer"}),
+    ...mapActions({
+      getListInfoCustomer: "authentication/getListInfoCustomer"
+    }),
     async fetchData() {
-       await this.getListInfoCustomer(this.$store.getters.getUser.id);
+      this.loading = true;
+      await this.getListInfoCustomer(this.$store.getters.getUser.id);
+      this.loading = false;
     }
   }
 };

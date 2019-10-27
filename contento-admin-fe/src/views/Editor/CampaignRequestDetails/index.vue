@@ -74,6 +74,7 @@
                     :page.sync="page"
                     :items-per-page="itemsPerPage"
                     hide-default-footer
+                    :loading="loading"
                     @page-count="pageCount = $event"
                   >
                     <template v-slot:item.deadline="{item}">
@@ -127,7 +128,7 @@ export default {
       dialog: false,
       menu: false,
       search: "",
-      loading: true,
+      loading: false,
       /**Campaign Information */
       campaign_title: "",
       campaign_tags: undefined,
@@ -178,6 +179,7 @@ export default {
     },
     async fetchData() {
       /**Load list task */
+      this.loading = true;
       let campaignID = sessionStorage.getItem("CampaignID");
       await this.getDetailCampaign(campaignID);
       this.campaign_title = this.detailCampaign.title;
@@ -186,9 +188,10 @@ export default {
       this.campaign_enddate = this.detailCampaign.endDate;
       sessionStorage.setItem("Task-MaxTime", this.detailCampaign.endDate);
       this.campaign_content = this.detailCampaign.description;
-      this.getListCampaignTask(campaignID);
-      this.getListTagByCampaignID(campaignID);
-      this.getListWriter(this.$store.getters.getUser.id);
+      await this.getListCampaignTask(campaignID);
+      await this.getListTagByCampaignID(campaignID);
+      await this.getListWriter(this.$store.getters.getUser.id);
+      this.loading = false;
     }
   }
 };

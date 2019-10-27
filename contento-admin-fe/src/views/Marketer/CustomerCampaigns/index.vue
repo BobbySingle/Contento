@@ -35,13 +35,11 @@
             :page.sync="page"
             :items-per-page="itemsPerPage"
             hide-default-footer
+            :loading="loading"
             @page-count="pageCount = $event"
           >
             <template v-slot:item.customer="{item}">
-              <v-col
-                class="text__14"
-                style="display:flex; align-items:center;"
-              >
+              <v-col class="text__14" style="display:flex; align-items:center;">
                 <div>
                   <span
                     @click="clickCampaign(item)"
@@ -111,6 +109,7 @@ export default {
       /**End Pagination */
       dialog: false,
       menu: false,
+      loading: false,
       /**List Content */
       search: "",
       headers: [
@@ -139,9 +138,11 @@ export default {
       getListEditor: "authentication/getListEditorByMarketerID",
       getListTag: "contentprocess/getListTag"
     }),
-    fetchData() {
+    async fetchData() {
+      this.loading = true;
       let customerID = sessionStorage.getItem("customerID");
-      this.getListCampaign(customerID);
+      await this.getListCampaign(customerID);
+      this.loading = false;
       this.getListCustomer(this.$store.getters.getUser.id);
       this.getListEditor(this.$store.getters.getUser.id);
       this.getListTag();

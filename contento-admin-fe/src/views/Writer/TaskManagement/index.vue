@@ -32,6 +32,7 @@
             :mobile-breakpoint="600"
             :page.sync="page"
             :items-per-page="itemsPerPage"
+            :loading="loading"
             hide-default-footer
             @page-count="pageCount = $event"
           >
@@ -93,7 +94,7 @@ export default {
       dialog: false,
       menu: false,
       search: "",
-      loading: true,
+      loading: false,
       /**List Content */
       headers: [
         {
@@ -129,8 +130,10 @@ export default {
       getTaskByWriterId: "contentprocess/getTaskByWriterId",
       startTask: "contentprocess/startTask"
     }),
-    fetchData() {
-      this.getTaskByWriterId(this.$store.getters.getUser.id);
+    async fetchData() {
+      this.loading = true;
+      await this.getTaskByWriterId(this.$store.getters.getUser.id);
+      this.loading = false;
     }
   },
   computed: {

@@ -33,6 +33,7 @@
             :page.sync="page"
             :items-per-page="itemsPerPage"
             hide-default-footer
+            :loading="loading"
             @page-count="pageCount = $event"
           >
             <template v-slot:item.campaign="{item}">
@@ -91,7 +92,7 @@ export default {
       dialog: false,
       menu: false,
       search: "",
-      loading: true,
+      loading: false,
       /**List Content */
       headers: [
         {
@@ -119,8 +120,10 @@ export default {
       this.$router.push("/ReviewContent");
     },
     ...mapActions({getContentRequest: "contentprocess/getContentRequest"}),
-    fetchData(){
-      this.getContentRequest(this.$store.getters.getUser.id);
+    async fetchData(){
+      this.loading = true;
+      await this.getContentRequest(this.$store.getters.getUser.id);
+      this.loading = false;
     }
   },
   computed: {

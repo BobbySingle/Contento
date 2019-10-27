@@ -67,6 +67,7 @@
                   :page.sync="page"
                   :items-per-page="itemsPerPage"
                   hide-default-footer
+                  :loading="loading"
                   @page-count="pageCount = $event"
                 >
                   <template v-slot:item.status="{ item }">
@@ -151,6 +152,7 @@ export default {
       listTag: [],
       customer: "",
       editor: "",
+      loading:false,
       /**List Tasks */
       headers: [
         {
@@ -194,6 +196,7 @@ export default {
       getListCampaignTask: "contentprocess/getListCampaignTask"
     }),
     async fetchData() {
+      this.loading = true;
       let campaignID = JSON.parse(sessionStorage["CampaignID"].toString());
       await this.getDetailCampaign(campaignID);
       this.title = this.detailCampaign.title;
@@ -202,6 +205,7 @@ export default {
       this.endDate = this.detailCampaign.endDate;
       this.listTag = this.detailCampaign.listTag;
       this.getListCampaignTask(campaignID);
+      this.loading = false;
     },
     publish(event) {
       sessionStorage.setItem("ContentID", JSON.stringify(event));

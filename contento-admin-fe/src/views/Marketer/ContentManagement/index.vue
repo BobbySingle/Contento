@@ -14,6 +14,7 @@
             :page.sync="page"
             :items-per-page="itemsPerPage"
             hide-default-footer
+            :loading="loading"
             @page-count="pageCount = $event"
           >
             <template v-slot:item.status="{ item }">
@@ -55,6 +56,7 @@ export default {
       /**End Pagination */
       dialog: false,
       menu: false,
+      loading: false,
       /**List Content */
       headers: [
         {
@@ -94,7 +96,9 @@ export default {
     },
     ...mapActions({ getListTaskByMarketerID: "contentprocess/getListTaskByMarketerID" }),
     async fetchData(){
+      this.loading = true;
       await this.getListTaskByMarketerID(this.$store.getters.getUser.id);
+      this.loading = false;
     }
   },
   computed: {
