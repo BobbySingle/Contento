@@ -28,7 +28,7 @@
                   @blur="$v.title.$touch()"
                   @input="$v.title.$touch()"
                 ></v-text-field>
-                <div style="color:red" v-if="!$v.title.required && check">Please enter endtime.</div>
+                <div style="color:red" v-if="!$v.title.required && check">Please enter title.</div>
                 <div
                   style="color:red"
                   v-if="!$v.title.maxLength && check"
@@ -41,7 +41,6 @@
                   </v-col>
 
                   <v-col cols="12" md="11">
-                    <!-- <v-text-field type="hidden" :error-messages="endtimeErrors"></v-text-field> -->
                     <datetime
                       title="End Time"
                       type="datetime"
@@ -133,10 +132,19 @@
             </v-row>
             <v-row>
               <v-col cols="12" md="12">
-                <div>*NOTE: The content cannot be empty ! </div>
+                <div
+                  style="color:red"
+                  v-if="!$v.content.required && check"
+                >The content cannot empty !</div>
               </v-col>
               <v-col cols="12" md="12">
-                <CKEditor ref="ckeditor" :content="content" required @blur="$v.content.$touch()" />
+                <CKEditor
+                  ref="ckeditor"
+                  :content="content"
+                  v-model="content"
+                  required
+                  @ckeditorContent="content = $event"
+                />
               </v-col>
             </v-row>
           </v-col>
@@ -181,38 +189,7 @@ export default {
     form: ["title", "tags", "customer", "editor", "content", "endtime"]
   },
   computed: {
-    ...mapGetters(["listCustomer", "listEditor", "listTag"]),
-    // titleErrors() {
-    //   const errors = [];
-    //   if (!this.$v.title.$dirty) return errors;
-    //   !this.$v.title.required && errors.push("Please enter title");
-    //   !this.$v.title.maxLength && errors.push("Title up to 255 characters");
-    //   return errors;
-    // },
-    // tagsErrors() {
-    //   const errors = [];
-    //   if (!this.$v.tags.$dirty) return errors;
-    //   !this.$v.tags.required && errors.push("Please select category");
-    //   return errors;
-    // },
-    // endtimeErrors() {
-    //   const errors = [];
-    //   if (!this.$v.endtime.$dirty) return errors;
-    //   !this.$v.endtime.required && errors.push("Please select endtime");
-    //   return errors;
-    // },
-    // customerErrors() {
-    //   const errors = [];
-    //   if (!this.$v.customer.$dirty) return errors;
-    //   !this.$v.customer.required && errors.push("Please select customer");
-    //   return errors;
-    // },
-    // editorErrors() {
-    //   const errors = [];
-    //   if (!this.$v.editor.$dirty) return errors;
-    //   !this.$v.editor.required && errors.push("Please select editor");
-    //   return errors;
-    // },
+    ...mapGetters(["listCustomer", "listEditor", "listTag"])
     // contentErrors() {
     //   const errors = [];
     //   if (!this.$v.content.$dirty) return errors;
@@ -246,6 +223,7 @@ export default {
     },
 
     clickCreate() {
+      this.check = false;
       let tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       this.mintime = tomorrow.toISOString();

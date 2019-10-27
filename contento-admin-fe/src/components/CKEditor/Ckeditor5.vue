@@ -4,6 +4,7 @@
     v-model="editorData"
     :config="editorConfig"
     @ready="onReady"
+    @input="updateField"
     style="min-height: 500px; border:1px solid grey;"
   ></ckeditor>
 </template>
@@ -30,6 +31,10 @@ export default {
     readOnly: {
       type: Boolean,
       default: false
+    },
+    typeing:{
+      type: String,
+      required: false
     }
 
   },
@@ -44,6 +49,9 @@ export default {
     };
   },
   methods: {
+    updateField() {
+      this.$emit('ckeditorContent',this.editorData);
+    },
     onReady(editor) {
       console.log('on ready')
       // Insert the toolbar before the editable area.

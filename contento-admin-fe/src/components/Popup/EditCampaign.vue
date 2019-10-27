@@ -28,7 +28,14 @@
                   v-model="title"
                   :value="title"
                   class="text__14"
+                  @blur="$v.title.$touch()"
+                  @input="$v.title.$touch()"
                 ></v-text-field>
+                <div style="color:red" v-if="!$v.title.required && check">Please enter title.</div>
+                <div
+                  style="color:red"
+                  v-if="!$v.title.maxLength && check"
+                >Title up to 255 characters.</div>
               </v-col>
               <v-col cols="12" md="6">
                 <v-row class="out-endtime">
@@ -43,15 +50,18 @@
                       :value="endDate"
                       :min-datetime="minDate"
                       v-model="endDate"
-                      placeholder="Select End-date"
+                      placeholder="Select End time"
                       input-class="datetime"
                       input-style="cursor:pointer;"
                       value-zone="Asia/Ho_Chi_Minh"
                       zone="Asia/Ho_Chi_Minh"
                       class="endtime text__14"
+                      required
+                      @blur="$v.endDate.$touch()"
                     ></datetime>
                   </v-col>
                 </v-row>
+                <div style="color:red" v-if="!$v.endDate.required && check">Please select end time.</div>
               </v-col>
             </v-row>
             <v-row>
@@ -66,9 +76,22 @@
                       v-model="customer.id"
                       :value="customer"
                       class="text__14"
+                      required
+                      @blur="$v.customer.$touch()"
                     ></v-select>
+                    <div
+                      style="color:red"
+                      v-if="!$v.customer.required && check"
+                    >Please select customer.</div>
                   </v-col>
-                  <v-col cols="2" md="2" class="pl-5" style="width:100%;" align-self="center"  justify-self="center">
+                  <v-col
+                    cols="2"
+                    md="2"
+                    class="pl-5"
+                    style="width:100%;"
+                    align-self="center"
+                    justify-self="center"
+                  >
                     <popup-create-customer :isSmallBtn="true"></popup-create-customer>
                   </v-col>
                 </v-row>
@@ -82,7 +105,10 @@
                   v-model="editor.id"
                   :value="editor"
                   class="text__14"
+                  required
+                  @blur="$v.editor.$touch()"
                 ></v-select>
+                <div style="color:red" v-if="!$v.editor.required && check">Please select editor.</div>
               </v-col>
             </v-row>
             <v-row>
@@ -97,6 +123,8 @@
                   clearable
                   label="Category"
                   multiple
+                  required
+                  @blur="$v.selectedTag.$touch()"
                 >
                   <template v-slot:selection="{ attrs, item, select, selected }">
                     <v-chip
@@ -110,11 +138,27 @@
                     </v-chip>
                   </template>
                 </v-combobox>
+                <div
+                  style="color:red"
+                  v-if="!$v.selectedTag.required && check"
+                >Please select category.</div>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12" md="12">
-                <CKEditor ref="ckeditor" :content="content" v-model="ckeditor" />
+                <div
+                  style="color:red"
+                  v-if="!$v.content.required && check"
+                >The content cannot empty !</div>
+              </v-col>
+              <v-col cols="12" md="12">
+                <CKEditor
+                  ref="ckeditor"
+                  :content="content"
+                  v-model="content"
+                  required
+                  @ckeditorContent="content = $event"
+                />
               </v-col>
             </v-row>
           </v-col>
@@ -126,6 +170,7 @@
 <script>
 import CKEditor from "../CKEditor/Ckeditor5";
 import PopupCreateCustomer from "./CreateCustomer.vue";
+import { required, minLength, maxLength } from "vuelidate/lib/validators";
 import { mapGetters, mapActions } from "vuex";
 import axios from "axios";
 export default {
@@ -141,16 +186,24 @@ export default {
       customers: [],
       editors: [],
       selectedTag: [],
-      // listTag: [],
       minDate: new Date().toISOString(),
       endDate: "",
       title: "",
       customer: "",
       editor: "",
-      ckeditor: "",
       content: "",
-      id: ""
+      id: "",
+      check: false
     };
+  },
+  validations: {
+    title: { required, maxLength: maxLength(255) },
+    endDate: { required },
+    customer: { required },
+    editor: { required },
+    content: { required },
+    selectedTag: { required },
+    form: ["title", "selectedTag", "customer", "editor", "content", "endDate"]
   },
   methods: {
     ...mapActions({
@@ -158,6 +211,8 @@ export default {
       getDetailCampaign: "campaign/getDetailCampaign"
     }),
     async clickEdit(event) {
+      this.check = false;
+      this.check = true;
       await this.getDetailCampaign(event);
       if (this.detailCampaign != null) {
         this.selectedTag = this.detailCampaign.listTag;
@@ -170,17 +225,20 @@ export default {
       }
     },
     async update() {
-      let status = await this.editCampaign({
-        id: this.id,
-        title: this.title,
-        description: this.$refs.ckeditor.editorData,
-        endDate: this.endDate,
-        tags: this.selectedTag,
-        editor: this.editor,
-        customer: this.customer
-      });
-      if(status == 202){
-        this.dialog = false;
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
+        let status = await this.editCampaign({
+          id: this.id,
+          title: this.title,
+          description: this.$refs.ckeditor.editorData,
+          endDate: this.endDate,
+          tags: this.selectedTag,
+          editor: this.editor,
+          customer: this.customer
+        });
+        if (status == 202) {
+          this.dialog = false;
+        }
       }
     }
   },
