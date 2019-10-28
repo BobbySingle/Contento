@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" scrollable width="1000px">
+  <v-dialog v-model="dialog" scrollable width="800px">
     <template v-slot:activator="{ on }">
       <v-btn color="primary" v-on="on" class="text__14" @click="clickCreate()">Create Campaign</v-btn>
     </template>
@@ -11,7 +11,7 @@
         <v-toolbar-title>Add New Campaign</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="create()">Save</v-btn>
+          <v-btn dark text @click="create()" :loading="loadingSave">Save</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
@@ -24,17 +24,18 @@
                   :counter="255"
                   label="Title:"
                   class="text__14"
+                  prepend-inner-icon="title"
                   required
                   @blur="$v.title.$touch()"
                   @input="$v.title.$touch()"
                 ></v-text-field>
-                <div style="color:red" v-if="!$v.title.required && check">Please enter title.</div>
+                <div style="color:red" v-if="!$v.title.required && check">The title cannot be empty.</div>
                 <div
                   style="color:red"
                   v-if="!$v.title.maxLength && check"
                 >Title up to 255 characters.</div>
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" align-self="center">
                 <v-row class="out-endtime">
                   <v-col class="d-none d-md-block" md="1">
                     <v-icon>mdi-calendar-range</v-icon>
@@ -49,7 +50,9 @@
                       placeholder="Select End-date"
                       input-class="datetime"
                       input-style="cursor:pointer;"
+                      value-zone="UTC+07:00"
                       class="endtime text__14"
+                      clear
                       required
                       @blur="$v.endtime.$touch()"
                     ></datetime>
@@ -68,6 +71,8 @@
                       item-text="name"
                       item-value="id"
                       label="Customer"
+                      prepend-inner-icon="account_circle"
+                      clearable
                       required
                       @blur="$v.customer.$touch()"
                     ></v-select>
@@ -95,6 +100,8 @@
                   item-text="name"
                   item-value="id"
                   label="Editor"
+                  prepend-inner-icon="edit"
+                  clearable
                   required
                   @blur="$v.editor.$touch()"
                 ></v-select>
@@ -111,6 +118,7 @@
                   chips
                   clearable
                   label="Category"
+                  prepend-inner-icon="category"
                   multiple
                   required
                   @blur="$v.tags.$touch()"
@@ -176,7 +184,8 @@ export default {
       editor: [],
       title: "",
       firstTimeLoad: true,
-      check: false
+      check: false,
+      loadingSave: false
     };
   },
   validations: {
@@ -204,6 +213,7 @@ export default {
 
     async create() {
       this.check = true;
+      this.loadingSave = true;
       this.content = this.$refs.ckeditor.editorData;
       this.$v.form.$touch();
       if (!this.$v.form.$invalid) {
@@ -217,9 +227,11 @@ export default {
           idMarketer: this.$store.getters.getUser.id
         });
         if (status == 202) {
+          this.loadingSave = false;
           this.dialog = false;
         }
       }
+      this.loadingSave = false;
     },
 
     clickCreate() {
@@ -249,9 +261,9 @@ export default {
   height: 100%;
 }
 .endtime {
-  border-bottom: 1px solid #999999;
   height: 32px;
   width: 100%;
+  padding-top: 5px;
 }
 .chips {
   color: white !important;

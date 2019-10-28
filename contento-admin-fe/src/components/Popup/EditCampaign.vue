@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" scrollable width="1000px">
+  <v-dialog v-model="dialog" scrollable width="800px">
     <template v-slot:activator="{ on }">
       <v-btn color="primary" fab small v-on="on" @click="clickEdit(campaignID)">
         <v-icon>edit</v-icon>
@@ -13,7 +13,7 @@
         <v-toolbar-title>Edit Campaign</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="update()">Save</v-btn>
+          <v-btn dark text @click="update()" :loading="loadingSave">Save</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
@@ -28,6 +28,7 @@
                   v-model="title"
                   :value="title"
                   class="text__14"
+                  prepend-inner-icon="title"
                   @blur="$v.title.$touch()"
                   @input="$v.title.$touch()"
                 ></v-text-field>
@@ -37,7 +38,7 @@
                   v-if="!$v.title.maxLength && check"
                 >Title up to 255 characters.</div>
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" align-self="center">
                 <v-row class="out-endtime">
                   <v-col class="d-none d-md-block" md="1">
                     <v-icon>mdi-calendar-range</v-icon>
@@ -53,8 +54,7 @@
                       placeholder="Select End time"
                       input-class="datetime"
                       input-style="cursor:pointer;"
-                      value-zone="Asia/Ho_Chi_Minh"
-                      zone="Asia/Ho_Chi_Minh"
+                      value-zone="UTC+07:00"
                       class="endtime text__14"
                       required
                       @blur="$v.endDate.$touch()"
@@ -76,6 +76,8 @@
                       v-model="customer.id"
                       :value="customer"
                       class="text__14"
+                      prepend-inner-icon="account_circle"
+                      clearable
                       required
                       @blur="$v.customer.$touch()"
                     ></v-select>
@@ -105,6 +107,8 @@
                   v-model="editor.id"
                   :value="editor"
                   class="text__14"
+                  prepend-inner-icon="edit"
+                  clearable
                   required
                   @blur="$v.editor.$touch()"
                 ></v-select>
@@ -122,6 +126,7 @@
                   chips
                   clearable
                   label="Category"
+                  prepend-inner-icon="category"
                   multiple
                   required
                   @blur="$v.selectedTag.$touch()"
@@ -193,7 +198,8 @@ export default {
       editor: "",
       content: "",
       id: "",
-      check: false
+      check: false,
+      loadingSave: false
     };
   },
   validations: {
@@ -212,7 +218,6 @@ export default {
     }),
     async clickEdit(event) {
       this.check = false;
-      this.check = true;
       await this.getDetailCampaign(event);
       if (this.detailCampaign != null) {
         this.selectedTag = this.detailCampaign.listTag;
@@ -225,6 +230,7 @@ export default {
       }
     },
     async update() {
+      this.loadingSave = true;
       this.$v.form.$touch();
       if (!this.$v.form.$invalid) {
         let status = await this.editCampaign({
@@ -237,9 +243,11 @@ export default {
           customer: this.customer
         });
         if (status == 202) {
+          this.loadingSave = fasle;
           this.dialog = false;
         }
       }
+      this.loadingSave = fasle;
     }
   },
   computed: {
@@ -254,9 +262,9 @@ export default {
   height: 100%;
 }
 .endtime {
-  border-bottom: 1px solid #999999;
   height: 32px;
   width: 100%;
+  padding-top: 5px;
 }
 .chips {
   color: white !important;

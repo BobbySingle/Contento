@@ -72,18 +72,58 @@
                 class="expansion-bg"
                 v-bind:style="{ width: computedWidth}"
               >
-                <v-row class=".flex-nowrap" align="center">
-                  <v-text-field v-model="name" :value="name" class="mr-2"></v-text-field>
-                  <v-btn v-on:click="changeWidth()">Normal/Wide Screen</v-btn>
+                <v-row>
+                  <v-col cols="12">
+                    <v-row class=".flex-nowrap">
+                      <v-text-field
+                        label="Title"
+                        outlined
+                        prepend-inner-icon="edit"
+                        v-model="name"
+                        required
+                        counter="255"
+                        :value="name"
+                        class="mr-2"
+                        @blur="$v.name.$touch()"
+                        @input="$v.name.$touch()"
+                      ></v-text-field>
+                      <v-btn v-on:click="changeWidth()" icon class="mt-3" color="black">
+                        <v-icon>{{btnChange}}</v-icon>
+                      </v-btn>
+                    </v-row>
+                    <div
+                      style="color:red"
+                      v-if="!$v.name.required && check"
+                    >The title of content cannot be empty.</div>
+                    <div
+                      style="color:red"
+                      v-if="!$v.name.maxLength && check"
+                    >Title up to 255 characters.</div>
+                    <div
+                      style="color:red"
+                      v-if="!$v.content.required && check"
+                    >The content cannot be empty.</div>
+                  </v-col>
+                  <v-col cols="12">
+                    <CKEditor
+                      ref="ckeditor"
+                      class="content"
+                      :content="content"
+                      required
+                      @ckeditorContent="content = $event"
+                    />
+                  </v-col>
                 </v-row>
-                <div>
-                  <CKEditor ref="ckeditor" class="content" :content="content" />
-                  <v-row justify="center" class="flex-nowrap my-2">
-                    <v-btn color="secondary" class="mx-1" @click="$router.go(-1)">Cancel</v-btn>
-                    <v-btn color="warning" class="mx-1" @click="save()">Save</v-btn>
-                    <v-btn color="primary" class="mx-1" @click="submit()">Submit</v-btn>
-                  </v-row>
-                </div>
+                <v-row justify="center" class="flex-nowrap my-2">
+                  <v-btn color="secondary" class="mx-1" @click="$router.go(-1)">Cancel</v-btn>
+                  <v-btn color="warning" class="mx-1" @click="save()" :loading="loadingSave">Save</v-btn>
+                  <v-btn
+                    color="primary"
+                    class="mx-1"
+                    @click="submit()"
+                    :loading="loadingSubmit"
+                  >Review</v-btn>
+                </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-col>
@@ -108,11 +148,12 @@
 import CKEditor from "../../../components/CKEditor/Ckeditor5.vue";
 import { mapGetters, mapActions } from "vuex";
 import moment from "moment";
+import { required, maxLength } from "vuelidate/lib/validators";
 export default {
   components: { CKEditor },
   data() {
     return {
-      panel: [0, 2, 3],
+      panel: [0, 2],
       radios: "",
       requestData: "",
       commentData: "",
@@ -124,8 +165,17 @@ export default {
       publishTime: "",
       name: "",
       idContent: "",
-      computedWidth: ""
+      computedWidth: "",
+      check: false,
+      loadingSave: false,
+      loadingSubmit: false,
+      btnChange: "fullscreen"
     };
+  },
+  validations: {
+    name: { required, maxLength: maxLength(255) },
+    content: { required },
+    form: ["name", "content"]
   },
   computed: {
     ...mapGetters(["getUser", "taskDetail"])
@@ -146,24 +196,39 @@ export default {
   methods: {
     changeWidth() {
       this.computedWidth = this.computedWidth == "" ? "200%" : "";
+      this.btnChange =
+        this.btnChange == "fullscreen" ? "fullscreen_exit" : "fullscreen";
       this.panel = [2];
     },
-    save() {
-      this.saveContent({
-        id: this.idContent,
-        name: this.name,
-        content: this.$refs.ckeditor.editorData
-      });
+    async save() {
+      this.check = true;
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
+        this.loadingSave = true;
+        await this.saveContent({
+          id: this.idContent,
+          name: this.name,
+          content: this.$refs.ckeditor.editorData
+        });
+        this.loadingSave = true;
+        this.check = false;
+      }
     },
     async submit() {
       let TaskID = sessionStorage.getItem("TaskID");
-      await this.submitContent({
-        idTask: TaskID,
-        idContent: this.idContent,
-        name: this.name,
-        content: this.$refs.ckeditor.editorData
-      });
-      this.$router.push("/TaskManagement");
+      this.check = true;
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
+        this.loadingSubmit = true;
+        await this.submitContent({
+          idTask: TaskID,
+          idContent: this.idContent,
+          name: this.name,
+          content: this.$refs.ckeditor.editorData
+        });
+        this.loadingSave = false;
+        this.$router.push("/TaskManagement");
+      }
     },
     ...mapActions({
       getTaskDetail: "contentprocess/getTaskDetail",
@@ -187,6 +252,10 @@ export default {
       this.deadline = this.taskDetail.deadline;
       this.publishTime = this.taskDetail.publishTime;
       this.commentData = this.taskDetail.comment.comment;
+      console.log(this.commentData);
+      if (!this.commentData == "" || !this.commentData == null) {
+        this.panel = [0, 2, 3];
+      }
     }
   }
 };

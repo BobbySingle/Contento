@@ -11,7 +11,7 @@
           <input
             class="input-field text__14"
             type="text"
-            placeholder="Customer,Title"
+            placeholder="Title"
             name="search"
             v-model="search"
           />
@@ -19,6 +19,35 @@
       </v-col>
       <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;">
         <popup-create-campaign />
+      </v-col>
+    </v-row>
+    <v-row class="mx-10 .flex-nowrap">
+      <v-col cols="4">
+        <v-text-field
+          v-model="fromDate"
+          type="date"
+          label="[End date] From:"
+          prepend-icon="date_range"
+        />
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          v-model="toDate"
+          type="date"
+          label="[End date] To:"
+          prepend-icon="date_range"
+        />
+      </v-col>
+      <v-col cols="4">
+        <v-select
+          v-model="customer"
+          :items="listCustomer"
+          item-text="name"
+          item-value="id"
+          label="Customer"
+          prepend-inner-icon="account_circle"
+          clearable
+        ></v-select>
       </v-col>
     </v-row>
     <!-- /** End Search */ -->
@@ -39,15 +68,9 @@
             @page-count="pageCount = $event"
           >
             <template v-slot:item.customer="{item}">
-              <v-col
-                class="text__14"
-                style="display:flex; align-items:center;"
-              >
+              <v-col class="text__14" style="display:flex; align-items:center;">
                 <div>
-                  <span
-                    @click="clickCampaign(item)"
-                    class="customer-inner-table text__14"
-                  >{{item.customer.name}}</span>
+                  <span class="customer-inner-table text__14">{{item.customer.name}}</span>
                 </div>
               </v-col>
             </template>
@@ -113,20 +136,60 @@ export default {
       dialog: false,
       menu: false,
       search: "",
+      fromDate: "",
+      toDate: "",
+      customer: "",
       loading: false,
       /**List Content */
       headers: [
         {
           text: "Customer",
-          align: "center",
+          align: "left",
           value: "customer",
-          width: "15%"
+          width: "15%",
+          sortable: false,
+          filter: value => {
+            if (!this.customer) return true;
+            return value.id == this.customer;
+          }
         },
         { text: "Title", value: "title", sortable: false, width: "35%" },
-        { text: "Start", value: "startedDate", align: "center", width: "15%" },
-        { text: "End", value: "endDate", align: "center", width: "15%" },
-        { text: "Status", value: "status", align: "center", width: "10%" },
-        { text: "Action", value: "action", align: "center", width: "10%" }
+        {
+          text: "Start",
+          value: "startedDate",
+          align: "center",
+          width: "15%"
+        },
+        {
+          text: "End",
+          value: "endDate",
+          filter: value => {
+            if (!this.fromDate && !this.toDate) return true;
+            if (this.fromDate != "" && this.toDate == "") {
+              return this.fromDate <= value;
+            } else if (this.fromDate == "" && this.toDate != "") {
+              return value <= this.toDate;
+            } else {
+              return this.fromDate <= value && value <= this.toDate;
+            }
+          },
+          align: "center",
+          width: "15%"
+        },
+        {
+          text: "Status",
+          value: "status",
+          sortable: false,
+          align: "center",
+          width: "10%"
+        },
+        {
+          text: "Action",
+          value: "action",
+          sortable: false,
+          align: "center",
+          width: "10%"
+        }
       ]
     };
   },
@@ -157,7 +220,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getUser", "listCampaign"])
+    ...mapGetters(["getUser", "listCampaign", "listCustomer"])
   },
   created() {
     axios.defaults.headers.common["Authorization"] =

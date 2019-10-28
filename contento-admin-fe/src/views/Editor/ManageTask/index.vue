@@ -5,7 +5,7 @@
     </v-row>
     <!-- /**Begin Search  */ -->
     <v-row no-gutters class="mx-10">
-      <v-col sm="8" md="9">
+      <v-col cols="12">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
           <input
@@ -17,7 +17,24 @@
           />
         </div>
       </v-col>
-      <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;"></v-col>
+    </v-row>
+    <v-row class="mx-10 .flex-nowrap">
+      <v-col cols="6">
+        <v-text-field
+          v-model="fromDate"
+          type="date"
+          label="[End date] From:"
+          prepend-icon="date_range"
+        />
+      </v-col>
+      <v-col cols="6">
+        <v-text-field
+          v-model="toDate"
+          type="date"
+          label="[End date] To:"
+          prepend-icon="date_range"
+        />
+      </v-col>
     </v-row>
     <!-- /** End Search */ -->
 
@@ -37,17 +54,16 @@
             @page-count="pageCount = $event"
           >
             <template v-slot:item.campaign="{item}">
-              <v-col
-                class="text__14"
-                style="display:flex; align-items:center;"            
-              >
+              <v-col class="text__14" style="display:flex; align-items:center;">
                 <div>
                   <span class="content-inner-table text__14">{{item.campaign}}</span>
                 </div>
               </v-col>
             </template>
-            <template v-slot:item.modifiedDate="{item}">{{item.modifiedDate | moment("HH:mm DD/MM/YYYY")}}</template>
-            <template v-slot:item.deadline="{item}"> {{item.deadline| moment("HH:mm DD/MM/YYYY")}}</template>
+            <template
+              v-slot:item.modifiedDate="{item}"
+            >{{item.modifiedDate | moment("HH:mm DD/MM/YYYY")}}</template>
+            <template v-slot:item.deadline="{item}">{{item.deadline| moment("HH:mm DD/MM/YYYY")}}</template>
             <template v-slot:item.contentTitle="{item}">
               <div class="content_details">
                 <div>
@@ -63,7 +79,24 @@
               >{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.action="{ item }">
-              <v-btn color="primary" v-if="item.status.id === 3" @click="changeToReview(item.id)">Review</v-btn>
+              <v-row class="flex-nowrap" justify="center">
+                <edit-task v-if="item.status.id < 5 && item.status.id != 3" :taskID="item.id" />
+                <v-btn
+                  text
+                  icon
+                  color="error"
+                  v-if="item.status.id == 1"
+                  @click="clickDelete(item.id)"
+                >
+                  <v-icon>delete</v-icon>
+                </v-btn>
+
+                <v-btn
+                  color="primary"
+                  v-if="item.status.id == 3"
+                  @click="changeToReview(item.id)"
+                >Review</v-btn>
+              </v-row>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -78,10 +111,12 @@
 </template>
 
 <script>
-import moment from 'moment';
+import moment from "moment";
 import axios from "axios";
-import {mapGetters, mapActions} from 'vuex'
+import EditTask from "../../../components/Popup/EditTask.vue";
+import { mapGetters, mapActions } from "vuex";
 export default {
+  components: { EditTask },
   data() {
     return {
       /**Begin Pagination */
@@ -92,6 +127,8 @@ export default {
       dialog: false,
       menu: false,
       search: "",
+      fromDate: "",
+      toDate: "",
       loading: false,
       /**List Content */
       headers: [
@@ -108,9 +145,36 @@ export default {
           align: "center",
           width: "12.5%"
         },
-        { text: "End", value: "deadline", align: "center", width: "12.5%" },
-        { text: "Status", value: "status", align: "center", width: "10%" },
-        { text: "Action", value: "action", align: "center", width: "10%" }
+        {
+          text: "End",
+          value: "deadline",
+          align: "center",
+          width: "12.5%",
+          filter: value => {
+            if (!this.fromDate && !this.toDate) return true;
+            if (this.fromDate != "" && this.toDate == "") {
+              return this.fromDate <= value;
+            } else if (this.fromDate == "" && this.toDate != "") {
+              return value <= this.toDate;
+            } else {
+              return this.fromDate <= value && value <= this.toDate;
+            }
+          }
+        },
+        {
+          text: "Status",
+          value: "status",
+          sortable: false,
+          align: "center",
+          width: "10%"
+        },
+        {
+          text: "Action",
+          value: "action",
+          sortable: false,
+          align: "center",
+          width: "10%"
+        }
       ]
     };
   },
@@ -119,15 +183,17 @@ export default {
       sessionStorage.setItem("ContentRequestID", event);
       this.$router.push("/ReviewContent");
     },
-    ...mapActions({getListTaskByEditorID: "contentprocess/getListTaskByEditorID"}),
-    async fetchData(){
+    ...mapActions({
+      getListTaskByEditorID: "contentprocess/getListTaskByEditorID"
+    }),
+    async fetchData() {
       this.loading = true;
       await this.getListTaskByEditorID(this.$store.getters.getUser.id);
       this.loading = false;
     }
   },
   computed: {
-    ...mapGetters(["getUser","listTaskByEditorID"])
+    ...mapGetters(["getUser", "listTaskByEditorID"])
   },
   created() {
     let role = this.getUser.role;

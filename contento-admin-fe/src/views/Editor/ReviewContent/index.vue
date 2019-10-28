@@ -72,23 +72,53 @@
                 class="my-2 py-2 expansion-bg"
                 v-bind:style="{ width: computedWidth}"
               >
-                <v-row class=".flex-nowrap" align="center">
-                  <v-text-field v-model="name" :value="name" class="mr-2"></v-text-field>
-                  <!-- <v-btn class="d-none d-md-block" v-on:click="changeWidth()">Normal/Wide Screen</v-btn> -->
+                <v-row no-gutters>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="name"
+                      label="Title"
+                      outlined
+                      prepend-inner-icon="edit"
+                      :value="name"
+                      required
+                      @blur="$v.name.$touch()"
+                      @input="$v.name.$touch()"
+                    ></v-text-field>
+                    <div style="color:red" v-if="!$v.name.required && check">The title of content cannot be empty.</div>
+                    <div
+                      style="color:red"
+                      v-if="!$v.name.maxLength && check"
+                    >Title up to 255 characters.</div>
+                    <div
+                      style="color:red"
+                      v-if="!$v.content.required && check"
+                    >The content cannot be empty.</div>
+                  </v-col>
+                  <v-col cols="12">
+                    <CKEditor
+                      ref="ckeditor"
+                      class="content"
+                      :content="content"
+                      required
+                      @ckeditorContent="content = $event"
+                    />
+                  </v-col>
                 </v-row>
-                <div class="work">
-                  <CKEditor ref="ckeditor" class="content" :content="content" />
-                </div>
 
-                <v-row justify="center" class="flex-nowrap">
-                  <v-radio-group v-model="radios" row>
-                    <v-radio label="Reject" value="false"></v-radio>
-                    <v-radio label="Approve" value="true"></v-radio>
-                  </v-radio-group>
-                </v-row>
-                <v-row justify="center" class="flex-nowrap">
+                <v-row justify="center" class="flex-nowrap mt-3">
                   <v-btn color="warning" class="mx-1" @click="$router.go(-1)">Cancel</v-btn>
-                  <v-btn color="primary" class="mx-1" @click="submit()">Submit</v-btn>
+                  <v-btn
+                    color="primary"
+                    class="mx-1"
+                    @click="rewrite()"
+                    :loading="loadingRewrite"
+                  >Rewrite</v-btn>
+                  <v-btn
+                    color="success"
+                    class="mx-1"
+                    @click="submit()"
+                    :loading="loadingSubmit"
+                  >Complete</v-btn>
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -104,11 +134,13 @@
 import CKEditor from "../../../components/CKEditor/Ckeditor5.vue";
 import { mapGetters, mapActions } from "vuex";
 import moment from "moment";
+import { required, maxLength } from "vuelidate/lib/validators";
+
 export default {
   components: { CKEditor },
   data() {
     return {
-      panel: [0, 1, 2],
+      panel: [0, 2],
       radios: "",
       requestDetails: "",
       content: "",
@@ -120,8 +152,16 @@ export default {
       comment: [],
       name: "",
       idContent: "",
-      computedWidth: ""
+      computedWidth: "",
+      check: false,
+      loadingRewrite: false,
+      loadingSubmit: false
     };
+  },
+  validations: {
+    name: { required, maxLength: maxLength(255) },
+    content: { required },
+    form: ["name", "content"]
   },
   methods: {
     // changeWidth() {
@@ -129,8 +169,11 @@ export default {
     //   this.panel = [1];
     // },
     async submit() {
-      let ContentRequestID = sessionStorage.getItem("ContentRequestID");
-      if (this.radios === "true") {
+      this.check = true;
+      this.loadingSubmit = true;
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
+        let ContentRequestID = sessionStorage.getItem("ContentRequestID");
         await this.setApprovalContentRequest({
           idTask: ContentRequestID,
           idContent: this.idContent,
@@ -138,7 +181,16 @@ export default {
           name: this.name,
           button: true
         });
-      } else if (this.radios === "false") {
+        this.check = false;
+      }
+      setTimeout(3000);
+      this.loadingSubmit = false;
+    },
+    async rewrite() {
+      this.check = true;
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
+        let ContentRequestID = sessionStorage.getItem("ContentRequestID");
         await this.setApprovalContentRequest({
           idTask: ContentRequestID,
           idContent: this.idContent,
@@ -146,8 +198,7 @@ export default {
           name: this.name,
           button: false
         });
-      } else {
-        alert("Choose Reject - Accept");
+        this.check = false;
       }
     },
     ...mapActions({

@@ -189,9 +189,9 @@ export default {
       sessionStorage.setItem("Task-MaxTime", this.detailCampaign.endDate);
       this.campaign_content = this.detailCampaign.description;
       await this.getListCampaignTask(campaignID);
+      this.loading = false;
       await this.getListTagByCampaignID(campaignID);
       await this.getListWriter(this.$store.getters.getUser.id);
-      this.loading = false;
     }
   }
 };

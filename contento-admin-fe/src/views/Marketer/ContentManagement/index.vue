@@ -18,7 +18,7 @@
             @page-count="pageCount = $event"
           >
             <template v-slot:item.status="{ item }">
-              <v-chip color="success" dark class="text__14">Completed</v-chip>
+              <v-chip :color="item.status.color" dark class="text__14">{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.publishTime="{ item }">
               <span>{{item.publishTime | moment("HH:mm DD/MM/YYYY")}}</span>
@@ -30,7 +30,17 @@
                 v-if="item.status.id === 5"
                 @click="publish(item.id)"
               >Publish</v-btn>
-              <v-btn class="text__14" disabled v-if="item.status.id != 5">Publish</v-btn>
+              <v-btn
+                class="text__14"
+                color="primary"
+                v-if="item.status.id === 6"
+                @click="publish(item.id)"
+              >Change</v-btn>
+              <v-btn
+                class="text__14"
+                disabled
+                v-if="item.status.id != 5 && item.status.id != 6"
+              >Publish</v-btn>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -94,8 +104,10 @@ export default {
       sessionStorage.setItem("ContentID", JSON.stringify(event));
       this.$router.push("/PublishChannel");
     },
-    ...mapActions({ getListTaskByMarketerID: "contentprocess/getListTaskByMarketerID" }),
-    async fetchData(){
+    ...mapActions({
+      getListTaskByMarketerID: "contentprocess/getListTaskByMarketerID"
+    }),
+    async fetchData() {
       this.loading = true;
       await this.getListTaskByMarketerID(this.$store.getters.getUser.id);
       this.loading = false;

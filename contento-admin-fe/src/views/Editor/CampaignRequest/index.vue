@@ -5,19 +5,36 @@
     </v-row>
     <!-- /**Begin Search  */ -->
     <v-row no-gutters class="mx-10">
-      <v-col sm="8" md="9">
+      <v-col cols="12" sm="12">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
           <input
             class="input-field text__14"
             type="text"
-            placeholder="Title"
+            placeholder="Customer,Title"
             name="search"
             v-model="search"
           />
         </div>
       </v-col>
-      <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;"></v-col>
+    </v-row>
+    <v-row class="mx-10 .flex-nowrap">
+      <v-col cols="6">
+        <v-text-field
+          v-model="fromDate"
+          type="date"
+          label="[End date] From:"
+          prepend-icon="date_range"
+        />
+      </v-col>
+      <v-col cols="6">
+        <v-text-field
+          v-model="toDate"
+          type="date"
+          label="[End date] To:"
+          prepend-icon="date_range"
+        />
+      </v-col>
     </v-row>
     <!-- /** End Search */ -->
 
@@ -37,15 +54,9 @@
             @page-count="pageCount = $event"
           >
             <template v-slot:item.customer="{item}">
-              <v-col
-                class="text__14"
-                style="display:flex; align-items:center;"
-              >
+              <v-col class="text__14" style="display:flex; align-items:center;">
                 <div>
-                  <span
-                    @click="clickCampaign(item)"
-                    class="customer-inner-table text__14"
-                  >{{item.customer.name}}</span>
+                  <span class="text__14">{{item.customer.name}}</span>
                 </div>
               </v-col>
             </template>
@@ -89,8 +100,8 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-import axios from 'axios'
+import { mapGetters, mapActions } from "vuex";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -102,19 +113,48 @@ export default {
       dialog: false,
       menu: false,
       search: "",
+      fromDate: "",
+      toDate: "",
       loading: false,
       /**List Content */
       headers: [
         {
           text: "Customer",
-          align: "center",
+          align: "left",
           value: "customer",
+          sortable: false,
           width: "15%"
         },
         { text: "Title", value: "title", sortable: false, width: "35%" },
-        { text: "Start", value: "startedDate", align: "center", width: "15%" },
-        { text: "End", value: "endDate", align: "center", width: "15%" },
-        { text: "Status", value: "status", align: "center", width: "10%" }
+        {
+          text: "Start",
+          value: "startedDate",
+          align: "center",
+          width: "15%"
+        },
+        {
+          text: "End",
+          value: "endDate",
+          align: "center",
+          width: "15%",
+          filter: value => {
+            if (!this.fromDate && !this.toDate) return true;
+            if (this.fromDate != "" && this.toDate == "") {
+              return this.fromDate <= value;
+            } else if (this.fromDate == "" && this.toDate != "") {
+              return value <= this.toDate;
+            } else {
+              return this.fromDate <= value && value <= this.toDate;
+            }
+          }
+        },
+        {
+          text: "Status",
+          value: "status",
+          sortable: false,
+          align: "center",
+          width: "10%"
+        }
       ],
       listCampaigns: []
     };
@@ -183,11 +223,6 @@ export default {
   display: flex;
 }
 
-.customer-inner-table:hover {
-  color: rgb(83, 138, 255);
-  transition: 0.5s;
-  cursor: pointer;
-}
 .campaign-details span {
   font-weight: bold;
   /**line-clamp */
