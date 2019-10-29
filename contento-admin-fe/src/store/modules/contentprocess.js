@@ -145,7 +145,11 @@ const actions = {
   },
   async editTaskByID({ commit }, data) {
     try {
+
+      console.log("data");
+      console.log(data);
       let rs = await editTaskByID(data);
+      console.log(rs.data);
       if (rs.status == 202) {
         commit("UPDATE_LISTTASK", rs.data);
         console.log("EDIT LIST TASK - ACTION");
@@ -156,14 +160,14 @@ const actions = {
           text: 'Task has been edited successfully!',
           type: 'suc'
         });
-        return 202;
+        return rs.status;
       }
     } catch (error) {
       Vue.notify({
         group: 'notice',
         title: 'Edit failed!',
         text: 'Task has been edited failed!',
-        type: 'suc'
+        type: 'warn'
       });
       console.log("ERROR - EDIT TASK");
       console.log(error);

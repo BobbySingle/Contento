@@ -184,11 +184,19 @@ export default {
       this.$router.push("/ReviewContent");
     },
     ...mapActions({
-      getListTaskByEditorID: "contentprocess/getListTaskByEditorID"
+      getListTaskByEditorID: "contentprocess/getListTaskByEditorID",
+      deleteTaskByID: "contentprocess/deleteTaskByID",
+      getListTagByCampaignID: "contentprocess/getListTagByCampaignID",
+      getListWriter: "authentication/getListWriter"
     }),
+    async clickDelete(id) {
+      await this.deleteTaskByID(id);
+      await this.getListTaskByEditorID(this.$store.getters.getUser.id);
+    },
     async fetchData() {
       this.loading = true;
       await this.getListTaskByEditorID(this.$store.getters.getUser.id);
+      await this.getListWriter(this.$store.getters.getUser.id);
       this.loading = false;
     }
   },

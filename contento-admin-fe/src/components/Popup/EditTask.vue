@@ -197,7 +197,7 @@ export default {
       "writer",
       "content",
       "endtime",
-      "publishTime",
+      "publishDate",
       "selectedTag"
     ]
   },
@@ -207,12 +207,13 @@ export default {
   mounted() {
     let now = new Date();
     this.mintime = now.toISOString();
-    this.maxtime = sessionStorage.getItem("Task-MaxTime").toString();
+    this.maxtime = sessionStorage.getItem("Task-MaxTime");
   },
   methods: {
     ...mapActions({
       getTaskDetailUpdate: "contentprocess/getTaskDetailUpdate",
-      editTaskByID: "contentprocess/editTaskByID"
+      editTaskByID: "contentprocess/editTaskByID",
+      getListTaskByEditorID: "contentprocess/getListTaskByEditorID"
     }),
     async clickEdit(taskID) {
       this.check = false;
@@ -232,6 +233,7 @@ export default {
       this.loadingSave = true;
       this.check = true;
       this.$v.form.$touch();
+      console.log(this.taskDetailUpdate.id);
       if (!this.$v.form.$invalid) {
         let status = await this.editTaskByID({
           idTask: this.id,
@@ -243,6 +245,7 @@ export default {
           tags: this.selectedTag
         });
         if (status == 202) {
+          await this.getListTaskByEditorID(this.$store.getters.getUser.id);
           this.loadingSave = false;
           this.dialog = false;
         }
