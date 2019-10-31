@@ -186,7 +186,6 @@ export default {
     ...mapActions({
       getListTaskByEditorID: "contentprocess/getListTaskByEditorID",
       deleteTaskByID: "contentprocess/deleteTaskByID",
-      getListTagByCampaignID: "contentprocess/getListTagByCampaignID",
       getListWriter: "authentication/getListWriter"
     }),
     async clickDelete(id) {

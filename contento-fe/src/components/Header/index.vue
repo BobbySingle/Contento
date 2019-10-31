@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app>
+  <v-app-bar app dense elevate-on-scroll>
     <v-toolbar-items>
       <v-toolbar-title
         class="headline text-uppercase"
@@ -7,15 +7,11 @@
     justify-content: center;
     align-items: center;"
       >
-        <img src="@/assets/Logo.png" style="height: 90%;" />
-        <router-link to="/">
-          <span>ontento</span>
-        </router-link>
+        <img src="@/assets/Logo.png" style="display:block; height:90%;" />
+        <span>ontento</span>
       </v-toolbar-title>
-      <div style="min-width:30px; width:100px;" />
+      <!-- <div style="min-width:30px; width:100px;" /> -->
       <v-btn text>Trending</v-btn>
-      <v-btn text to="/profile">Video</v-btn>
-      <!-- <v-btn text>Category</v-btn> -->
       <v-menu
         bottom
         max-height="200"
@@ -32,16 +28,25 @@
         <v-list>
           <v-list-item
             style="float: left;  width:50%; background: white;"
-            v-for="(item, i) in items"
+            v-for="(item,i) in items"
             :key="i"
-            @click
+            @click="clickCategory(item.title)"
           >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
     </v-toolbar-items>
-    <v-text-field hide-details prepend-icon="mdi-magnify" style="min-width:100px;"></v-text-field>
+    <v-spacer></v-spacer>
+    <v-toolbar-items>
+      <v-text-field
+        class="mt-2"
+        single-line
+        prepend-inner-icon="mdi-magnify"
+        clearable
+        v-model="search"
+      ></v-text-field>
+    </v-toolbar-items>
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-btn text>Sign Up</v-btn>
@@ -111,6 +116,7 @@
 <script>
 export default {
   data: () => ({
+    search: "",
     items: [
       { title: "Topic 1" },
       { title: "Topic 2" },
@@ -140,6 +146,9 @@ export default {
   }),
 
   methods: {
+    clickCategory(event) {
+      alert(event);
+    },
     validate() {
       if (this.$refs.form.validate()) {
         alert("OK");
@@ -152,7 +161,7 @@ export default {
 };
 </script>
 <style scoped>
-a{
+a {
   text-decoration: none;
 }
 </style>

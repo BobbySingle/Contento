@@ -1,19 +1,20 @@
 <template>
-  <v-app>
+  <v-app style="background-color:white;">
     <v-content>
       <Header/>
-      <router-view />
+      <router-view/>
     </v-content>
+    <Footer/>
   </v-app>
 </template>
 
 <script>
 import Header from '@/components/Header/index';
-
+import Footer from '@/components/Footer/index';
 export default {
   name: 'App',
   components: {
-    Header,
+    Header,Footer
   },
   data: () => ({
     //

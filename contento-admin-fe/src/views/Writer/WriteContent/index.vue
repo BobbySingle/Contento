@@ -202,6 +202,7 @@ export default {
     },
     async save() {
       this.check = true;
+      this.loadingSave = true;
       this.$v.form.$touch();
       if (!this.$v.form.$invalid) {
         this.loadingSave = true;
@@ -210,9 +211,10 @@ export default {
           name: this.name,
           content: this.$refs.ckeditor.editorData
         });
-        this.loadingSave = true;
+        this.loadingSave = false;
         this.check = false;
       }
+      this.loadingSave = false;
     },
     async submit() {
       let TaskID = sessionStorage.getItem("TaskID");

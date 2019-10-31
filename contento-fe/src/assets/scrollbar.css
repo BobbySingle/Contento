@@ -7,6 +7,10 @@ body{
     height: 10px;
     background-color: gray;
 }
+::-webkit-scrollbar{
+    width: 10px;
+    background-color: gray;
+}
 ::-webkit-scrollbar-thumb{
     border-radius: 2px;
     background-color: #a6a6a6;

@@ -145,14 +145,13 @@ const actions = {
   },
   async editTaskByID({ commit }, data) {
     try {
-
       console.log("data");
       console.log(data);
       let rs = await editTaskByID(data);
       console.log(rs.data);
       if (rs.status == 202) {
-        commit("UPDATE_LISTTASK", rs.data);
-        console.log("EDIT LIST TASK - ACTION");
+        // commit("UPDATE_LISTTASK", rs.data);
+        // console.log("EDIT LIST TASK - ACTION");
         console.log(rs.data);
         Vue.notify({
           group: 'notice',

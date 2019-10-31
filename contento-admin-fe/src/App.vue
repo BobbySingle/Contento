@@ -48,7 +48,61 @@ export default {
         this.loadAccessToken(user.token);
       }
     }
-  }
+  },
+  // created() {
+  //   //Yeu cau quyen thong bao tren trinh duyet
+  //   Notification.requestPermission()
+  //     .then(() => this.$messaging.getToken())
+  //     .then(token => {
+  //       console.log(token);
+  //       // if (this.loggedUser) {
+  //       //   this.registerFirebaseToken({
+  //       //     username: this.loggedUser.username,
+  //       //     webToken: token
+  //       //   });
+  //       // }
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //       // this.$notification.new(
+  //       console.log("Vui lòng cấp quyền truy cập thông báo để nhận được thông tin mới nhất nhanh chóng"
+  //       );
+  //     });
+
+  //   //Khi server gui message len firebase - firebase gui notification xuong user
+  //   this.$messaging.onMessage(payload => {
+  //     console.log(payload);
+  //     // if (this.loggedUser) {
+  //       const notificationTitle = "E-Broker thông báo";
+  //       const notificationOptions = {
+  //         body: payload.notification.body,
+  //         icon: "./assets/logo.png"
+  //       };
+  //       new Notification(notificationTitle, notificationOptions);
+  //       //Xu ly
+  //       // this.getNotification(this.loggedUser.access_token);
+  //     }
+  //   // }
+  //   );
+
+  //   //Refresh token khi het han
+  //   this.$messaging.onTokenRefresh(() => {
+  //     this.$messaging
+  //       .getToken()
+  //       .then(refreshedToken => {
+  //         console.log(refreshedToken);
+  //         // if (this.loggedUser) {
+  //         //   this.registerFirebaseToken({
+  //         //     username: this.loggedUser.username,
+  //         //     webToken: refreshedToken
+  //         //   });
+  //         // }
+  //       })
+  //       .catch(err => {
+  //         console.log("Unable to retrieve refreshed token ", err);
+  //       });
+  //   });
+  // }
 };
 </script>
 <style lang="scss">
