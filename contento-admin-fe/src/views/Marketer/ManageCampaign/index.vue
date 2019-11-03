@@ -1,21 +1,24 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1 class="text__h1">Approve request</h1>
+      <h1 class="text__h1">Manage Campaign</h1>
     </v-row>
     <!-- /**Begin Search  */ -->
-    <v-row no-gutters class="mx-6 mb-2">
-      <v-col cols="12" sm="12">
+    <v-row no-gutters class="mx-6">
+      <v-col sm="8" md="9">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
           <input
             class="input-field text__14"
             type="text"
-            placeholder="Customer,Title"
+            placeholder="Title"
             name="search"
             v-model="search"
           />
         </div>
+      </v-col>
+      <v-col sm="4" md="3" style="display:flex; justify-content: center;">
+        <popup-create-campaign />
       </v-col>
     </v-row>
     <v-row no-gutters class="mx-6 mb-2">
@@ -158,7 +161,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listCampaignByEditorID"
+            :items="listCampaign"
             :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
@@ -171,32 +174,38 @@
             <template v-slot:item.customer="{item}">
               <v-col class="text__14" style="display:flex; align-items:center;">
                 <div>
-                  <span class="text__14">{{item.customer.name}}</span>
+                  <span class="customer-inner-table text__14">{{item.customer.name}}</span>
                 </div>
               </v-col>
             </template>
             <template v-slot:item.title="{item}">
-              <div class="campaign-details py-2" @click="clickCampaign(item)">
+              <div class="campaign-details py-2" @click="clickCampaign(item.id)">
                 <div>
                   <span class="text__14">{{ item.title }}</span>
                 </div>
               </div>
               <div>
-                <v-chip v-for="topic in item.listTag" :key="topic.id" x-small>{{topic.name}}</v-chip>
+                <v-chip x-small light v-for="topic in item.listTag" :key="topic.id">{{topic.name}}</v-chip>
               </div>
             </template>
-            <template v-slot:item.startedDate="{item}">
-              <span>{{item.startedDate | moment("HH:mm DD/MM/YYYY")}}</span>
-            </template>
-            <template v-slot:item.endDate="{item}">
-              <span>{{item.endDate | moment("HH:mm DD/MM/YYYY")}}</span>
-            </template>
+            <template
+              v-slot:item.startedDate="{ item }"
+            >{{item.startedDate | moment("HH:mm DD/MM/YYYY")}}</template>
+            <template v-slot:item.endDate="{ item }">{{item.endDate | moment("HH:mm DD/MM/YYYY")}}</template>
             <template v-slot:item.status="{ item }">
               <v-chip
                 :color="item.status.color"
-                style="color:white;"
+                style="color:white"
                 class="text__14"
               >{{item.status.name}}</v-chip>
+            </template>
+            <template v-slot:item.action="{item}">
+              <v-row class="flex-nowrap">
+                <popup-edit-campaign :campaignID="item.id" />
+                <v-btn color="success" fab small @click="clickCalendar(item.id)" class="mx-3">
+                  <v-icon>event</v-icon>
+                </v-btn>
+              </v-row>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -209,21 +218,25 @@
     </v-row>
   </v-container>
 </template>
-
 <script>
+import PopupCreateCampaign from "../../../components/Popup/CreateCampaign.vue";
+import PopupEditCampaign from "../../../components/Popup/EditCampaign.vue";
+import moment from "moment";
 import { mapGetters, mapActions } from "vuex";
 import axios from "axios";
 export default {
+  components: { PopupCreateCampaign, PopupEditCampaign },
   data() {
     return {
       /**Begin Pagination */
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
-      panel: [],
       /**End Pagination */
+      panel: [],
       dialog: false,
       menu: false,
+      /**Filter */
       search: "",
       startFromDate: "",
       startToDate: "",
@@ -240,8 +253,8 @@ export default {
           text: "Customer",
           align: "left",
           value: "customer",
-          sortable: false,
           width: "15%",
+          sortable: false,
           filter: value => {
             if (!this.customer) return true;
             return value.id == this.customer;
@@ -267,8 +280,6 @@ export default {
         {
           text: "End",
           value: "endDate",
-          align: "center",
-          width: "15%",
           filter: value => {
             if (!this.endFromDate && !this.endToDate) return true;
             if (this.endFromDate != "" && this.endToDate == "") {
@@ -278,7 +289,9 @@ export default {
             } else {
               return this.endFromDate <= value && value <= this.endToDate;
             }
-          }
+          },
+          align: "center",
+          width: "15%"
         },
         {
           text: "Status",
@@ -290,6 +303,13 @@ export default {
             if (!this.status) return true;
             return value.id == this.status;
           }
+        },
+        {
+          text: "Action",
+          value: "action",
+          sortable: false,
+          align: "center",
+          width: "10%"
         },
         {
           text: "",
@@ -307,24 +327,6 @@ export default {
         }
       ]
     };
-  },
-  computed: {
-    ...mapGetters([
-      "getUser",
-      "listCampaignByEditorID",
-      "listCustomer",
-      "listStatusCampaign",
-      "listTag"
-    ])
-  },
-  created() {
-    let role = this.getUser.role;
-    if (role !== "Editor" && role != null) {
-      this.$router.push("/403");
-    } else if (role == null) {
-      this.$store.state.authentication.loggedUser = false;
-      this.$router.push("/");
-    }
   },
   methods: {
     reset() {
@@ -348,24 +350,51 @@ export default {
     clearEndToDate() {
       this.endToDate = "";
     },
-    clickCampaign: function(event) {
-      sessionStorage.setItem("CampaignID", JSON.stringify(event.id));
-      this.$router.push("/CampaignRequestDetails");
+    clickCalendar(event) {
+      sessionStorage.setItem("CampaignID", JSON.stringify(event));
+      this.$router.push("/Calendar");
+    },
+    clickCampaign(event) {
+      sessionStorage.setItem("CampaignID", JSON.stringify(event));
+      this.$router.push("/CampaignDetails");
     },
     ...mapActions({
-      getListCampaign: "campaign/getListCampaignByEditorID",
-      loadUser: "authentication/setUser",
+      getCampaigns: "campaign/getListCampaign",
+      getListCustomer: "authentication/getListCustomerByMarketerID",
+      getListEditor: "authentication/getListEditorByMarketerID",
       getListTag: "contentprocess/getListTag",
-      getListStatusCampaign: "contentprocess/getListStatusCampaign",
-      getListCustomerByEditorID: "authentication/getListCustomerByEditorID"
+      loadUser: "authentication/setUser",
+      getListStatusCampaign: "contentprocess/getListStatusCampaign"
     }),
+
     async fetchData() {
       this.loading = true;
-      await this.getListCampaign(this.$store.getters.getUser.id);
-      await this.getListCustomerByEditorID(this.$store.getters.getUser.id);
-      await this.getListStatusCampaign();
-      await this.getListTag();
+      await this.getCampaigns(this.getUser.id);
       this.loading = false;
+      await this.getListStatusCampaign();
+      await this.getListCustomer(this.$store.getters.getUser.id);
+      await this.getListEditor(this.$store.getters.getUser.id);
+      await this.getListTag();
+    }
+  },
+  computed: {
+    ...mapGetters([
+      "getUser",
+      "listCampaign",
+      "listCustomer",
+      "listStatusCampaign",
+      "listTag"
+    ])
+  },
+  created() {
+    axios.defaults.headers.common["Authorization"] =
+      "Bearer " + this.$store.getters.getAccessToken;
+    let role = this.getUser.role;
+    if (role !== "Marketer" && role != null) {
+      this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
     }
   },
   mounted() {
@@ -387,6 +416,7 @@ export default {
   border-bottom: 1px solid #737373;
   overflow: hidden;
 }
+
 
 .search-filter {
   height: 40px;
@@ -419,6 +449,11 @@ export default {
   display: flex;
 }
 
+.customer-inner-table:hover {
+  color: rgb(83, 138, 255);
+  transition: 0.5s;
+  cursor: pointer;
+}
 .campaign-details span {
   font-weight: bold;
   /**line-clamp */

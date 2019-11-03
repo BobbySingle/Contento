@@ -58,6 +58,61 @@
         <v-expansion-panel>
           <v-expansion-panel-header class="text__14">List Tasks:</v-expansion-panel-header>
           <v-expansion-panel-content>
+            <v-row no-gutters>
+              <v-col cols="12" sm="4" md="4">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="Deadline From"
+                      type="datetime"
+                      v-model="from"
+                      placeholder="Deadline From"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="from">
+                    <v-btn icon @click="clearFrom()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="4" md="4">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="Deadline To"
+                      type="datetime"
+                      v-model="to"
+                      placeholder="Deadline To"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="to">
+                    <v-btn icon @click="clearTo()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="4" md="4">
+                <v-select
+                  v-model="status"
+                  :items="listStatusTask"
+                  item-text="name"
+                  item-value="id"
+                  label="Status"
+                  prepend-inner-icon="filter_list"
+                  clearable
+                ></v-select>
+              </v-col>
+            </v-row>
             <v-col sm="12" md="12">
               <v-row>
                 <v-data-table
@@ -71,42 +126,7 @@
                   @page-count="pageCount = $event"
                 >
                   <template v-slot:item.status="{ item }">
-                    <v-chip
-                      class="text__14"
-                      color="success"
-                      dark
-                      v-if="item.status.id === 1"
-                    >{{item.status.name}}</v-chip>
-                    <v-chip
-                      class="text__14"
-                      color="warning"
-                      dark
-                      v-if="item.status.id === 2"
-                    >{{item.status.name}}</v-chip>
-                    <v-chip
-                      class="text__14"
-                      color="warning"
-                      dark
-                      v-if="item.status.id === 3"
-                    >{{item.status.name}}</v-chip>
-                    <v-chip
-                      class="text__14"
-                      color="error"
-                      dark
-                      v-if="item.status.id === 4"
-                    >{{item.status.name}}</v-chip>
-                    <v-chip
-                      class="text__14"
-                      color="secondary"
-                      dark
-                      v-if="item.status.id === 5"
-                    >{{item.status.name}}</v-chip>
-                    <v-chip
-                      class="text__14"
-                      color="primary"
-                      dark
-                      v-if="item.status.id === 6"
-                    >{{item.status.name}}</v-chip>
+                    <v-chip class="text__14" :color="item.status.color" dark>{{item.status.name}}</v-chip>
                   </template>
                   <template v-slot:item.action="{item}">
                     <v-btn
@@ -115,7 +135,17 @@
                       v-if="item.status.id === 5"
                       @click="publish(item.id)"
                     >Publish</v-btn>
-                    <v-btn class="text__14" disabled v-if="item.status.id != 5">Publish</v-btn>
+                    <v-btn
+                      class="text__14"
+                      color="primary"
+                      v-if="item.status.id === 6"
+                      @click="publish(item.id)"
+                    >Change</v-btn>
+                    <v-btn
+                      class="text__14"
+                      disabled
+                      v-if="item.status.id != 5 && item.status.id != 6"
+                    >Publish</v-btn>
                   </template>
                 </v-data-table>
                 <v-row justify="center">
@@ -152,7 +182,11 @@ export default {
       listTag: [],
       customer: "",
       editor: "",
-      loading:false,
+      loading: false,
+      /**Filter */
+      from: "",
+      to: "",
+      status: "",
       /**List Tasks */
       headers: [
         {
@@ -168,8 +202,33 @@ export default {
           align: "center",
           width: "16%"
         },
-        { text: "Deadline", value: "deadline", align: "center", width: "16%" },
-        { text: "Status", value: "status", align: "center", width: "10%" },
+        {
+          text: "Deadline",
+          value: "deadline",
+          align: "center",
+          width: "16%",
+          filter: value => {
+            if (!this.from && !this.to) return true;
+            if (this.from != "" && this.to == "") {
+              return this.from <= value;
+            } else if (this.from == "" && this.to != "") {
+              return value <= this.from;
+            } else {
+              return this.from <= value && value <= this.to;
+            }
+          }
+        },
+        {
+          text: "Status",
+          value: "status",
+          align: "center",
+          sortable: false,
+          width: "10%",
+          filter: value => {
+            if (!this.status) return true;
+            return value.id == this.status;
+          }
+        },
         {
           text: "Action",
           value: "action",
@@ -177,23 +236,20 @@ export default {
           width: "10%",
           sortable: false
         }
-      ],
-      // listtasks: [
-        // {
-        //   id: 1,
-        //   title:
-        //     "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-        //   writer: "Writer 1",
-        //   deadline: "2019-10-17T15:20:03.146Z",
-        //   status: 1
-        // },
-      // ]
+      ]
     };
   },
   methods: {
+    clearFrom() {
+      this.from = "";
+    },
+    clearTo() {
+      this.to = "";
+    },
     ...mapActions({
       getDetailCampaign: "campaign/getDetailCampaign",
-      getListCampaignTask: "contentprocess/getListCampaignTask"
+      getListCampaignTask: "contentprocess/getListCampaignTask",
+      getListStatusTask: "contentprocess/getListStatusTask"
     }),
     async fetchData() {
       this.loading = true;
@@ -204,6 +260,7 @@ export default {
       this.editor = this.detailCampaign.editor;
       this.endDate = this.detailCampaign.endDate;
       this.listTag = this.detailCampaign.listTag;
+      this.getListStatusTask();
       this.getListCampaignTask(campaignID);
       this.loading = false;
     },
@@ -213,7 +270,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getUser", "detailCampaign", "listCampaignTaskNotFormated"])
+    ...mapGetters(["getUser", "detailCampaign", "listCampaignTaskNotFormated","listStatusTask"])
   },
   created() {
     let role = this.getUser.role;
@@ -263,6 +320,20 @@ export default {
 };
 </script>
 <style scoped>
+::v-deep .css_time {
+  cursor: pointer;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+.out_css_time {
+  background: url(../../../assets/calendar.png) no-repeat scroll 7px 7px;
+  width: 100%;
+  padding-left: 30px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #737373;
+  overflow: hidden;
+}
+
 ::v-deep .v-expansion-panels {
   z-index: inherit;
 }

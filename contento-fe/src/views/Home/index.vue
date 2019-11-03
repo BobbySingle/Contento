@@ -40,8 +40,8 @@
       </v-col>
     </v-row>
     <v-row class="py-12">
-      <v-col cols="3" v-for="item in getPaginationNews" :key="item.id">
-        <card-news :news="item" />
+      <v-col cols="4" md="3" v-for="item in getPaginationNews" :key="item.id">
+          <card-news :news="item" />
       </v-col>
     </v-row>
     <div class="text-xs-center" style="margin-bottom: 50px">
@@ -54,19 +54,34 @@
         previous=":disabled='isInFirstPage'"
       ></v-pagination>
     </div>
+    <v-dialog v-model="dialog" persistent width="500">
+      <v-card>
+        <v-card-title class="headline">You are interested in the topic:</v-card-title>
+        <v-row no-gutters class="mx-4">
+          <v-col cols="4" v-for="item in listCategory" :key="item.id">
+            <v-checkbox v-model="userSelectedTopics" :label="item.name" :value="item.id"></v-checkbox>
+          </v-col>
+        </v-row>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="clickOK()">OK</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
 import SmallNews from "../../components/SmallNews/index.vue";
 import CardNews from "../../components/CardNews/index.vue";
 import axios from "axios";
-import Cookie from "js-cookie";
+import Cookies from "js-cookie";
 import { mapActions, mapGetters } from "vuex";
 export default {
   components: { SmallNews, CardNews },
   data() {
     return {
-      tags: [{ id: 1, name: "THỂ THAO" }, { id: 2, name: "DU LỊCH" }],
+      dialog: false,
+      userSelectedTopics: [],
       news: [
         {
           id: 1,
@@ -216,7 +231,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getPaginationNews"]),
+    ...mapGetters(["getPaginationNews", "listCategory"]),
     isInFirstPage() {
       return this.$store.state.currentPage === 1;
     },
@@ -228,34 +243,39 @@ export default {
     ...mapActions({
       setCurrentSelectedPage: "viewer/setCurrentSelectedPage",
       setNewsData: "viewer/setNewsData",
-      postTags: "viewer/postTags"
+      createCookie: "viewer/createCookie",
+      getContent: "viewer/getContent",
+      getTags: "viewer/getTags"
     }),
     onClickPage(selectedPage) {
       this.setCurrentSelectedPage(selectedPage);
     },
-    setData() {
-      this.setNewsData(this.news);
-      let category = JSON.stringify(this.tags);
-      // let message = "{[]}";
-      let thisa = [1, 2, 3];
-
-      Cookie.set("test", thisa, { expires: 365 });
-      // this.$cookies.set("user_session", message);
-      console.log(Cookie.getJSON("test"));
-      this.postTags({ tags: thisa });
+    async clickOK() {
+      await this.createCookie({ key: "CCTT", value: this.userSelectedTopics });
+      await Cookies.set("CCTT", this.userSelectedTopics);
+      await this.getContent();
+      this.dialog = false;
+    },
+    async setData() {
+      await this.getTags();
+      // await this.setNewsData(this.news);
+      if (Cookies.get("CCTT") == undefined) {
+        this.dialog = true;
+      } else {
+        await this.createCookie({ key: "CCTT", value: Cookies.get("CCTT") });
+        // console.log(Cookies.get("CCTT"));
+        // await Cookies.set("CCTT", Cookies.get("CCTT"));
+        await this.getContent();
+      }
     }
   },
   mounted() {
-    axios.defaults.withCredentials = true;
-    // axios.create({
-    //   withCredentials: true
-    // });
     axios.defaults.headers = {
       "Access-Control-Allow-Credentials": "true",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "*",
-      "Content-Type": "application/json"
-      // Authorization: localStorage.getItem("access-token")
+      "Content-Type": "application/json",
+      withCredentials: true
     };
     this.setData();
   }

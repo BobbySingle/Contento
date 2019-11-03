@@ -17,6 +17,11 @@ export function getListCustomerByMarketerID(userid) {
     `http://34.87.31.23:5000/api/authentication/customers/marketers-basic/${userid}`
   );
 }
+export function getListCustomerByEditorID(userid) {
+  return axios.get(
+    `http://34.87.31.23:5000/api/authentication/customer/editor/${userid}`
+  );
+}
 
 export function getListInfoCustomer(userid) {
   return axios.get(

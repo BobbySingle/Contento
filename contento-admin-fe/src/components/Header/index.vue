@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <v-app-bar app dark height="56" style="background-color:#004ba0" flat>
+    <v-app-bar app dark dense style="background-color:#004ba0" flat>
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-menu
@@ -41,7 +41,7 @@
         </v-menu>
         <v-divider vertical inset></v-divider>
         <v-menu
-          bottom
+        bottom
           max-height="300"
           min-width="188"
           max-width="188"
@@ -52,11 +52,12 @@
           :close-on-content-click="false"
         >
           <template v-slot:activator="{ on }">
-            <v-btn text v-on="on">
-              <v-list-item-title style="text-transform: capitalize; color:white;">{{fullname}}</v-list-item-title>
-              <v-list-item-avatar>
-                <v-img :src="imageURL" sizes="50"></v-img>
-              </v-list-item-avatar>
+            <v-btn text v-on="on" style="text-transform: capitalize; color:white;">
+              {{fullname}}
+              <!-- <v-list-item-subtitle style="text-transform: capitalize; color:white;">{{fullname}}</v-list-item-subtitle> -->
+              <!-- <v-list-item-avatar>
+                <v-img :src="imageURL" sizes="15"></v-img>
+              </v-list-item-avatar> -->
             </v-btn>
           </template>
           <!--Begin List Menu Profile -->
@@ -104,11 +105,11 @@ export default {
   mounted() {
     let profile = JSON.parse(localStorage.getItem("Profile").toString());
       this.fullname = profile.fullName;
-      if (profile.imagePath == null) {
-        this.imageURL = "https://picsum.photos/id/241/3456/2304";
-      } else {
-        this.imageURL = profile.imagePath;
-      }
+      // if (profile.imagePath == null) {
+      //   this.imageURL = "https://picsum.photos/id/241/3456/2304";
+      // } else {
+      //   this.imageURL = profile.imagePath;
+      // }
   }
 };
 </script>

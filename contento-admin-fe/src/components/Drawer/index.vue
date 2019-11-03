@@ -7,9 +7,9 @@
     dark
     style="background-color:#1976d2;"
   >
-    <v-list-item style="background-color:#004ba0" dark>
+    <v-list-item style="background-color:#004ba0; height:48px;" dark >
       <v-list-item-avatar>
-        <v-img src="../../assets/logo.png" sizes="85"></v-img>
+        <v-img src="../../assets/logo.png" ></v-img>
       </v-list-item-avatar>
       <v-list-item-title>Contento</v-list-item-title>
       <v-btn icon @click.stop="mini = !mini">
@@ -49,20 +49,27 @@ export default {
         {
           title: "Campaign",
           icon: "emoji_events",
-          link: "/CampaignManagement",
+          link: "/ManageCampaign",
           role: "Marketer"
         },
         {
-          title: "Content",
+          title: "Publish Content",
           icon: "edit",
-          link: "/ContentManagement",
+          link: "/ManagePublish",
           role: "Marketer"
         },
         {
           title: "Customer",
           icon: "people",
-          link: "/CustomerManagement",
+          link: "/ManageCustomer",
           role: "Marketer"
+        },
+                {
+          title: "Channel",
+          icon: "public",
+          link: "/ManageChannel",
+          role: "Marketer"
+          // role: "Marketer"
         },
         {
           title: "Campaign Request",
@@ -72,9 +79,9 @@ export default {
           // role: "Marketer"
         },
         {
-          title: "Content Request",
+          title: "Approve Request",
           icon: "notes",
-          link: "/ContentRequest",
+          link: "/ApproveRequest",
           role: "Editor"
           // role: "Marketer"
         },

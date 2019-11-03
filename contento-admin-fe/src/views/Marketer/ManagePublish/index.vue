@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1 class="text__h1">List Content</h1>
+      <h1 class="text__h1">Manage Publish Content</h1>
     </v-row>
     <v-row no-gutters class="mx-10">
-      <v-col sm="12" md="12">
+      <v-col cols="12">
         <v-row>
           <v-data-table
             :headers="headers"

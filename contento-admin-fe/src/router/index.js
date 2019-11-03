@@ -1,18 +1,19 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Home from "../views/Home/index.vue";
-import CampaignManagement from "../views/Marketer/CampaignManagement/index.vue";
+import ManageCampaign from "../views/Marketer/ManageCampaign/index.vue";
 import TaskManagement from "../views/Writer/TaskManagement/index.vue";
 import WriteContent from "../views/Writer/WriteContent/index.vue";
 import CampaignDetails from "../views/Marketer/CampaignDetails/index.vue";
 import PublishChannel from "../views/Marketer/PublishChannel/index.vue";
+import ManageChannel from "../views/Marketer/ManageChannel/index.vue";
 import Calendar from "../views/Marketer/Calendar/index.vue";
-import ContentManagement from "../views/Marketer/ContentManagement/index.vue";
-import CustomerManagement from "../views/Marketer/CustomerManagement/index.vue";
+import ManagePublish from "../views/Marketer/ManagePublish/index.vue";
+import ManageCustomer from "../views/Marketer/ManageCustomer/index.vue";
 import CustomerCampaigns from "../views/Marketer/CustomerCampaigns/index.vue";
 import Page403 from "../views/Error/Page403.vue";
 import CampaignRequest from "../views/Editor/CampaignRequest/index.vue";
-import ContentRequest from "../views/Editor/ContentRequest/index.vue";
+import ApproveRequest from "../views/Editor/ApproveRequest/index.vue";
 import CampaignRequestDetails from "../views/Editor/CampaignRequestDetails/index.vue";
 import ReviewContent from "../views/Editor/ReviewContent/index.vue";
 import ManageTask from "../views/Editor/ManageTask/index.vue";
@@ -34,9 +35,9 @@ export default new Router({
       component: Page403,
     },
     {
-      path: "/CampaignManagement",
-      name: "CampaignManagement",
-      component: CampaignManagement
+      path: "/ManageCampaign",
+      name: "ManageCampaign",
+      component: ManageCampaign
     },
     {
       path: "/CampaignDetails",
@@ -49,19 +50,24 @@ export default new Router({
       component: PublishChannel
     },
     {
+      path: "/ManageChannel",
+      name: "ManageChannel",
+      component: ManageChannel
+    },
+    {
       path: "/Calendar",
       name: "Calendar",
       component: Calendar
     },
     {
-      path: "/ContentManagement",
-      name: "ContentManagement",
-      component: ContentManagement
+      path: "/ManagePublish",
+      name: "ManagePublish",
+      component: ManagePublish
     },
     {
-      path: "/CustomerManagement",
-      name: "CustomerManagement",
-      component: CustomerManagement
+      path: "/ManageCustomer",
+      name: "ManageCustomer",
+      component: ManageCustomer
     },
     {
       path: "/CustomerCampaigns",
@@ -75,9 +81,9 @@ export default new Router({
       component: CampaignRequest
     },
     {
-      path: "/ContentRequest",
-      name: "ContentRequest",
-      component: ContentRequest
+      path: "/ApproveRequest",
+      name: "ApproveRequest",
+      component: ApproveRequest
     },
     {
       path: "/CampaignRequestDetails",

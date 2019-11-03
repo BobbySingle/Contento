@@ -1,10 +1,12 @@
-import { postTags } from "../../services/viewer"
+import { createCookie, getContent, getTags, getNewsDetails } from "../../services/viewer"
 
 const state = {
     news: [],
     currentPage: 1,
-    itemsPerPage: 8,
+    itemsPerPage: 4,
     totalPages: 0,
+    tags: [],
+    newsDetails:null,
 }
 const mutations = {
     setCurrentSelectedPage(state, payload) {
@@ -21,6 +23,12 @@ const mutations = {
         state.totalPages = Math.ceil(
             state.news.length / state.itemsPerPage
         );
+    },
+    setTags(state, payload) {
+        state.tags = payload;
+    },
+    setNewsDetails(state, payload){
+        state.newsDetails = payload;
     }
 }
 const actions = {
@@ -40,10 +48,9 @@ const actions = {
     setNewsData({ commit }, payload) {
         commit("setNewsData", payload);
     },
-    async postTags({ commit }, payload) {
+    async createCookie({ commit }, payload) {
         try {
-            console.log(payload);
-            let rs = await postTags(payload);
+            let rs = await createCookie(payload);
             console.log(rs);
             if (rs.status == 200) {
                 console.log("OK")
@@ -51,6 +58,47 @@ const actions = {
             }
         } catch (error) {
             console.log("Not OK");
+            console.log(error);
+        }
+    },
+    async getContent({ commit }, ) {
+        try {
+            let rs = await getContent();
+            console.log(rs);
+            if (rs.status == 200) {
+                commit("setNewsData", rs.data);
+                console.log("getContent OK");
+                console.log(rs.data);
+            }
+        } catch (error) {
+            console.log("getContent Not OK");
+            console.log(error);
+        }
+    },
+    async getTags({ commit }) {
+        try {
+            let rs = await getTags();
+            console.log(rs);
+            // if (rs.status == 200) {
+                commit("setTags", rs.data);
+            //     console.log("getTags OK");
+            //     console.log(rs.data);
+            // }
+        } catch (error) {
+            console.log("getTags Not OK");
+            console.log(error);
+        }
+    },
+    async getNewsDetails({commit}, payload){
+        try {
+            let rs = await getNewsDetails(payload);
+            console.log("NEW");
+            console.log(rs.data);
+            if(rs.status == 200){
+                commit("setNewsDetails", rs.data);
+                return 200;
+            }
+        } catch (error) {
             console.log(error);
         }
     }

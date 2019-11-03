@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center" no-gutters class="mx-4">
       <v-col cols="12" sm="8" md="9" style="display:flex; justify-content:center;">
-        <h1 class="text__h1">List Customer</h1>
+        <h1 class="text__h1">Manage Customer</h1>
       </v-col>
       <v-col cols="12" sm="4" md="3">
         <v-row class="ml-1 mb-5">

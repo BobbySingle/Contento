@@ -5,6 +5,7 @@ import {
   createCustomer,
   getListEditorByMarketerID,
   getListCustomerByMarketerID,
+  getListCustomerByEditorID,
   editCustomer,
   getListWriter
 } from "../../services/authentication";
@@ -165,6 +166,15 @@ const actions = {
       commit("SET_LISTCUSTOMER", rs.data);
     } catch (error) {
       console.log("ERROR -  LIST CUSTOMER BY MARKETER ID");
+      console.log(error);
+    }
+  },
+  async getListCustomerByEditorID({ commit }, payload) {
+    try {
+      let rs = await getListCustomerByEditorID(payload);
+      commit("SET_LISTCUSTOMER", rs.data);
+    } catch (error) {
+      console.log("ERROR -  LIST CUSTOMER BY EDITOR ID");
       console.log(error);
     }
   },

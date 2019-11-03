@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1 class="text__h1">Content Request</h1>
+      <h1 class="text__h1">Approve Request</h1>
     </v-row>
     <!-- /**Begin Search  */ -->
-    <v-row no-gutters class="mx-10">
+    <v-row no-gutters class="mx-6 mb-2">
       <v-col cols="12">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
@@ -18,23 +18,74 @@
         </div>
       </v-col>
     </v-row>
-    <v-row class="mx-10 .flex-nowrap">
-      <v-col cols="6">
-        <v-text-field
-          v-model="fromDate"
-          type="date"
-          label="[End date] From:"
-          prepend-icon="date_range"
-        />
-      </v-col>
-      <v-col cols="6">
-        <v-text-field
-          v-model="toDate"
-          type="date"
-          label="[End date] To:"
-          prepend-icon="date_range"
-        />
-      </v-col>
+    <v-row no-gutters class="mx-6 mb-2">
+      <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+        <v-expansion-panel>
+          <v-expansion-panel-header class="text__14">Advanced Filter:</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-row class=".flex-nowrap">
+              <v-col cols="12" sm="6" md="3">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="[End]From Time"
+                      type="datetime"
+                      v-model="endFromDate"
+                      placeholder="[End] From time"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="endFromDate">
+                    <v-btn icon @click="clearEndFromDate()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="[End]To Time"
+                      type="datetime"
+                      v-model="endToDate"
+                      placeholder="[End] To time"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="endToDate">
+                    <v-btn icon @click="clearEndToDate()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-select
+                  v-model="status"
+                  :items="listStatusTask"
+                  item-text="name"
+                  item-value="id"
+                  label="Status"
+                  prepend-inner-icon="filter_list"
+                  clearable
+                ></v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-row justify="center">
+                  <v-btn color="primary" @click="reset()">Reset</v-btn>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-row>
     <!-- /** End Search */ -->
 
@@ -108,12 +159,15 @@ export default {
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
+      panel:[],
       /**End Pagination */
       dialog: false,
       menu: false,
       search: "",
-      fromDate: "",
-      toDate: "",
+      endFromDate: "",
+      endToDate: "",
+      status: "",
+
       loading: false,
       /**List Content */
       headers: [
@@ -136,13 +190,13 @@ export default {
           align: "center",
           width: "12.5%",
           filter: value => {
-            if (!this.fromDate && !this.toDate) return true;
-            if (this.fromDate != "" && this.toDate == "") {
-              return this.fromDate <= value;
-            } else if (this.fromDate == "" && this.toDate != "") {
-              return value <= this.toDate;
+            if (!this.endFromDate && !this.endToDate) return true;
+            if (this.endFromDate != "" && this.endToDate == "") {
+              return this.endFromDate <= value;
+            } else if (this.endFromDate == "" && this.endToDate != "") {
+              return value <= this.endToDate;
             } else {
-              return this.fromDate <= value && value <= this.toDate;
+              return this.endFromDate <= value && value <= this.endToDate;
             }
           }
         },
@@ -151,7 +205,11 @@ export default {
           value: "status",
           sortable: false,
           align: "center",
-          width: "10%"
+          width: "10%",
+          filter: value => {
+            if (!this.status) return true;
+            return value.id == this.status;
+          }
         },
         {
           text: "Action",
@@ -164,19 +222,34 @@ export default {
     };
   },
   methods: {
+    reset() {
+      this.endFromDate = "";
+      this.endToDate = "";
+      this.status = "";
+    },
+    clearEndFromDate() {
+      this.endFromDate = "";
+    },
+    clearEndToDate() {
+      this.endToDate = "";
+    },
     changeToReview(event) {
-      sessionStorage.setItem("ContentRequestID", event);
+      sessionStorage.setItem("ApproveRequestID", event);
       this.$router.push("/ReviewContent");
     },
-    ...mapActions({ getContentRequest: "contentprocess/getContentRequest" }),
+    ...mapActions({
+      getContentRequest: "contentprocess/getContentRequest",
+      getListStatusTask: "contentprocess/getListStatusTask"
+    }),
     async fetchData() {
       this.loading = true;
       await this.getContentRequest(this.$store.getters.getUser.id);
+      this.getListStatusTask();
       this.loading = false;
     }
   },
   computed: {
-    ...mapGetters(["getUser", "listContentRequest"])
+    ...mapGetters(["getUser", "listContentRequest", "listStatusTask"])
   },
   created() {
     axios.defaults.headers.common["Authorization"] =
@@ -195,6 +268,20 @@ export default {
 };
 </script>
 <style scoped>
+::v-deep .css_time {
+  cursor: pointer;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+.out_css_time {
+  background: url(../../../assets/calendar.png) no-repeat scroll 7px 7px;
+  width: 100%;
+  padding-left: 30px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #737373;
+  overflow: hidden;
+}
+
 .search-filter {
   height: 40px;
   display: flex;

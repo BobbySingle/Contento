@@ -84,3 +84,11 @@ export function submitContent(content) {
 export function getListTaskByEditorID(editorID) {
   return axios.get(`http://34.87.31.23:5002/api/contentprocess/all-task/editor/${editorID}`);
 }
+
+export function getListStatusTask() {
+  return axios.get(`http://34.87.31.23:5002/api/contentprocess/status/task`);
+}
+
+export function getListStatusCampaign() {
+  return axios.get(`http://34.87.31.23:5002/api/contentprocess/status/campaign`);
+}

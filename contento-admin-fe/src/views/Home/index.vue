@@ -9,9 +9,9 @@ export default {
     let role = this.getUser.role;
     console.log(role);
     if (role === "Marketer") {
-      this.$router.push("/CampaignManagement");
+      this.$router.push("/ManageCampaign");
     } else if (role === "Editor") {
-      this.$router.push("/ContentRequest");
+      this.$router.push("/ApproveRequest");
     } else if (role === "Writer") {
       this.$router.push("/TaskManagement");
     } else {

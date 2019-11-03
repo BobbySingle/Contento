@@ -173,9 +173,9 @@ export default {
       this.loadingSubmit = true;
       this.$v.form.$touch();
       if (!this.$v.form.$invalid) {
-        let ContentRequestID = sessionStorage.getItem("ContentRequestID");
+        let ApproveRequestID = sessionStorage.getItem("ApproveRequestID");
         await this.setApprovalContentRequest({
-          idTask: ContentRequestID,
+          idTask: ApproveRequestID,
           idContent: this.idContent,
           comments: this.$refs.ckeditor.editorData,
           name: this.name,
@@ -190,9 +190,9 @@ export default {
       this.check = true;
       this.$v.form.$touch();
       if (!this.$v.form.$invalid) {
-        let ContentRequestID = sessionStorage.getItem("ContentRequestID");
+        let ApproveRequestID = sessionStorage.getItem("ApproveRequestID");
         await this.setApprovalContentRequest({
-          idTask: ContentRequestID,
+          idTask: ApproveRequestID,
           idContent: this.idContent,
           comments: this.$refs.ckeditor.editorData,
           name: this.name,

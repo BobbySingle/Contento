@@ -17,13 +17,13 @@ firebase.initializeApp(firebaseConfig);
 
 Vue.prototype.$firebase = firebase;
 
-Vue.prototype.$messaging = firebase.messaging()
+// Vue.prototype.$messaging = firebase.messaging()
 
-navigator.serviceWorker
-  .register('/firebase-messaging-sw.js')
-  .then(registration => {
-    Vue.prototype.$messaging.useServiceWorker(registration)
-  })
-  .catch(err => {
-    console.log(err)
-  })
+// navigator.serviceWorker
+//   .register('/firebase-messaging-sw.js')
+//   .then(registration => {
+//     Vue.prototype.$messaging.useServiceWorker(registration)
+//   })
+//   .catch(err => {
+//     console.log(err)
+//   })

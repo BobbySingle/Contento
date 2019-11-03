@@ -15,7 +15,9 @@ import {
   startTask,
   saveContent,
   submitContent,
-  getListTaskByEditorID
+  getListTaskByEditorID,
+  getListStatusTask,
+  getListStatusCampaign
 } from "../../services/contentprocess";
 
 import router from "@/router/index";
@@ -31,6 +33,8 @@ const state = {
   listContentRequest: [],
   listTaskByWriterID: [],
   listTaskByEditorID: [],
+  listStatusTask:[],
+  listStatusCampaign:[],
 };
 
 const mutations = {
@@ -73,6 +77,12 @@ const mutations = {
   },
   SET_LIST_TASK_BY_EDITOR_ID(state, data) {
     state.listTaskByEditorID = data;
+  },
+  SET_LIST_STATUS_TASK(state, data) {
+    state.listStatusTask = data;
+  },
+  SET_LIST_STATUS_CAMPAIGN(state, data) {
+    state.listStatusCampaign = data;
   },
 };
 
@@ -231,7 +241,7 @@ const actions = {
     try {
       await setApprovalContentRequest(payload);
       router.push({
-        name: "ContentRequest"
+        name: "ApproveRequest"
       });
     } catch (error) {
       console.log("ERROR - APPROVAL CONTENT REQUEST");
@@ -288,7 +298,33 @@ const actions = {
       console.log("ERROR - LIST TASK BY EDITOR ID");
       console.log(error);
     }
-  }
+  },
+  async getListStatusTask({ commit }) {
+    try {
+      let rs = await getListStatusTask();
+      if(rs.status == 200){
+        commit("SET_LIST_STATUS_TASK",rs.data);
+      }
+      console.log("LIST STATUS TASK - ACTION");
+      console.log(rs.data);
+    } catch (error) {
+      console.log("ERROR - LIST STATUS TASK");
+      console.log(error);
+    }
+  },
+  async getListStatusCampaign({ commit }) {
+    try {
+      let rs = await getListStatusCampaign();
+      if(rs.status == 200){
+        commit("SET_LIST_STATUS_CAMPAIGN",rs.data);
+      }
+      console.log("LIST STATUS TASK - ACTION");
+      console.log(rs.data);
+    } catch (error) {
+      console.log("ERROR - LIST STATUS TASK");
+      console.log(error);
+    }
+  },
 };
 
 export default {

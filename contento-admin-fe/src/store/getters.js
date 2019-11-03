@@ -34,5 +34,7 @@ const getters = {
   listContentRequest: state => state.contentprocess.listContentRequest,
   listTaskByWriterID: state => state.contentprocess.listTaskByWriterID,
   listTaskByEditorID: state => state.contentprocess.listTaskByEditorID,
+  listStatusTask: state => state.contentprocess.listStatusTask,
+  listStatusCampaign: state => state.contentprocess.listStatusCampaign,
 };
 export default getters;
