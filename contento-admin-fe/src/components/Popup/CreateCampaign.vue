@@ -110,7 +110,7 @@
             </v-row>
             <v-row>
               <v-col cols="12" md="12">
-                <v-combobox
+                <v-select
                   v-model="tags"
                   item-text="name"
                   item-value="id"
@@ -134,7 +134,7 @@
                       <strong class="text__14">{{ item.name }}</strong>
                     </v-chip>
                   </template>
-                </v-combobox>
+                </v-select>
                 <div style="color:red" v-if="!$v.tags.required && check">Please select category.</div>
               </v-col>
             </v-row>

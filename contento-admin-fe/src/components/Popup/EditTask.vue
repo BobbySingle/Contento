@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" scrollable width="800px">
+  <v-dialog v-model="dialog" scrollable :width="widthDialog">
     <template v-slot:activator="{ on }">
       <v-btn text icon color="warning" v-on="on" @click="clickEdit(taskID)">
         <v-icon>edit</v-icon>
@@ -16,9 +16,9 @@
           <v-btn dark text @click="update()" :loading="loadingSave">Save</v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-card-text style="min-height: 300px; padding:0px;">
+      <v-card-text style="padding:0px;">
         <v-row no-gutters class="mx-10">
-          <v-col cols="12" sm="12">
+          <v-col cols="12" sm="12" v-if="!overdue">
             <v-row>
               <v-col cols="12" sm="12">
                 <v-text-field
@@ -68,7 +68,7 @@
                       input-class="datetime"
                       input-style="cursor:pointer;"
                       :min-datetime="mintime"
-                      :max-datetime="maxtime"
+                      :max-datetime="publishDate"
                       required
                     ></datetime>
                   </v-col>
@@ -78,7 +78,7 @@
             </v-row>
             <v-row>
               <v-col cols="12" sm="6">
-                <v-combobox
+                <v-select
                   v-model="selectedTag"
                   item-text="name"
                   item-value="id"
@@ -102,7 +102,7 @@
                       <strong class="text__14">{{ item.name }}</strong>
                     </v-chip>
                   </template>
-                </v-combobox>
+                </v-select>
                 <div
                   style="color:red"
                   v-if="!$v.selectedTag.required && check"
@@ -124,8 +124,7 @@
                       class="text__14"
                       input-class="datetime"
                       input-style="cursor:pointer;"
-                      :min-datetime="mintime"
-                      :max-datetime="maxtime"
+                      :min-datetime="endtime"
                       required
                     ></datetime>
                   </v-col>
@@ -153,6 +152,59 @@
               </v-col>
             </v-row>
           </v-col>
+          <!-- Over due -->
+          <v-row v-if="overdue">
+            <v-col cols="12" align-self="center">
+              <v-row class="out-endtime flex-nowrap" align="center">
+                <v-col sm="1" class="d-none d-sm-block">
+                  <v-icon>mdi-calendar-range</v-icon>
+                </v-col>
+                <v-col cols="12" sm="11">
+                  <datetime
+                    title="End Time"
+                    placeholder="Select End Time"
+                    value-zone="UTC+07:00"
+                    type="datetime"
+                    v-model="endtime"
+                    :value="endtime"
+                    class="text__14"
+                    input-class="datetime"
+                    input-style="cursor:pointer;"
+                    :min-datetime="mintime"
+                    :max-datetime="publishDate"
+                    required
+                  ></datetime>
+                </v-col>
+              </v-row>
+              <div style="color:red" v-if="!$v.endtime.required && check">Please select endtime.</div>
+            </v-col>
+            <v-col cols="12" align-self="center">
+              <v-row class="out-endtime flex-nowrap" align="center">
+                <v-col sm="1" class="d-none d-sm-block">
+                  <v-icon>publish</v-icon>
+                </v-col>
+                <v-col cols="12" sm="11">
+                  <datetime
+                    title="Publish Time"
+                    placeholder="Select Publish Time"
+                    type="datetime"
+                    v-model="publishDate"
+                    :value="publishDate"
+                    value-zone="UTC+07:00"
+                    class="text__14"
+                    input-class="datetime"
+                    input-style="cursor:pointer;"
+                    :min-datetime="endtime"
+                    required
+                  ></datetime>
+                </v-col>
+              </v-row>
+              <div
+                style="color:red"
+                v-if="!$v.publishDate.required && check"
+              >Please select publish time.</div>
+            </v-col>
+          </v-row>
         </v-row>
       </v-card-text>
     </v-card>
@@ -171,6 +223,7 @@ export default {
   data() {
     return {
       dialog: false,
+      widthDialog: "800px",
       menu: false,
       selectedTag: [],
       endtime: "",
@@ -182,7 +235,8 @@ export default {
       title: "",
       id: "",
       check: false,
-      loadingSave: false
+      loadingSave: false,
+      overdue: false
     };
   },
   validations: {
@@ -199,7 +253,8 @@ export default {
       "endtime",
       "publishDate",
       "selectedTag"
-    ]
+    ],
+    overdue: ["publishDate", "endtime"]
   },
   computed: {
     ...mapGetters(["listWriter", "listTagByCampaignID", "taskDetailUpdate"])
@@ -207,13 +262,13 @@ export default {
   mounted() {
     let now = new Date();
     this.mintime = now.toISOString();
-    this.maxtime = sessionStorage.getItem("Task-MaxTime");
   },
   methods: {
     ...mapActions({
       getTaskDetailUpdate: "contentprocess/getTaskDetailUpdate",
       editTaskByID: "contentprocess/editTaskByID",
-      getListTaskByEditorID: "contentprocess/getListTaskByEditorID"
+      getListTaskByEditorID: "contentprocess/getListTaskByEditorID",
+      getListCampaignTask: "contentprocess/getListCampaignTask"
     }),
     async clickEdit(taskID) {
       this.check = false;
@@ -226,31 +281,64 @@ export default {
         this.writer = this.taskDetailUpdate.writer;
         this.title = this.taskDetailUpdate.title;
         this.id = this.taskDetailUpdate.id;
+        if (
+          this.taskDetailUpdate.status.id == 4 ||
+          this.taskDetailUpdate.status.id == 2
+        ) {
+          this.overdue = true;
+          this.widthDialog = "300px";
+        } else {
+          this.overdue = false;
+          this.widthDialog = "800px";
+        }
       }
     },
 
     async update() {
       this.loadingSave = true;
+      let campaignID = sessionStorage.getItem("CampaignID");
       this.check = true;
       this.$v.form.$touch();
-      console.log(this.taskDetailUpdate.id);
-      if (!this.$v.form.$invalid) {
-        let status = await this.editTaskByID({
-          idTask: this.id,
-          idWriter: this.writer.id,
-          title: this.title,
-          description: this.$refs.ckeditor.editorData,
-          deadline: this.endtime,
-          publishTime: this.publishDate,
-          tags: this.selectedTag
-        });
-        if (status == 202) {
-          await this.getListTaskByEditorID(this.$store.getters.getUser.id);
-          this.loadingSave = false;
-          this.dialog = false;
+      this.$v.overdue.$touch();
+      if (!this.overdue) {
+        if (!this.$v.form.$invalid) {
+          let status = await this.editTaskByID({
+            idTask: this.id,
+            idWriter: this.writer.id,
+            title: this.title,
+            description: this.$refs.ckeditor.editorData,
+            deadline: this.endtime,
+            publishTime: this.publishDate,
+            tags: this.selectedTag
+          });
+          if (status == 202) {
+            await this.getListCampaignTask(campaignID);
+            await this.getListTaskByEditorID(this.$store.getters.getUser.id);
+            this.loadingSave = false;
+            this.dialog = false;
+          }
         }
+        this.loadingSave = false;
+      } else {
+        if (!this.$v.overdue.$invalid) {
+          let status = await this.editTaskByID({
+            idTask: this.id,
+            idWriter: this.writer.id,
+            title: this.title,
+            description: this.content,
+            deadline: this.endtime,
+            publishTime: this.publishDate,
+            tags: this.selectedTag
+          });
+          if (status == 202) {
+            await this.getListCampaignTask(campaignID);
+            await this.getListTaskByEditorID(this.$store.getters.getUser.id);
+            this.loadingSave = false;
+            this.dialog = false;
+          }
+        }
+        this.loadingSave = false;
       }
-      this.loadingSave = false;
     }
   }
 };

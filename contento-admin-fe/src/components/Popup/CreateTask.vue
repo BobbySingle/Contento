@@ -77,7 +77,7 @@
             </v-row>
             <v-row>
               <v-col cols="12" sm="6">
-                <v-combobox
+                <v-select
                   v-model="selectedTags"
                   item-text="name"
                   item-value="id"
@@ -101,7 +101,7 @@
                       <strong class="text__14">{{ item.name }}</strong>
                     </v-chip>
                   </template>
-                </v-combobox>
+                </v-select>
                 <div
                   style="color:red"
                   v-if="!$v.selectedTags.required && check"
@@ -123,8 +123,7 @@
                       class="text__14"
                       input-class="datetime"
                       input-style="cursor:pointer;"
-                      :min-datetime="mintime"
-                      :max-datetime="maxtime"
+                      :min-datetime="endtime"
                       required
                     ></datetime>
                   </v-col>

@@ -9,6 +9,7 @@ const getters = {
   listEditor: state => state.authentication.listEditor,
   listInfoCustomer: state => state.authentication.listInfoCustomer,
   listWriter: state => state.authentication.listWriter,
+  listWriterByMarketerID: state => state.authentication.listWriterByMarketerID,
 
   //Campaign
   listCampaign: state => state.campaign.listCampaign,
@@ -36,5 +37,6 @@ const getters = {
   listTaskByEditorID: state => state.contentprocess.listTaskByEditorID,
   listStatusTask: state => state.contentprocess.listStatusTask,
   listStatusCampaign: state => state.contentprocess.listStatusCampaign,
+  listStatusPublish: state => state.contentprocess.listStatusPublish,
 };
 export default getters;

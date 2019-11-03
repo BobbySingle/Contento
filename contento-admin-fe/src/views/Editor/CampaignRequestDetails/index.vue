@@ -82,7 +82,7 @@
                     </template>
                     <template v-slot:item.action="{ item }">
                       <v-row class="flex-nowrap" justify="center">
-                        <edit-task v-if="item.status.id !== 5" :taskID="item.id" />
+                        <edit-task v-if="item.status.id <= 4" :taskID="item.id" />
                         <v-btn
                           text
                           icon

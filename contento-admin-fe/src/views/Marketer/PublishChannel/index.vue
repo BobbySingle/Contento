@@ -74,7 +74,7 @@
               </v-row>
             </v-col>
             <v-col sm="12" md="6" class="pt-7">
-              <v-combobox
+              <v-select
                 v-model="tags"
                 :value="tags"
                 :items="listTag"
@@ -90,7 +90,7 @@
                     <strong class="text__14">{{ item.name }}</strong>
                   </v-chip>
                 </template>
-              </v-combobox>
+              </v-select>
             </v-col>
           </v-row>
           <v-row justify="end">

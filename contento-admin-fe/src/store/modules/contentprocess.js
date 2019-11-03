@@ -17,7 +17,8 @@ import {
   submitContent,
   getListTaskByEditorID,
   getListStatusTask,
-  getListStatusCampaign
+  getListStatusCampaign,
+  getListStatusPublish
 } from "../../services/contentprocess";
 
 import router from "@/router/index";
@@ -33,8 +34,9 @@ const state = {
   listContentRequest: [],
   listTaskByWriterID: [],
   listTaskByEditorID: [],
-  listStatusTask:[],
-  listStatusCampaign:[],
+  listStatusTask: [],
+  listStatusCampaign: [],
+  listStatusPublish: [],
 };
 
 const mutations = {
@@ -83,6 +85,9 @@ const mutations = {
   },
   SET_LIST_STATUS_CAMPAIGN(state, data) {
     state.listStatusCampaign = data;
+  },
+  SET_LIST_STATUS_PUBLISH(state, data) {
+    state.listStatusPublish = data;
   },
 };
 
@@ -160,8 +165,7 @@ const actions = {
       let rs = await editTaskByID(data);
       console.log(rs.data);
       if (rs.status == 202) {
-        // commit("UPDATE_LISTTASK", rs.data);
-        // console.log("EDIT LIST TASK - ACTION");
+        console.log("EDIT LIST TASK - ACTION");
         console.log(rs.data);
         Vue.notify({
           group: 'notice',
@@ -270,20 +274,42 @@ const actions = {
     try {
       let rs = await saveContent(payload);
       if (rs.status == 200) {
-        alert("Save Success!");
+        Vue.notify({
+          group: 'notice',
+          title: 'Save successful!',
+          text: 'Content has been save successfully!',
+          type: 'suc'
+        });
       }
     } catch (error) {
       console.log("ERROR - SAVE CONTENT");
       console.log(error);
+      Vue.notify({
+        group: 'notice',
+        title: 'Save failed!',
+        text: 'Content has been save failed!',
+        type: 'warn'
+      });
     }
   },
   async submitContent({ commit }, payload) {
     try {
       let rs = await submitContent(payload);
       if (rs.status == 202) {
-        alert("Submit Success!");
+        Vue.notify({
+          group: 'notice',
+          title: 'Submit successful!',
+          text: 'Content has been submit successfully!',
+          type: 'suc'
+        });
       }
     } catch (error) {
+      Vue.notify({
+        group: 'notice',
+        title: 'Submit failed!',
+        text: 'Content has been submit failed!',
+        type: 'warn'
+      });
       console.log("ERROR - SUBMIT CONTENT");
       console.log(error);
     }
@@ -302,8 +328,8 @@ const actions = {
   async getListStatusTask({ commit }) {
     try {
       let rs = await getListStatusTask();
-      if(rs.status == 200){
-        commit("SET_LIST_STATUS_TASK",rs.data);
+      if (rs.status == 200) {
+        commit("SET_LIST_STATUS_TASK", rs.data);
       }
       console.log("LIST STATUS TASK - ACTION");
       console.log(rs.data);
@@ -315,13 +341,26 @@ const actions = {
   async getListStatusCampaign({ commit }) {
     try {
       let rs = await getListStatusCampaign();
-      if(rs.status == 200){
-        commit("SET_LIST_STATUS_CAMPAIGN",rs.data);
+      if (rs.status == 200) {
+        commit("SET_LIST_STATUS_CAMPAIGN", rs.data);
       }
       console.log("LIST STATUS TASK - ACTION");
       console.log(rs.data);
     } catch (error) {
       console.log("ERROR - LIST STATUS TASK");
+      console.log(error);
+    }
+  },
+  async getListStatusPublish({ commit }) {
+    try {
+      let rs = await getListStatusPublish();
+      if (rs.status == 200) {
+        commit("SET_LIST_STATUS_PUBLISH", rs.data);
+      }
+      console.log("LIST STATUS PUBLISH - ACTION");
+      console.log(rs.data);
+    } catch (error) {
+      console.log("ERROR - LIST STATUS PUBLISH");
       console.log(error);
     }
   },

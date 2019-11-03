@@ -217,20 +217,21 @@ export default {
       this.loadingSave = false;
     },
     async submit() {
+      this.loadingSubmit = true;
       let TaskID = sessionStorage.getItem("TaskID");
       this.check = true;
       this.$v.form.$touch();
       if (!this.$v.form.$invalid) {
-        this.loadingSubmit = true;
         await this.submitContent({
           idTask: TaskID,
           idContent: this.idContent,
           name: this.name,
           content: this.$refs.ckeditor.editorData
         });
-        this.loadingSave = false;
+        this.loadingSubmit = false;
         this.$router.push("/TaskManagement");
       }
+      this.loadingSubmit = false;
     },
     ...mapActions({
       getTaskDetail: "contentprocess/getTaskDetail",

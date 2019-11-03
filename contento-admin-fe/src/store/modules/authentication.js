@@ -7,7 +7,8 @@ import {
   getListCustomerByMarketerID,
   getListCustomerByEditorID,
   editCustomer,
-  getListWriter
+  getListWriter,
+  getListWriterByMarketerID
 } from "../../services/authentication";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -20,7 +21,8 @@ const state = {
   listCustomer: [],
   listEditor: [],
   listInfoCustomer: [],
-  listWriter: []
+  listWriter: [],
+  listWriterByMarketerID:[],
 };
 const mutations = {
   SET_ACCESS_TOKEN(state, data) {
@@ -56,6 +58,9 @@ const mutations = {
   },
   SET_LISTWRITER(state, data) {
     state.listWriter = data;
+  },
+  SET_LISTWRITER_BY_MARKETERID(state, data) {
+    state.listWriterByMarketerID = data;
   }
 };
 const actions = {
@@ -193,6 +198,15 @@ const actions = {
       commit("SET_LISTWRITER", rs.data);
     } catch (error) {
       console.log("ERROR -  LIST WRITER ");
+      console.log(error);
+    }
+  },
+  async getListWriterByMarketerID({ commit }, payload) {
+    try {
+      let rs = await getListWriterByMarketerID(payload);
+      commit("SET_LISTWRITER_BY_MARKETERID", rs.data);
+    } catch (error) {
+      console.log("ERROR -  LIST WRITER BY MARKETER ID");
       console.log(error);
     }
   },

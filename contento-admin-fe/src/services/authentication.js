@@ -51,3 +51,8 @@ export function getListWriter(userid) {
     `http://34.87.31.23:5000/api/authentication/writers/editors/${userid}`
   );
 }
+export function getListWriterByMarketerID(userid) {
+  return axios.get(
+    `http://34.87.31.23:5000/api/authentication/writer/marketers/${userid}`
+  );
+}

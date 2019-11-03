@@ -92,3 +92,6 @@ export function getListStatusTask() {
 export function getListStatusCampaign() {
   return axios.get(`http://34.87.31.23:5002/api/contentprocess/status/campaign`);
 }
+export function getListStatusPublish() {
+  return axios.get(`http://34.87.31.23:5002/api/contentprocess/status-publish/task`);
+}
