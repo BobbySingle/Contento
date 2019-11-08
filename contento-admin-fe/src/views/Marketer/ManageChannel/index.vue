@@ -35,7 +35,6 @@
                       v-model="fromFilter"
                       placeholder="From time"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -56,7 +55,6 @@
                       v-model="toFilter"
                       placeholder="To time"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -120,7 +118,7 @@
             <template v-slot:item.customer="{item}">{{item.customer.name}}</template>
             <template
               v-slot:item.modifiedDate="{item}"
-            >{{item.modifiedDate|moment("HH:mm DD/MM/YYYY")}}</template>
+            >{{item.modifiedDate|localTime()|moment("HH:mm DD/MM/YYYY")}}</template>
             <template v-slot:item.action="{item}">
               <v-row class="flex-nowrap" justify="center" v-if="item.id > 1">
                 <edit-channel :channelID="item.id" />
@@ -212,6 +210,19 @@ export default {
         }
       ]
     };
+  },
+  filters: {
+    localTime: function(value) {
+      if (!value) return "";
+
+      //Local TimeZone
+      var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+      var millisecondsTime = Date.parse(value + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      return newDateUTC7;
+    }
   },
   methods: {
     Clear() {

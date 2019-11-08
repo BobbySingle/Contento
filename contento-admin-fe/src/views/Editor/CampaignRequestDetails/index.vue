@@ -78,10 +78,13 @@
                     @page-count="pageCount = $event"
                   >
                     <template v-slot:item.deadline="{item}">
-                      <span>{{item.deadline| moment("DD/MM/YYYY")}}</span>
+                      <span v-if="item.deadline">{{item.deadline| moment("DD/MM/YYYY")}}</span>
+                    </template>
+                    <template v-slot:item.writer="{item}">
+                      <span  v-if="item.writer">{{item.writer.name}}</span>
                     </template>
                     <template v-slot:item.action="{ item }">
-                      <v-row class="flex-nowrap" justify="center">
+                      <v-row class="flex-nowrap" justify="center" v-if="item.status">
                         <edit-task v-if="item.status.id <= 4" :taskID="item.id" />
                         <v-btn
                           text
@@ -140,7 +143,7 @@ export default {
         { text: "Title", value: "title", sortable: false, width: "40%" },
         {
           text: "Implementer",
-          value: "writer.name",
+          value: "writer",
           sortable: false,
           width: "20%"
         },

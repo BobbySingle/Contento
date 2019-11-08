@@ -1,16 +1,17 @@
 /* eslint-disable no-console */
 import {
-  login,
-  getListInfoCustomer,
-  createCustomer,
-  getListEditorByMarketerID,
-  getListCustomerByMarketerID,
-  getListCustomerByEditorID,
-  editCustomer,
-  getListWriter,
-  getListWriterByMarketerID,
-  getCustomerDetailByCustomerID,
-  getProfileInfo
+  APIlogin,
+  APIgetListInfoCustomer,
+  APIcreateCustomer,
+  APIgetListEditorByMarketerID,
+  APIgetListCustomerByMarketerID,
+  APIgetListCustomerByEditorID,
+  APIeditCustomer,
+  APIgetListWriter,
+  APIgetListWriterByMarketerID,
+  APIgetCustomerDetailByCustomerID,
+  APIgetProfileInfo,
+  APIeditProfileInfo
 } from "../../services/authentication";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -26,7 +27,7 @@ const state = {
   listWriter: [],
   listWriterByMarketerID: [],
   customerDetail: "",
-  profile:"",
+  profile: "",
 };
 const mutations = {
   SET_ACCESS_TOKEN(state, data) {
@@ -69,14 +70,14 @@ const mutations = {
   SET_CUSTOMER_DETAIL(state, data) {
     state.customerDetail = data;
   },
-  SET_PROFILE(state, data){
+  SET_PROFILE(state, data) {
     state.profile = data;
   }
 };
 const actions = {
   async login({ commit }, payload) {
     try {
-      let rs = await login(payload.email, payload.password);
+      let rs = await APIlogin(payload.email, payload.password);
       if (rs.status == 200) {
         commit("SET_LOGGEDUSER", true);
         commit("SET_ACCESS_TOKEN", rs.data.token);
@@ -101,7 +102,7 @@ const actions = {
 
   async getListInfoCustomer({ commit }, payload) {
     try {
-      let rs = await getListInfoCustomer(payload);
+      let rs = await APIgetListInfoCustomer(payload);
       console.log("LIST INFO CUSTOMER - ACTION");
       console.log(rs);
       commit("SET_LISTINFOCUSTOMER", rs.data);
@@ -112,7 +113,7 @@ const actions = {
   },
   async createCustomer({ commit }, payload) {
     try {
-      let rs = await createCustomer(payload);
+      let rs = await APIcreateCustomer(payload);
       if (rs.status == 202) {
         console.log("NEW LIST INFO CUSTOMER - ACTION");
         console.log(rs.data);
@@ -142,7 +143,7 @@ const actions = {
   },
   async editCustomer({ commit }, payload) {
     try {
-      let rs = await editCustomer(payload);
+      let rs = await APIeditCustomer(payload);
       if (rs.status == 202) {
         console.log("EDIT LIST INFO CUSTOMER - ACTION");
         console.log(rs.data);
@@ -168,7 +169,7 @@ const actions = {
   },
   async getListCustomerByMarketerID({ commit }, payload) {
     try {
-      let rs = await getListCustomerByMarketerID(payload);
+      let rs = await APIgetListCustomerByMarketerID(payload);
       commit("SET_LISTCUSTOMER", rs.data);
     } catch (error) {
       console.log("ERROR -  LIST CUSTOMER BY MARKETER ID");
@@ -177,7 +178,7 @@ const actions = {
   },
   async getListCustomerByEditorID({ commit }, payload) {
     try {
-      let rs = await getListCustomerByEditorID(payload);
+      let rs = await APIgetListCustomerByEditorID(payload);
       commit("SET_LISTCUSTOMER", rs.data);
     } catch (error) {
       console.log("ERROR -  LIST CUSTOMER BY EDITOR ID");
@@ -186,7 +187,7 @@ const actions = {
   },
   async getListEditorByMarketerID({ commit }, payload) {
     try {
-      let rs = await getListEditorByMarketerID(payload);
+      let rs = await APIgetListEditorByMarketerID(payload);
       commit("SET_LISTEDITOR", rs.data);
     } catch (error) {
       console.log("ERROR -  LIST EDITOR BY MARKETER ID");
@@ -195,7 +196,7 @@ const actions = {
   },
   async getListWriter({ commit }, payload) {
     try {
-      let rs = await getListWriter(payload);
+      let rs = await APIgetListWriter(payload);
       commit("SET_LISTWRITER", rs.data);
     } catch (error) {
       console.log("ERROR -  LIST WRITER ");
@@ -204,7 +205,7 @@ const actions = {
   },
   async getListWriterByMarketerID({ commit }, payload) {
     try {
-      let rs = await getListWriterByMarketerID(payload);
+      let rs = await APIgetListWriterByMarketerID(payload);
       commit("SET_LISTWRITER_BY_MARKETERID", rs.data);
     } catch (error) {
       console.log("ERROR -  LIST WRITER BY MARKETER ID");
@@ -213,7 +214,7 @@ const actions = {
   },
   async getCustomerDetailByCustomerID({ commit }, payload) {
     try {
-      let rs = await getCustomerDetailByCustomerID(payload);
+      let rs = await APIgetCustomerDetailByCustomerID(payload);
       commit("SET_CUSTOMER_DETAIL", rs.data);
     } catch (error) {
       console.log("ERROR -  CUSTOMER DETAIL");
@@ -222,11 +223,33 @@ const actions = {
   },
   async getProfileInfo({ commit }, payload) {
     try {
-      let rs = await getProfileInfo(payload);
+      let rs = await APIgetProfileInfo(payload);
       commit("SET_PROFILE", rs.data);
     } catch (error) {
       console.log("ERROR -  PROFILE");
       console.log(error);
+    }
+  },
+  async editProfileInfo({ commit }, payload) {
+    try {
+      let rs = await APIeditProfileInfo(payload);
+      commit("SET_PROFILE", rs.data);
+      Vue.notify({
+        group: 'notice',
+        title: 'Edit successful!',
+        text: 'Profile has been edited successfully!',
+        type: 'suc'
+      })
+      return 202;
+    } catch (error) {
+      console.log("ERROR -  PROFILE");
+      console.log(error);
+      Vue.notify({
+        group: 'notice',
+        title: 'Edit failed!',
+        text: 'Profile has been edited failed!',
+        type: 'warn'
+      })
     }
   },
   setLoggedUser({ commit }, payload) {

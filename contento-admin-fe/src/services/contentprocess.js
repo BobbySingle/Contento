@@ -2,99 +2,102 @@ import axios from "axios";
 
 const API_URL ="http://35.247.168.237:8760/contentproccessservice";
 
+// test
+// const API_URL = "http://34.87.31.23:5002";
+
 
 if (localStorage.getItem("Profile") != null) {
   let user = JSON.parse(localStorage.getItem("Profile").toString());
   axios.defaults.headers.common["Authorization"] = "Bearer " + user.token;
 }
 
-export function getListTag() {
+export function APIgetListTag() {
   return axios.get(`${API_URL}/api/contentprocess/tags`);
 }
 
-export function getListCampaignTask(campaignID) {
+export function APIgetListCampaignTask(campaignID) {
   return axios.get(
     `${API_URL}/api/contentprocess/task/campaign/${campaignID}`
   );
 }
 
-export function getTaskDetail(contentID) {
+export function APIgetTaskDetail(contentID) {
   return axios.get(
     `${API_URL}/api/contentprocess/task-detail/campaign/${contentID}`
   );
 }
 
-export function getListTaskByMarketerID(userID) {
+export function APIgetListTaskByMarketerID(userID) {
   return axios.get(
     `${API_URL}/api/contentprocess/task/marketer/${userID}`
   );
 }
 
-export function createTask(task) {
+export function APIcreateTask(task) {
   return axios.post(`${API_URL}/api/contentprocess/task`, task);
 }
 
-export function deleteTaskByID(taskID) {
+export function APIdeleteTaskByID(taskID) {
   return axios.delete(
     `${API_URL}/api/contentprocess/task/campaign/${taskID}`
   );
 }
 
-export function editTaskByID(task) {
+export function APIeditTaskByID(task) {
   return axios.put(`${API_URL}/api/contentprocess/task`, task);
 }
 
-export function getListTagByCampaignID(campaignID) {
+export function APIgetListTagByCampaignID(campaignID) {
   return axios.get(
     `${API_URL}/api/contentprocess/tags/campaign/${campaignID}`
   );
 }
-export function getTaskDetailUpdate(taskID) {
+export function APIgetTaskDetailUpdate(taskID) {
   return axios.get(
     `${API_URL}/api/contentprocess/task-detail-update/campaign/${taskID}`
   );
 }
-export function getContentRequest(userId) {
+export function APIgetContentRequest(userId) {
   return axios.get(
     `${API_URL}/api/contentprocess/task/editor/${userId}`
   );
 }
 
-export function setApprovalContentRequest(content) {
+export function APIsetApprovalContentRequest(content) {
   return axios.post(`${API_URL}/api/contentprocess/approvals`, content)
 }
 
-export function getTaskByWriterId(userId) {
+export function APIgetTaskByWriterId(userId) {
   return axios.get(
     `${API_URL}/api/contentprocess/task/writer/${userId}`
   );
 }
 
-export function startTask(taskID) {
+export function APIstartTask(taskID) {
   return axios.put(
     `${API_URL}/api/contentprocess/content/task/campaign/start`, taskID
   );
 }
 
-export function saveContent(content) {
+export function APIsaveContent(content) {
   return axios.put(`${API_URL}/api/contentprocess/content/task/campaign`, content);
 }
 
-export function submitContent(content) {
+export function APIsubmitContent(content) {
   return axios.put(`${API_URL}/api/contentprocess/content/task/campaign/submit`, content);
 }
 
-export function getListTaskByEditorID(editorID) {
+export function APIgetListTaskByEditorID(editorID) {
   return axios.get(`${API_URL}/api/contentprocess/all-task/editor/${editorID}`);
 }
 
-export function getListStatusTask() {
+export function APIgetListStatusTask() {
   return axios.get(`${API_URL}/api/contentprocess/status/task`);
 }
 
-export function getListStatusCampaign() {
+export function APIgetListStatusCampaign() {
   return axios.get(`${API_URL}/api/contentprocess/status/campaign`);
 }
-export function getListStatusPublish() {
+export function APIgetListStatusPublish() {
   return axios.get(`${API_URL}/api/contentprocess/status-publish/task`);
 }

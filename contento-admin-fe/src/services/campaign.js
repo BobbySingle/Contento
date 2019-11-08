@@ -7,42 +7,42 @@ if (localStorage.getItem("Profile") != null) {
   axios.defaults.headers.common["Authorization"] = "Bearer " + user.token;
 }
 
-export function getListCampaign(userID) {
+export function APIgetListCampaign(userID) {
   return axios.get(
     `${API_URL}/api/campaign/campaigns/marketers/${userID}`
   );
 }
 
-export function createCampaign(campaign) {
+export function APIcreateCampaign(campaign) {
   return axios.post(`${API_URL}/api/campaign/campaign`, campaign);
 }
 
-export function editCampaign(campaign) {
+export function APIeditCampaign(campaign) {
   return axios.put(`${API_URL}/api/campaign/campaign`, campaign);
 }
 
-export function getDetailCampaign(campaignID) {
+export function APIgetDetailCampaign(campaignID) {
   return axios.get(
     `${API_URL}/api/campaign/campaigns/${campaignID}`
   );
 }
-export function getListCampaignByCustomerID(customerID) {
+export function APIgetListCampaignByCustomerID(customerID) {
   return axios.get(
     `${API_URL}/api/campaign/campaigns/customers/${customerID}`
   );
 }
-export function getListCampaignByEditorID(editorID) {
+export function APIgetListCampaignByEditorID(editorID) {
   return axios.get(
     `${API_URL}/api/campaign/campaigns/editor/${editorID}`
   );
 }
 
-export function getListFilterCampaignByEditorID(editorID) {
+export function APIgetListFilterCampaignByEditorID(editorID) {
   return axios.get(
     `${API_URL}/api/campaign/campaigns-basic/editor/${editorID}`
   );
 }
-export function getListFilterCampaignByWriterID(writerID) {
+export function APIgetListFilterCampaignByWriterID(writerID) {
   return axios.get(
     `${API_URL}/api/campaign/campaigns-basic/writer/${writerID}`
   );

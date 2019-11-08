@@ -33,7 +33,6 @@
                       v-model="publishFromDate"
                       placeholder="[Publish] From time"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -54,7 +53,6 @@
                       v-model="publishToDate"
                       placeholder="[Publish] To time"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -119,7 +117,7 @@
             </template>
             <template v-slot:item.writer="{ item }">{{item.writer.name}}</template>
             <template v-slot:item.publishTime="{ item }">
-              <span>{{item.publishTime | moment("HH:mm DD/MM/YYYY")}}</span>
+              <span>{{item.publishTime|localTime() | moment("HH:mm DD/MM/YYYY")}}</span>
             </template>
             <template v-slot:item.action="{item}">
               <v-btn
@@ -231,6 +229,19 @@ export default {
         }
       ]
     };
+  },
+  filters: {
+    localTime: function(value) {
+      if (!value) return "";
+
+      //Local TimeZone
+      var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+      var millisecondsTime = Date.parse(value + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      return newDateUTC7;
+    }
   },
   methods: {
     Clear() {

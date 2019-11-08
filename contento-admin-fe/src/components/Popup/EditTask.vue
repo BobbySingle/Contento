@@ -62,7 +62,6 @@
                     <datetime
                       title="End Time"
                       placeholder="Select End Time"
-                      value-zone="UTC+07:00"
                       type="datetime"
                       v-model="endtime"
                       :value="endtime"
@@ -123,7 +122,6 @@
                       type="datetime"
                       v-model="publishDate"
                       :value="publishDate"
-                      value-zone="UTC+07:00"
                       class="text__14"
                       input-class="datetime"
                       input-style="cursor:pointer;"
@@ -166,7 +164,6 @@
                   <datetime
                     title="End Time"
                     placeholder="Select End Time"
-                    value-zone="UTC+07:00"
                     type="datetime"
                     v-model="endtime"
                     :value="endtime"
@@ -193,7 +190,6 @@
                     type="datetime"
                     v-model="publishDate"
                     :value="publishDate"
-                    value-zone="UTC+07:00"
                     class="text__14"
                     input-class="datetime"
                     input-style="cursor:pointer;"
@@ -239,7 +235,10 @@ export default {
       id: "",
       check: false,
       loadingSave: false,
-      overdue: false
+      overdue: false,
+      //Local TimeZone
+      localISOTime: "",
+      tzoffset: new Date().getTimezoneOffset() * 60000 //offset in milliseconds
     };
   },
   validations: {
@@ -277,8 +276,20 @@ export default {
       this.check = false;
       await this.getTaskDetailUpdate(taskID);
       this.selectedTag = this.taskDetailUpdate.tags;
-      this.endtime = this.taskDetailUpdate.deadline;
-      this.publishDate = this.taskDetailUpdate.publishTime;
+      // Convert Time to LocalTime
+      var endtimeMilisTime = Date.parse(this.taskDetailUpdate.deadline + "Z");
+      var endtimeUTC7 = new Date(endtimeMilisTime - this.tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      this.endtime = endtimeUTC7;
+
+      var publishDateMilisTime = Date.parse(
+        this.taskDetailUpdate.deadline + "Z"
+      );
+      var publicDateUTC7 = new Date(publishDateMilisTime - this.tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      this.publishDate = publicDateUTC7;
       this.content = this.taskDetailUpdate.description;
       this.writer = this.taskDetailUpdate.writer;
       this.title = this.taskDetailUpdate.title;

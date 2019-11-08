@@ -23,7 +23,7 @@
                 <v-col sm="5" md="5">
                   <span style="color:grey; font-weight:300; font-size:12px;">End Date</span>
                   <br />
-                  <span class="text__14">{{endDate | moment("HH:mm DD/MM/YYYY")}}</span>
+                  <span class="text__14">{{endDate|localTime() | moment("HH:mm DD/MM/YYYY")}}</span>
                 </v-col>
               </v-row>
               <v-row>
@@ -68,7 +68,6 @@
                       v-model="from"
                       placeholder="Deadline From"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -89,7 +88,6 @@
                       v-model="to"
                       placeholder="Deadline To"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -128,6 +126,9 @@
                   <template v-slot:item.status="{ item }">
                     <v-chip class="text__14" :color="item.status.color" dark>{{item.status.name}}</v-chip>
                   </template>
+                  <template
+                    v-slot:item.deadline="{ item }"
+                  >{{item.deadline | localTime()|moment("HH:mm DD/MM/YYYY")}}</template>
                   <template v-slot:item.action="{item}">
                     <v-btn
                       class="text__14"
@@ -238,6 +239,19 @@ export default {
         }
       ]
     };
+  },
+  filters: {
+    localTime: function(value) {
+      if (!value) return "";
+
+      //Local TimeZone
+      var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+      var millisecondsTime = Date.parse(value + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      return newDateUTC7;
+    }
   },
   methods: {
     clearFrom() {

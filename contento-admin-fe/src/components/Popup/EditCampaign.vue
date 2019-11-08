@@ -54,7 +54,6 @@
                       placeholder="Select End time"
                       input-class="datetime"
                       input-style="cursor:pointer;"
-                      value-zone="UTC+07:00"
                       class="endtime text__14"
                       required
                       @blur="$v.endDate.$touch()"
@@ -199,7 +198,10 @@ export default {
       isOpen: false,
       id: "",
       check: false,
-      loadingSave: false
+      loadingSave: false,
+      //Local TimeZone
+      localISOTime: "",
+      tzoffset: new Date().getTimezoneOffset() * 60000 //offset in milliseconds
     };
   },
   validations: {
@@ -214,7 +216,8 @@ export default {
   methods: {
     ...mapActions({
       editCampaign: "campaign/editCampaign",
-      getDetailCampaign: "campaign/getDetailCampaign"
+      getDetailCampaign: "campaign/getDetailCampaign",
+      getListCampaign: "campaign/getListCampaign"
     }),
     async clickEdit(event) {
       this.check = false;
@@ -224,7 +227,11 @@ export default {
       this.title = this.detailCampaign.title;
       this.customer = this.detailCampaign.customer;
       this.editor = this.detailCampaign.editor;
-      this.endDate = this.detailCampaign.endDate;
+      var millisecondsTime = Date.parse(this.detailCampaign.endDate + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - this.tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      this.endDate = newDateUTC7;
       if (this.detailCampaign.status == 1) {
         this.isOpen = true;
       }
@@ -244,6 +251,7 @@ export default {
           customer: this.customer
         });
         if (status == 202) {
+          await this.getListCampaign(this.$store.getters.getUser.id);
           this.loadingSave = false;
           this.dialog = false;
         }

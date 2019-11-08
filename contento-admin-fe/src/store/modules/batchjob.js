@@ -1,4 +1,4 @@
-import { publishContent, getFanPages, getFanPage, createFanPage, editFanPage, deleteFanPage, getFanPageFacebook, getFanPageWordpress, getFanPageCustomer, getFanPagesByContentID } from "../../services/batchjob";
+import { APIpublishContent, APIgetFanPages, APIgetFanPage, APIcreateFanPage, APIeditFanPage, APIdeleteFanPage, APIgetFanPageFacebook, APIgetFanPageWordpress, APIgetFanPageCustomer, APIgetFanPagesByContentID } from "../../services/batchjob";
 import Vue from "vue";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -42,7 +42,7 @@ const mutations = {
 const actions = {
     async publishContent({ commit }, payload) {
         try {
-            let rs = await publishContent(payload);
+            let rs = await APIpublishContent(payload);
             if (rs.status == 202) {
                 Swal.fire(
                     {
@@ -77,7 +77,7 @@ const actions = {
     },
     async getFanPage({ commit }, payload) {
         try {
-            let rs = await getFanPage(payload);
+            let rs = await APIgetFanPage(payload);
             if (rs.status == 200) {
                 commit("SET_FANPAGE", rs.data);
             }
@@ -88,7 +88,7 @@ const actions = {
     },
     async getFanPages({ commit }, payload) {
         try {
-            let rs = await getFanPages(payload);
+            let rs = await APIgetFanPages(payload);
             if (rs.status == 200) {
                 commit("SET_FANPAGES", rs.data);
             }
@@ -99,7 +99,7 @@ const actions = {
     },
     async createFanPage({ commit }, payload) {
         try {
-            let rs = await createFanPage(payload);
+            let rs = await APIcreateFanPage(payload);
             if (rs.status == 202) {
                 Vue.notify({
                     group: 'notice',
@@ -122,7 +122,7 @@ const actions = {
     },
     async editFanPage({ commit }, payload) {
         try {
-            let rs = await editFanPage(payload);
+            let rs = await APIeditFanPage(payload);
             if (rs.status == 202) {
                 Vue.notify({
                     group: 'notice',
@@ -145,7 +145,7 @@ const actions = {
     },
     async deleteFanPage({ commit }, payload) {
         try {
-            let rs = await deleteFanPage(payload);
+            let rs = await APIdeleteFanPage(payload);
             if (rs.status == 200) {
                 commit("DELETE_FANPAGE", payload);
                 Vue.notify({
@@ -169,7 +169,7 @@ const actions = {
     },
     async getFanPageFacebook({ commit }, payload) {
         try {
-            let rs = await getFanPageFacebook(payload);
+            let rs = await APIgetFanPageFacebook(payload);
             if (rs.status == 200) {
                 commit("SET_FACEBOOK", rs.data);
             }
@@ -180,7 +180,7 @@ const actions = {
     },
     async getFanPageWordpress({ commit }, payload) {
         try {
-            let rs = await getFanPageWordpress(payload);
+            let rs = await APIgetFanPageWordpress(payload);
             if (rs.status == 200) {
                 commit("SET_WORDPRESS", rs.data);
             }
@@ -191,7 +191,7 @@ const actions = {
     },
     async getFanPageCustomer({ commit }, payload) {
         try {
-            let rs = await getFanPageCustomer(payload);
+            let rs = await APIgetFanPageCustomer(payload);
             if (rs.status == 200) {
                 commit("SET_CUSTOMER", rs.data);
             }
@@ -202,7 +202,7 @@ const actions = {
     },
     async getFanPagesByContentID({ commit }, payload) {
         try {
-            let rs = await getFanPagesByContentID(payload);
+            let rs = await APIgetFanPagesByContentID(payload);
             if (rs.status == 200) {
                 commit("SET_FANPAGES_CONTENT", rs.data);
             }

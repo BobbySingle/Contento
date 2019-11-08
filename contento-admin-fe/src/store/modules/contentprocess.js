@@ -1,24 +1,24 @@
 /* eslint-disable no-console */
 import {
-  getListCampaignTask,
-  getTaskDetail,
-  getListTaskByMarketerID,
-  getListTag,
-  deleteTaskByID,
-  getListTagByCampaignID,
-  createTask,
-  getTaskDetailUpdate,
-  editTaskByID,
-  getContentRequest,
-  setApprovalContentRequest,
-  getTaskByWriterId,
-  startTask,
-  saveContent,
-  submitContent,
-  getListTaskByEditorID,
-  getListStatusTask,
-  getListStatusCampaign,
-  getListStatusPublish
+  APIgetListCampaignTask,
+  APIgetTaskDetail,
+  APIgetListTaskByMarketerID,
+  APIgetListTag,
+  APIdeleteTaskByID,
+  APIgetListTagByCampaignID,
+  APIcreateTask,
+  APIgetTaskDetailUpdate,
+  APIeditTaskByID,
+  APIgetContentRequest,
+  APIsetApprovalContentRequest,
+  APIgetTaskByWriterId,
+  APIstartTask,
+  APIsaveContent,
+  APIsubmitContent,
+  APIgetListTaskByEditorID,
+  APIgetListStatusTask,
+  APIgetListStatusCampaign,
+  APIgetListStatusPublish
 } from "../../services/contentprocess";
 
 import router from "@/router/index";
@@ -94,7 +94,7 @@ const mutations = {
 const actions = {
   async getListCampaignTask({ commit }, payload) {
     try {
-      let rs = await getListCampaignTask(payload);
+      let rs = await APIgetListCampaignTask(payload);
       commit("SET_LISTCAMPAIGNTASK", rs.data);
       console.log("LIST CAMPAIGN TASK - ACTION");
       console.log(rs.data);
@@ -105,7 +105,7 @@ const actions = {
   },
   async getTaskDetail({ commit }, payload) {
     try {
-      let rs = await getTaskDetail(payload);
+      let rs = await APIgetTaskDetail(payload);
       commit("SET_TASKDETAIL", rs.data);
       console.log("TASK DETAIL - ACTION");
       console.log(rs.data);
@@ -116,7 +116,7 @@ const actions = {
   },
   async getListTag({ commit }) {
     try {
-      let rs = await getListTag();
+      let rs = await APIgetListTag();
       commit("SET_LISTTAG", rs.data);
     } catch (error) {
       console.log("ERROR - LIST TASK ");
@@ -125,7 +125,7 @@ const actions = {
   },
   async getListTaskByMarketerID({ commit }, payload) {
     try {
-      let rs = await getListTaskByMarketerID(payload);
+      let rs = await APIgetListTaskByMarketerID(payload);
       commit("SET_LISTTASKBYMARKETERID", rs.data);
       console.log("LIST TASK BY MARKETERID- ACTION");
       console.log(rs.data);
@@ -136,7 +136,7 @@ const actions = {
   },
   async createTask({ commit }, data) {
     try {
-      let rs = await createTask(data);
+      let rs = await APIcreateTask(data);
       if (rs.status == 202) {
         commit("SET_NEWTASK", rs.data);
         Vue.notify({
@@ -162,7 +162,7 @@ const actions = {
     try {
       console.log("data");
       console.log(data);
-      let rs = await editTaskByID(data);
+      let rs = await APIeditTaskByID(data);
       console.log(rs.data);
       if (rs.status == 202) {
         console.log("EDIT LIST TASK - ACTION");
@@ -188,7 +188,7 @@ const actions = {
   },
   async deleteTaskByID({ commit }, id) {
     try {
-      let rs = await deleteTaskByID(id);
+      let rs = await APIdeleteTaskByID(id);
       if (rs.status == 200) {
         commit("DELETE_TASK", id);
         Vue.notify({
@@ -211,7 +211,7 @@ const actions = {
   },
   async getListTagByCampaignID({ commit }, payload) {
     try {
-      let rs = await getListTagByCampaignID(payload);
+      let rs = await APIgetListTagByCampaignID(payload);
       commit("SET_LISTTAGBYCAMPAIGNID", rs.data);
       console.log("ACTIONS");
     } catch (error) {
@@ -221,7 +221,7 @@ const actions = {
   },
   async getTaskDetailUpdate({ commit }, payload) {
     try {
-      let rs = await getTaskDetailUpdate(payload);
+      let rs = await APIgetTaskDetailUpdate(payload);
       commit("SET_TASK_DETAIL_UPDATE", rs.data);
     } catch (error) {
       console.log("ERROR - TASK DETAIL UPDATE");
@@ -231,7 +231,7 @@ const actions = {
   ,
   async getContentRequest({ commit }, payload) {
     try {
-      let rs = await getContentRequest(payload);
+      let rs = await APIgetContentRequest(payload);
       commit("SET_LIST_CONTENT_REQUEST", rs.data);
       console.log("LIST CONTENT REQUEST - ACTION");
       console.log(rs.data);
@@ -243,7 +243,7 @@ const actions = {
   ,
   async setApprovalContentRequest({ commit }, payload) {
     try {
-      await setApprovalContentRequest(payload);
+      await APIsetApprovalContentRequest(payload);
       router.push({
         name: "ApproveRequest"
       });
@@ -254,7 +254,7 @@ const actions = {
   },
   async getTaskByWriterId({ commit }, payload) {
     try {
-      let rs = await getTaskByWriterId(payload);
+      let rs = await APIgetTaskByWriterId(payload);
       commit("SET_LIST_TASK_BY_WRITER_ID", rs.data);
     } catch (error) {
       console.log("ERROR - GET TASK BY WRITER ID");
@@ -263,7 +263,7 @@ const actions = {
   },
   async startTask({ commit }, payload) {
     try {
-      let rs = await startTask(payload);
+      let rs = await APIstartTask(payload);
       commit("SET_TASKDETAIL", rs.data);
     } catch (error) {
       console.log("ERROR - START TASK");
@@ -272,7 +272,7 @@ const actions = {
   },
   async saveContent({ commit }, payload) {
     try {
-      let rs = await saveContent(payload);
+      let rs = await APIsaveContent(payload);
       if (rs.status == 200) {
         Vue.notify({
           group: 'notice',
@@ -295,7 +295,7 @@ const actions = {
   },
   async submitContent({ commit }, payload) {
     try {
-      let rs = await submitContent(payload);
+      let rs = await APIsubmitContent(payload);
       if (rs.status == 202) {
         Vue.notify({
           group: 'notice',
@@ -318,7 +318,7 @@ const actions = {
   },
   async getListTaskByEditorID({ commit }, payload) {
     try {
-      let rs = await getListTaskByEditorID(payload);
+      let rs = await APIgetListTaskByEditorID(payload);
       commit("SET_LIST_TASK_BY_EDITOR_ID", rs.data);
       console.log("LIST TASK BY EDITOR ID -ACTION");
       console.log(rs.data);
@@ -329,7 +329,7 @@ const actions = {
   },
   async getListStatusTask({ commit }) {
     try {
-      let rs = await getListStatusTask();
+      let rs = await APIgetListStatusTask();
       if (rs.status == 200) {
         commit("SET_LIST_STATUS_TASK", rs.data);
       }
@@ -342,7 +342,7 @@ const actions = {
   },
   async getListStatusCampaign({ commit }) {
     try {
-      let rs = await getListStatusCampaign();
+      let rs = await APIgetListStatusCampaign();
       if (rs.status == 200) {
         commit("SET_LIST_STATUS_CAMPAIGN", rs.data);
       }
@@ -355,7 +355,7 @@ const actions = {
   },
   async getListStatusPublish({ commit }) {
     try {
-      let rs = await getListStatusPublish();
+      let rs = await APIgetListStatusPublish();
       if (rs.status == 200) {
         commit("SET_LIST_STATUS_PUBLISH", rs.data);
       }

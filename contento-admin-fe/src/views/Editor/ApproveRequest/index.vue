@@ -33,7 +33,6 @@
                       v-model="endFromDate"
                       placeholder="[End] From time"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -54,7 +53,6 @@
                       v-model="endToDate"
                       placeholder="[End] To time"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -120,8 +118,10 @@
             </template>
             <template
               v-slot:item.modifiedDate="{item}"
-            >{{item.modifiedDate | moment("HH:mm DD/MM/YYYY")}}</template>
-            <template v-slot:item.deadline="{item}">{{item.deadline| moment("HH:mm DD/MM/YYYY")}}</template>
+            >{{item.modifiedDate| localTime() | moment("HH:mm DD/MM/YYYY")}}</template>
+            <template
+              v-slot:item.deadline="{item}"
+            >{{item.deadline| localTime()| moment("HH:mm DD/MM/YYYY")}}</template>
             <template v-slot:item.contentTitle="{item}">
               <div class="content_details">
                 <div>
@@ -175,7 +175,6 @@ export default {
       endToDate: "",
       status: "",
       campaign: "",
-
       loading: false,
       /**List Content */
       headers: [
@@ -232,6 +231,19 @@ export default {
         }
       ]
     };
+  },
+  filters: {
+    localTime: function(value) {
+      if (!value) return "";
+
+      //Local TimeZone
+      var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+      var millisecondsTime = Date.parse(value + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      return newDateUTC7;
+    }
   },
   methods: {
     Clear() {

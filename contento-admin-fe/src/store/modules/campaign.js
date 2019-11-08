@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 import {
-  getListCampaign,
-  createCampaign,
-  editCampaign,
-  getDetailCampaign,
-  getListCampaignByCustomerID,
-  getListCampaignByEditorID,
-  getListFilterCampaignByEditorID,
-  getListFilterCampaignByWriterID
+  APIgetListCampaign,
+  APIcreateCampaign,
+  APIeditCampaign,
+  APIgetDetailCampaign,
+  APIgetListCampaignByCustomerID,
+  APIgetListCampaignByEditorID,
+  APIgetListFilterCampaignByEditorID,
+  APIgetListFilterCampaignByWriterID
 } from "../../services/campaign";
 import Vue from 'vue'
 const state = {
@@ -22,15 +22,15 @@ const mutations = {
   SET_LISTCAMPAIGN(state, data) {
     state.listCampaign = data;
   },
-  SET_NEWCAMPAIGN: (state, campaign) => {
-    state.listCampaign.unshift(campaign);
-  },
-  UPDATE_CAMPAIGN: (state, campaign) => {
-    const current = state.listCampaign.find(c => c.id == campaign.id);
-    const itemUpdate = Object.assign(current, campaign);
-    let listNeedUpdate = state.listCampaign;
-    state.listCampaign = Object.assign(listNeedUpdate, itemUpdate);
-  },
+  // SET_NEWCAMPAIGN: (state, campaign) => {
+  //   state.listCampaign.unshift(campaign);
+  // },
+  // UPDATE_CAMPAIGN: (state, campaign) => {
+  //   const current = state.listCampaign.find(c => c.id == campaign.id);
+  //   const itemUpdate = Object.assign(current, campaign);
+  //   let listNeedUpdate = state.listCampaign;
+  //   state.listCampaign = Object.assign(listNeedUpdate, itemUpdate);
+  // },
   SET_DETAILCAMPAIGN: (state, data) => {
     state.detailCampaign = data;
   },
@@ -50,7 +50,7 @@ const mutations = {
 const actions = {
   async getListCampaign({ commit }, payload) {
     try {
-      let rs = await getListCampaign(payload);
+      let rs = await APIgetListCampaign(payload);
       commit("SET_LISTCAMPAIGN", rs.data);
       console.log("GET_LISTCAMPAIGN ACTION");
       console.log(rs.data);
@@ -62,9 +62,9 @@ const actions = {
 
   async createCampaign({ commit }, payload) {
     try {
-      let rs = await createCampaign(payload);
+      let rs = await APIcreateCampaign(payload);
       if (rs.status == 202) {
-        commit("SET_NEWCAMPAIGN", rs.data);
+        // commit("SET_NEWCAMPAIGN", rs.data);
         console.log("CREATE CAMPAIGN ACTION");
         console.log(rs.data);
         Vue.notify({
@@ -88,9 +88,9 @@ const actions = {
   },
   async editCampaign({ commit }, payload) {
     try {
-      let rs = await editCampaign(payload);
+      let rs = await APIeditCampaign(payload);
       if (rs.status == 202) {
-        commit("UPDATE_CAMPAIGN", rs.data);
+        // commit("UPDATE_CAMPAIGN", rs.data);
         console.log("UPDATE CAMPAIGN ACTION");
         console.log(rs.data);
         Vue.notify({
@@ -114,7 +114,7 @@ const actions = {
   },
   async getDetailCampaign({ commit }, payload) {
     try {
-      let rs = await getDetailCampaign(payload);
+      let rs = await APIgetDetailCampaign(payload);
       commit("SET_DETAILCAMPAIGN", rs.data);
       console.log("DETAIL CAMPAIGN ACTION");
       console.log(rs.data);
@@ -125,7 +125,7 @@ const actions = {
   },
   async getListCampaignByCustomerID({ commit }, payload) {
     try {
-      let rs = await getListCampaignByCustomerID(payload);
+      let rs = await APIgetListCampaignByCustomerID(payload);
       console.log("LIST CAMPAIGN BY CUSTOMER ID - ACTION");
       console.log(rs.data);
       commit("SET_LISTCAMPAIGNBYCUSTOMERID", rs.data);
@@ -136,7 +136,7 @@ const actions = {
   },
   async getListCampaignByEditorID({ commit }, payload) {
     try {
-      let rs = await getListCampaignByEditorID(payload);
+      let rs = await APIgetListCampaignByEditorID(payload);
       console.log("LIST CAMPAIGN BY EDITOR ID - ACTION");
       console.log(rs.data);
       commit("SET_LISTCAMPAIGNBYEDITORID", rs.data);
@@ -147,7 +147,7 @@ const actions = {
   },
   async getListFilterCampaignByEditorID({ commit }, payload) {
     try {
-      let rs = await getListFilterCampaignByEditorID(payload);
+      let rs = await APIgetListFilterCampaignByEditorID(payload);
       console.log("LIST FILTER CAMPAIGN BY EDITOR ID - ACTION");
       console.log(rs.data);
       commit("SET_LIST_FILTER_CAMPAIGN_BY_EDITOR_ID", rs.data);
@@ -158,7 +158,7 @@ const actions = {
   },
   async getListFilterCampaignByWriterID({ commit }, payload) {
     try {
-      let rs = await getListFilterCampaignByWriterID(payload);
+      let rs = await APIgetListFilterCampaignByWriterID(payload);
       console.log("LIST FILTER CAMPAIGN BY WRITER ID - ACTION");
       console.log(rs.data);
       commit("SET_LIST_FILTER_CAMPAIGN_BY_WRITER_ID", rs.data);
@@ -166,7 +166,7 @@ const actions = {
       console.log("ERROR - LIST FILTER CAMPAIGN BY WRITER ID");
       console.log(error);
     }
-  },
+  }
 };
 
 export default {

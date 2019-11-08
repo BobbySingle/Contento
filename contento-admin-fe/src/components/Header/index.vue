@@ -65,14 +65,6 @@ export default {
       localStorage.clear();
       this.$store.state.authentication.loggedUser = false;
       this.$router.push("/");
-    },
-    validate() {
-      if (this.$refs.form.validate()) {
-        alert("OK");
-      }
-    },
-    reset() {
-      this.$refs.form.reset();
     }
   },
   mounted() {

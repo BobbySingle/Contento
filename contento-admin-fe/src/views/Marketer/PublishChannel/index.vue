@@ -234,7 +234,11 @@ export default {
         }
       ],
       check: false,
+
+      //Local TimeZone
       localISOTime: "",
+      tzoffset: new Date().getTimezoneOffset() * 60000, //offset in milliseconds
+
       loading: false
     };
   },
@@ -263,10 +267,13 @@ export default {
         this.getTaskDetail(contentID)
       ]);
       this.title = this.taskDetail.title;
-      this.publishTime = this.taskDetail.publishTime;
-      // this.publishTime = this.$moment(
-      //   this.taskDetail.publishTime
-      // ).toISOString();
+      // Convert Time to LocalTime
+      var millisecondsTime = Date.parse(this.taskDetail.publishTime + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - this.tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      console.log(newDateUTC7);
+      this.publishTime = newDateUTC7;
       this.writer = this.taskDetail.writer.name;
       this.editor = this.taskDetail.editor.name;
       this.content = this.taskDetail.content.content;
@@ -291,7 +298,6 @@ export default {
         // this.fanpageCS,
         this.websiteCTT
       );
-      console.log(this.fanpages);
       this.$v.form.$touch();
       if (this.fanpages == "") {
         Swal.fire({
@@ -311,6 +317,7 @@ export default {
           contentId: this.taskDetail.content.id,
           time: this.publishTime
         });
+        console.log(this.publishTime);
         this.loading = false;
       }
       this.loading = false;
@@ -338,8 +345,7 @@ export default {
   mounted() {
     this.check = false;
     // timezone +7
-    var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
-    this.localISOTime = new Date(Date.now() - tzoffset)
+    this.localISOTime = new Date(Date.now() - this.tzoffset)
       .toISOString()
       .slice(0, -1);
     this.fetchData();

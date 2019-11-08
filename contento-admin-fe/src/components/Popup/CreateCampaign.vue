@@ -50,7 +50,6 @@
                       placeholder="Select End-date"
                       input-class="datetime"
                       input-style="cursor:pointer;"
-                      value-zone="UTC+07:00"
                       class="endtime text__14"
                       clear
                       required
@@ -208,7 +207,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      createCampaign: "campaign/createCampaign"
+      createCampaign: "campaign/createCampaign",
+      getListCampaign: "campaign/getListCampaign"
     }),
 
     async create() {
@@ -227,6 +227,7 @@ export default {
           idMarketer: this.$store.getters.getUser.id
         });
         if (status == 202) {
+          await this.getListCampaign(this.$store.getters.getUser.id);
           this.loadingSave = false;
           this.dialog = false;
         }

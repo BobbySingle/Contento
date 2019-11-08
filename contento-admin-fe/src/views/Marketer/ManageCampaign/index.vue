@@ -36,7 +36,6 @@
                       v-model="startFromDate"
                       placeholder="[Start] From time"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -57,7 +56,6 @@
                       v-model="startToDate"
                       placeholder="[Start] To time"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -100,7 +98,6 @@
                       v-model="endFromDate"
                       placeholder="[End] From time"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -121,7 +118,6 @@
                       v-model="endToDate"
                       placeholder="[End] To time"
                       input-class="css_time"
-                      value-zone="UTC+07:00"
                       class="text__14 out_css_time"
                       auto
                     ></datetime>
@@ -190,8 +186,10 @@
             </template>
             <template
               v-slot:item.startedDate="{ item }"
-            >{{item.startedDate | moment("HH:mm DD/MM/YYYY")}}</template>
-            <template v-slot:item.endDate="{ item }">{{item.endDate | moment("HH:mm DD/MM/YYYY")}}</template>
+            >{{item.startedDate | localTime()|moment("HH:mm DD/MM/YYYY")}}</template>
+            <template
+              v-slot:item.endDate="{ item }"
+            >{{item.endDate | localTime()| moment("HH:mm DD/MM/YYYY") }}</template>
             <template v-slot:item.status="{ item }">
               <v-chip
                 :color="item.status.color"
@@ -327,6 +325,20 @@ export default {
         }
       ]
     };
+  },
+  filters: {
+    localTime: function(value) {
+      if (!value) {
+        return "";
+      }
+      //Local TimeZone
+      var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+      var millisecondsTime = Date.parse(value + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      return newDateUTC7;
+    }
   },
   methods: {
     Clear() {
