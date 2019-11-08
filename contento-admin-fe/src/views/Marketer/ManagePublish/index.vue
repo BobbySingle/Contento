@@ -90,7 +90,7 @@
               </v-col>
               <v-col cols="12">
                 <v-row justify="end">
-                  <v-btn color="primary" @click="reset()">Reset</v-btn>
+                  <v-btn color="primary" @click="Clear()">Clear</v-btn>
                 </v-row>
               </v-col>
             </v-row>
@@ -233,7 +233,7 @@ export default {
     };
   },
   methods: {
-    reset() {
+    Clear() {
       this.publishFromDate = "";
       this.publishToDate = "";
       this.writer = "";
@@ -256,9 +256,11 @@ export default {
     }),
     async fetchData() {
       this.loading = true;
-      await this.getListTaskByMarketerID(this.$store.getters.getUser.id);
-      this.getListWriterByMarketerID(this.$store.getters.getUser.id);
-      this.getListStatusPublish();
+      await Promise.all([
+        this.getListTaskByMarketerID(this.$store.getters.getUser.id),
+        this.getListWriterByMarketerID(this.$store.getters.getUser.id),
+        this.getListStatusPublish()
+      ]);
       this.loading = false;
     }
   },

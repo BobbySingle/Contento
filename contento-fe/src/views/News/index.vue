@@ -1,8 +1,21 @@
 <template>
   <v-container v-if="newsDetails">
-    <h1>{{newsDetails.contents.name}}</h1>
-    <span v-html="newsDetails.contents.content"></span>
-    <h5>{{newsDetails.writer.name}}</h5>
+    <v-btn fab color="warning" @click="$router.go(-1)" style="position: fixed; bottom: 20px; left: 20px; z-index:9">Back</v-btn>
+    <v-btn
+      fab
+      color="primary"
+      @click="$vuetify.goTo(0)"
+      style="position: fixed; bottom: 20px; right: 20px; z-index:9"
+    >Top</v-btn>
+    <v-row justify="center">
+      <v-col cols="12" sm="8">
+        <h1 class="my-4">{{newsDetails.contents.name}}</h1>
+        <div v-html="newsDetails.contents.content" class="content"></div>
+        <v-row justify="end" class="mx-4">
+          <h3>{{newsDetails.writer.name}}</h3>
+        </v-row>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -36,6 +49,29 @@ export default {
   }
 };
 </script>
-
-<style>
+<style scoped>
+::v-deep p {
+  text-align: justify;
+}
+::v-deep .table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+::v-deep .image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+::v-deep .image img {
+  max-width: 100%;
+  max-height: 100%;
+}
+::v-deep .table td {
+  font-size: 14px;
+  text-align: center;
+  font-style: italic;
+  font-weight: bold;
+}
 </style>

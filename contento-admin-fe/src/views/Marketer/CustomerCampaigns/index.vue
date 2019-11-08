@@ -7,8 +7,8 @@
       <h1 class="text__h1">List Campaigns</h1>
     </v-row>
     <!-- /**Begin Search  */ -->
-    <v-row no-gutters class="mx-10">
-      <v-col sm="8" md="9">
+    <v-row no-gutters class="mx-6">
+      <v-col cols="12">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
           <input
@@ -20,6 +20,117 @@
           />
         </div>
       </v-col>
+    </v-row>
+    <v-row no-gutters class="mx-6 mb-2">
+      <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+        <v-expansion-panel>
+          <v-expansion-panel-header class="text__14">Advanced Filter:</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-row class=".flex-nowrap">
+              <v-col cols="12" sm="6" md="3">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="[Start]From Time"
+                      type="datetime"
+                      v-model="startFromDate"
+                      placeholder="[Start] From time"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="startFromDate">
+                    <v-btn icon @click="clearStartFromDate()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="[Start]To Time"
+                      type="datetime"
+                      v-model="startToDate"
+                      placeholder="[Start] To time"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="startToDate">
+                    <v-btn icon @click="clearStartToDate()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="[End]From Time"
+                      type="datetime"
+                      v-model="endFromDate"
+                      placeholder="[End] From time"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="endFromDate">
+                    <v-btn icon @click="clearEndFromDate()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="[End]To Time"
+                      type="datetime"
+                      v-model="endToDate"
+                      placeholder="[End] To time"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="endToDate">
+                    <v-btn icon @click="clearEndToDate()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-select
+                  v-model="status"
+                  :items="listStatusCampaign"
+                  item-text="name"
+                  item-value="id"
+                  label="Status"
+                  prepend-inner-icon="filter_list"
+                  clearable
+                ></v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="9">
+                <v-row justify="end">
+                  <v-btn color="primary" @click="Clear()">Clear</v-btn>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-row>
     <!-- /** End Search */ -->
 
@@ -55,11 +166,7 @@
                 </div>
               </div>
               <div>
-                <span
-                  v-for="topic in item.listTag"
-                  :key="topic.id"
-                  class="tag-campaign-details text__14"
-                >#{{topic.name}}</span>
+                <v-chip x-small light v-for="topic in item.listTag" :key="topic.id">{{topic.name}}</v-chip>
               </div>
             </template>
             <template v-slot:item.startedDate="{ item }">
@@ -106,22 +213,102 @@ export default {
       page: 1,
       pageCount: 0,
       itemsPerPage: 5,
+      panel: [],
       /**End Pagination */
       dialog: false,
       menu: false,
       loading: false,
+      /**Filter */
+      search: "",
+      startFromDate: "",
+      startToDate: "",
+      endFromDate: "",
+      endToDate: "",
+      tagFilter: "",
+      status: "",
+
       /**List Content */
       search: "",
       headers: [
         { text: "Title", value: "title", sortable: false, width: "50%" },
-        { text: "Start", value: "startedDate", align: "center" },
-        { text: "End", value: "endDate", align: "center" },
-        { text: "Status", value: "status", align: "center" },
-        { text: "Action", value: "action", align: "center", sortable: false }
+        {
+          text: "Start",
+          value: "startedDate",
+          align: "center",
+          filter: value => {
+            if (!this.startFromDate && !this.startToDate) return true;
+            if (this.startFromDate != "" && this.startToDate == "") {
+              return this.startFromDate <= value;
+            } else if (this.startFromDate == "" && this.startToDate != "") {
+              return value <= this.startToDate;
+            } else {
+              return this.startFromDate <= value && value <= this.startToDate;
+            }
+          }
+        },
+        {
+          text: "End",
+          value: "endDate",
+          align: "center",
+          filter: value => {
+            if (!this.endFromDate && !this.endToDate) return true;
+            if (this.endFromDate != "" && this.endToDate == "") {
+              return this.endFromDate <= value;
+            } else if (this.endFromDate == "" && this.endToDate != "") {
+              return value <= this.endToDate;
+            } else {
+              return this.endFromDate <= value && value <= this.endToDate;
+            }
+          }
+        },
+        {
+          text: "Status",
+          value: "status",
+          align: "center",
+          filter: value => {
+            if (!this.status) return true;
+            return value.id == this.status;
+          }
+        },
+        { text: "Action", value: "action", align: "center", sortable: false },
+        {
+          text: "",
+          value: "listTag",
+          sortable: false,
+          align: " d-none",
+          filter: value => {
+            if (!this.tagFilter) return true;
+            for (const i in value) {
+              if (value[i].id == this.tagFilter) {
+                return value[i].id == this.tagFilter;
+              }
+            }
+          }
+        }
       ]
     };
   },
   methods: {
+    Clear() {
+      this.startFromDate = "";
+      this.startToDate = "";
+      this.endFromDate = "";
+      this.endToDate = "";
+      this.tagFilter = "";
+      this.status = "";
+    },
+    clearStartFromDate() {
+      this.startFromDate = "";
+    },
+    clearStartToDate() {
+      this.startToDate = "";
+    },
+    clearEndFromDate() {
+      this.endFromDate = "";
+    },
+    clearEndToDate() {
+      this.endToDate = "";
+    },
     clickCalendar(event) {
       sessionStorage.setItem("CampaignID", JSON.stringify(event));
       this.$router.push("/Calendar");
@@ -136,20 +323,29 @@ export default {
       getListCampaign: "campaign/getListCampaignByCustomerID",
       getListCustomer: "authentication/getListCustomerByMarketerID",
       getListEditor: "authentication/getListEditorByMarketerID",
-      getListTag: "contentprocess/getListTag"
+      getListTag: "contentprocess/getListTag",
+      getListStatusCampaign: "contentprocess/getListStatusCampaign"
     }),
     async fetchData() {
       this.loading = true;
       let customerID = sessionStorage.getItem("customerID");
-      await this.getListCampaign(customerID);
+      await Promise.all([
+        this.getListCampaign(customerID),
+        this.getListCustomer(this.$store.getters.getUser.id),
+        this.getListEditor(this.$store.getters.getUser.id),
+        this.getListStatusCampaign(),
+        this.getListTag()
+      ]);
       this.loading = false;
-      this.getListCustomer(this.$store.getters.getUser.id);
-      this.getListEditor(this.$store.getters.getUser.id);
-      this.getListTag();
     }
   },
   computed: {
-    ...mapGetters(["getUser", "listCampaignByCustomerID"])
+    ...mapGetters([
+      "getUser",
+      "listCampaignByCustomerID",
+      "listStatusCampaign",
+      "listTag"
+    ])
   },
   created() {
     let role = this.getUser.role;
@@ -166,6 +362,20 @@ export default {
 };
 </script>
 <style scoped>
+::v-deep .css_time {
+  cursor: pointer;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+.out_css_time {
+  background: url(../../../assets/calendar.png) no-repeat scroll 7px 7px;
+  width: 100%;
+  padding-left: 30px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #737373;
+  overflow: hidden;
+}
+
 .search-filter {
   height: 40px;
   display: flex;

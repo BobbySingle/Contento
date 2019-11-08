@@ -3,7 +3,7 @@
     <v-row justify="center" class="mb-5">
       <h1 class="text__h1">Manage Channel Publish</h1>
     </v-row>
-    <v-row no-gutters class="mx-10">
+    <v-row no-gutters class="mx-6">
       <v-col sm="8" md="9">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
@@ -20,12 +20,93 @@
         <create-channel />
       </v-col>
     </v-row>
+    <v-row no-gutters class="mx-6 mb-2">
+      <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+        <v-expansion-panel>
+          <v-expansion-panel-header class="text__14">Advanced Filter:</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-row class=".flex-nowrap">
+              <v-col cols="12" sm="6" md="3">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="From Time"
+                      type="datetime"
+                      v-model="fromFilter"
+                      placeholder="From time"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="fromFilter">
+                    <v-btn icon @click="clearFromFilter()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="To Time"
+                      type="datetime"
+                      v-model="toFilter"
+                      placeholder="To time"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="toFilter">
+                    <v-btn icon @click="clearToFilter()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-select
+                  v-model="customerFilter"
+                  :items="listCustomer"
+                  item-text="name"
+                  item-value="id"
+                  label="Customer"
+                  prepend-inner-icon="account_circle"
+                  clearable
+                ></v-select>
+              </v-col>
+
+              <v-col cols="12" sm="6" md="3">
+                <v-select
+                  v-model="channelFilter"
+                  :items="channels"
+                  item-text="name"
+                  item-value="id"
+                  label="Channel"
+                  prepend-inner-icon="public"
+                  clearable
+                ></v-select>
+              </v-col>
+              <v-col cols="12">
+                <v-row justify="end">
+                  <v-btn color="primary" @click="Clear()">Clear</v-btn>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-row>
     <v-row no-gutters class="mx-10">
       <v-col sm="12" md="12">
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listItems"
+            :items="fanpages"
             :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
@@ -35,9 +116,15 @@
             :loading="loading"
             @page-count="pageCount = $event"
           >
+            <template v-slot:item.channel="{item}">{{item.channel.name}}</template>
+            <template v-slot:item.customer="{item}">{{item.customer.name}}</template>
+            <template
+              v-slot:item.modifiedDate="{item}"
+            >{{item.modifiedDate|moment("HH:mm DD/MM/YYYY")}}</template>
             <template v-slot:item.action="{item}">
-              <v-row class="flex-nowrap" justify="center">
+              <v-row class="flex-nowrap" justify="center" v-if="item.id > 1">
                 <edit-channel :channelID="item.id" />
+                <v-btn color="error" class="ml-2" @click="deleteFP(item.id)">Delete</v-btn>
               </v-row>
             </template>
           </v-data-table>
@@ -53,8 +140,10 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 import CreateChannel from "../../../components/Popup/CreateChannel.vue";
 import EditChannel from "../../../components/Popup/EditChannel.vue";
+import { METHODS } from "http";
 export default {
   components: { CreateChannel, EditChannel },
   data() {
@@ -65,28 +154,15 @@ export default {
       itemsPerPage: 10,
       search: "",
       loading: false,
-      listItems: [
-        {
-          id: 1,
-          name: "Contento FB Travel",
-          channel: "Facebook",
-          customer: "",
-          lastUpdate: "30/9/2019"
-        },
-        {
-          id: 2,
-          name: "FB Sport",
-          channel: "Facebook",
-          customer: "Customer 1",
-          lastUpdate: "30/9/2019"
-        },
-        {
-          id: 3,
-          name: "Contento WP Sport",
-          channel: "Wordpress",
-          customer: "Customer 2",
-          lastUpdate: "30/9/2019"
-        }
+      panel: [],
+      fromFilter: "",
+      toFilter: "",
+      customerFilter: "",
+      channelFilter: "",
+      channels: [
+        { id: 1, name: "Contento" },
+        { id: 2, name: "Facebook" },
+        { id: 3, name: "Wordpress" }
       ],
       headers: [
         {
@@ -94,16 +170,39 @@ export default {
           align: "left",
           value: "name"
         },
-        { text: "Channel", value: "channel", sortable: false },
+        {
+          text: "Channel",
+          value: "channel",
+          sortable: false,
+          filter: value => {
+            if (!this.channelFilter) return true;
+            return value.id == this.channelFilter;
+          }
+        },
         {
           text: "Customer",
           value: "customer",
-          align: "center"
+          align: "center",
+          sortable: false,
+          filter: value => {
+            if (!this.customerFilter) return true;
+            return value.id == this.customerFilter;
+          }
         },
         {
           text: "Last Update",
-          value: "lastUpdate",
-          align: "center"
+          value: "modifiedDate",
+          align: "center",
+          filter: value => {
+            if (!this.fromFilter && !this.toFilter) return true;
+            if (this.fromFilter != "" && this.toFilter == "") {
+              return this.fromFilter <= value;
+            } else if (this.fromFilter == "" && this.toFilter != "") {
+              return value <= this.toFilter;
+            } else {
+              return this.fromFilter <= value && value <= this.toFilter;
+            }
+          }
         },
         {
           text: "Action",
@@ -113,11 +212,66 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    Clear() {
+      this.fromFilter = "";
+      this.toFilter = "";
+      this.customerFilter = "";
+      this.channelFilter = "";
+    },
+    clearFromFilter() {
+      this.fromFilter = "";
+    },
+    clearToFilter() {
+      this.toFilter = "";
+    },
+    ...mapActions({
+      getListCustomer: "authentication/getListCustomerByMarketerID",
+      getFanPages: "batchjob/getFanPages",
+      deleteFanPage: "batchjob/deleteFanPage"
+    }),
+    async deleteFP(id) {
+      this.loading = true;
+      let status = await this.deleteFanPage(id);
+      if (status == 200) {
+        this.loading = false;
+      }
+      this.loading = false;
+    },
+    async fetchData() {
+      this.loading = true;
+      await Promise.all([
+        this.getListCustomer(this.$store.getters.getUser.id),
+        this.getFanPages(this.$store.getters.getUser.id)
+      ]);
+      this.loading = false;
+    }
+  },
+  computed: {
+    ...mapGetters(["listCustomer", "fanpages"])
+  },
+  mounted() {
+    this.fetchData();
   }
 };
 </script>
 
 <style scoped>
+::v-deep .css_time {
+  cursor: pointer;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+.out_css_time {
+  background: url(../../../assets/calendar.png) no-repeat scroll 7px 7px;
+  width: 100%;
+  padding-left: 30px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #737373;
+  overflow: hidden;
+}
+
 .search-filter {
   height: 40px;
   display: flex;

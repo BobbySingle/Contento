@@ -207,8 +207,8 @@ export default {
     }),
 
     async fetchData() {
-      let ContentRequestID = sessionStorage.getItem("ContentRequestID");
-      await this.getTaskDetail(ContentRequestID);
+      let ApproveRequestID = sessionStorage.getItem("ApproveRequestID");
+      await this.getTaskDetail(ApproveRequestID);
       this.requestDetails = this.taskDetail.description;
       this.content =
         this.taskDetail.content.content == null

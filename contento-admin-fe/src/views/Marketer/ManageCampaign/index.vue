@@ -146,7 +146,7 @@
               </v-col>
               <v-col cols="12" sm="6" md="3">
                 <v-row justify="center">
-                  <v-btn color="primary" @click="reset()">Reset</v-btn>
+                  <v-btn color="primary" @click="Clear()">Clear</v-btn>
                 </v-row>
               </v-col>
             </v-row>
@@ -329,7 +329,7 @@ export default {
     };
   },
   methods: {
-    reset() {
+    Clear() {
       this.startFromDate = "";
       this.startToDate = "";
       this.endFromDate = "";
@@ -369,12 +369,14 @@ export default {
 
     async fetchData() {
       this.loading = true;
-      await this.getCampaigns(this.getUser.id);
+      await Promise.all([
+        this.getCampaigns(this.getUser.id),
+        this.getListStatusCampaign(),
+        this.getListCustomer(this.$store.getters.getUser.id),
+        this.getListEditor(this.$store.getters.getUser.id),
+        this.getListTag()
+      ]);
       this.loading = false;
-      await this.getListStatusCampaign();
-      await this.getListCustomer(this.$store.getters.getUser.id);
-      await this.getListEditor(this.$store.getters.getUser.id);
-      await this.getListTag();
     }
   },
   computed: {
@@ -416,7 +418,6 @@ export default {
   border-bottom: 1px solid #737373;
   overflow: hidden;
 }
-
 
 .search-filter {
   height: 40px;

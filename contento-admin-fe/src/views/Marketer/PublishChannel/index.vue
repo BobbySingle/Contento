@@ -1,5 +1,14 @@
 <template>
   <v-container>
+    <v-overlay :value="overlay" opacity="1" color="white" absolute>
+      <v-progress-circular
+        :indeterminate="indeterminate"
+        rotate="0"
+        size="80"
+        width="8"
+        color="black"
+      >Loading</v-progress-circular>
+    </v-overlay>
     <v-row>
       <v-btn text @click="$router.go(-1)">Back</v-btn>
     </v-row>
@@ -13,23 +22,23 @@
           <v-expansion-panel-content>
             <v-col cols="12" class="px-8">
               <v-row>
-                <v-col sm="12" md="12">
+                <v-col cols="12" md="12">
                   <span style="color:grey; font-weight:300; font-size:12px;">Task Title</span>
                   <br />
                   <span class="text__14">{{title}}</span>
                   <!-- <v-text-field label="Title:" required v-model="title" readonly class="text__14"></v-text-field> -->
                 </v-col>
-                <v-col sm="6" md="6">
+                <v-col cols="6" md="6">
                   <span style="color:grey; font-weight:300; font-size:12px;">Writer</span>
                   <br />
                   <span class="text__14">{{writer}}</span>
                 </v-col>
-                <v-col sm="6" md="6">
+                <v-col cols="6" md="6">
                   <span style="color:grey; font-weight:300; font-size:12px;">Editor</span>
                   <br />
                   <span class="text__14">{{editor}}</span>
                 </v-col>
-                <v-col sm="12" md="12">
+                <v-col cols="12" md="12">
                   <span style="color:grey; font-weight:300; font-size:12px;">Content Title</span>
                   <br />
                   <span class="text__14">{{name}}</span>
@@ -42,7 +51,7 @@
           <v-expansion-panel-header class="text__14">Content Preview:</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-row class="my-8" style="width:100%;">
-              <v-col sm="12" md="12">
+              <v-col cols="12" md="12">
                 <div class="content px-12 py-4" style="max-width:795px;margin: 0 auto;">
                   <span v-html="content"></span>
                 </div>
@@ -54,12 +63,12 @@
       <v-row>
         <v-col cols="12" class="px-8">
           <v-row>
-            <v-col sm="12" md="6">
+            <v-col cols="12" md="6">
               <v-row class="out-endtime">
-                <v-col sm="1" md="1">
+                <v-col cols="0" md="1" class="d-none d-md-block">
                   <v-icon>mdi-calendar-range</v-icon>
                 </v-col>
-                <v-col sm="11" md="11">
+                <v-col cols="12" md="11">
                   <span style="color:grey; font-weight:300; font-size:12px;">Publish Time</span>
                   <datetime
                     title="Publish Time"
@@ -69,11 +78,23 @@
                     input-style="cursor:pointer;"
                     class="endtime text__14"
                     v-model="publishTime"
+                    value-zone="UTC+07:00"
+                    :min-datetime="localISOTime"
+                    required
+                    @blur="$v.publishTime.$touch()"
                   ></datetime>
                 </v-col>
               </v-row>
+              <div
+                style="color:red"
+                v-if="!$v.publishTime.required && check"
+              >Please select publish time.</div>
+              <div
+                style="color:red"
+                v-if="$v.publishTime.$model < localISOTime && check"
+              >Please select publish time > time now.</div>
             </v-col>
-            <v-col sm="12" md="6" class="pt-7">
+            <v-col cols="12" md="6" class="pt-7">
               <v-select
                 v-model="tags"
                 :value="tags"
@@ -83,7 +104,10 @@
                 chips
                 clearable
                 label="Category"
+                prepend-inner-icon="category"
                 multiple
+                required
+                @blur="$v.tags.$touch()"
               >
                 <template v-slot:selection="{ attrs, item, select, selected }">
                   <v-chip v-bind="attrs" :input-value="selected" color="blue" class="chips">
@@ -91,10 +115,82 @@
                   </v-chip>
                 </template>
               </v-select>
+              <div style="color:red" v-if="!$v.tags.required && check">Please select category.</div>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" md="4">
+              <v-select
+                v-model="fanpageFB"
+                :items="facebook"
+                :value="fanpageFB"
+                item-text="name"
+                item-value="id"
+                chips
+                clearable
+                label="Facebook Channel"
+                prepend-inner-icon="mdi-facebook-box"
+                multiple
+                attach
+              >
+                <template v-slot:selection="{ attrs, item,index, select, selected }">
+                  <v-chip
+                    color="blue"
+                    v-if="index === 0"
+                    class="chips caption"
+                  >+{{ fanpageFB.length }} others selected</v-chip>
+                </template>
+              </v-select>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-select
+                v-model="fanpageWP"
+                :items="wordpress"
+                :value="fanpageWP"
+                item-text="name"
+                item-value="id"
+                chips
+                clearable
+                label="Wordpress Channel"
+                prepend-inner-icon="mdi-wordpress"
+                multiple
+                attach
+              >
+                <template v-slot:selection="{ attrs, item,index, select, selected }">
+                  <v-chip
+                    color="blue"
+                    v-if="index === 0"
+                    class="chips caption"
+                  >+{{ fanpageWP.length }} others selected</v-chip>
+                </template>
+              </v-select>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-select
+                v-model="websiteCTT"
+                :items="website"
+                :value="websiteCTT"
+                item-text="name"
+                item-value="id"
+                chips
+                clearable
+                label="Contento Website"
+                prepend-inner-icon="mdi-web"
+                multiple
+                attach
+              >
+                <template v-slot:selection="{ attrs, item,index, select, selected }">
+                  <v-chip
+                    color="blue"
+                    v-if="index === 0"
+                    class="chips caption"
+                  >+{{ websiteCTT.length }} others selected</v-chip>
+                </template>
+              </v-select>
             </v-col>
           </v-row>
           <v-row justify="end">
-            <v-btn color="primary" class="text__14" @click="publish()">Publish</v-btn>
+            <v-btn color="primary" class="text__14" @click="publish()" :loading="loading">Publish</v-btn>
           </v-row>
         </v-col>
       </v-row>
@@ -103,55 +199,132 @@
 </template>
 <script>
 import CKEditor from "../../../components/CKEditor/Ckeditor5.vue";
+import { required } from "vuelidate/lib/validators";
 import { mapGetters, mapActions } from "vuex";
-
+import Swal from "sweetalert2";
 import axios from "axios";
 export default {
   components: { CKEditor },
   data() {
     return {
+      /**Loading Overlay */
+      overlay: false,
+      indeterminate: false,
+
       panel: [0],
       content: "",
       dialog: false,
       menu: false,
       tags: [],
+      fanpages: [],
+      fanpageFB: [],
+      fanpageWP: [],
+      // fanpageCS: [],
+      websiteCTT: [],
       title: "",
       name: "",
       publishTime: "",
       writer: "",
-      editor: ""
+      editor: "",
+      customerID: "",
+      website: [
+        {
+          id: 1,
+          name: "Contento"
+        }
+      ],
+      check: false,
+      localISOTime: "",
+      loading: false
     };
+  },
+  validations: {
+    publishTime: { required },
+    tags: { required },
+    form: ["tags", "publishTime"]
   },
   methods: {
     ...mapActions({
       getTaskDetail: "contentprocess/getTaskDetail",
       getListTag: "contentprocess/getListTag",
-      publishContent: "batchjob/publishContent"
+      publishContent: "batchjob/publishContent",
+      getFanPageFacebook: "batchjob/getFanPageFacebook",
+      getFanPageWordpress: "batchjob/getFanPageWordpress",
+      getFanPagesByContentID: "batchjob/getFanPagesByContentID"
     }),
     async fetchData() {
+      this.overlay = true;
+      this.indeterminate = true;
       let contentID = JSON.parse(sessionStorage.getItem("ContentID"));
-      await this.getTaskDetail(contentID);
+      await Promise.all([
+        this.getListTag(),
+        this.getFanPageFacebook(this.getUser.id),
+        this.getFanPageWordpress(this.getUser.id),
+        this.getTaskDetail(contentID)
+      ]);
       this.title = this.taskDetail.title;
-      this.publishTime = this.$moment(
-        this.taskDetail.publishTime
-      ).toISOString();
+      this.publishTime = this.taskDetail.publishTime;
+      // this.publishTime = this.$moment(
+      //   this.taskDetail.publishTime
+      // ).toISOString();
       this.writer = this.taskDetail.writer.name;
       this.editor = this.taskDetail.editor.name;
       this.content = this.taskDetail.content.content;
-      this.tags = this.taskDetail.tags;
+      this.tags = this.taskDetail.tag;
       this.name = this.taskDetail.content.name;
-      this.getListTag();
+      await this.getFanPagesByContentID(this.taskDetail.content.id);
+
+      this.customerID = this.taskDetail.customer;
+      this.fanpageFB = this.fanpagesContent.Facebook;
+      this.fanpageWP = this.fanpagesContent.Wordpress;
+      this.websiteCTT = this.fanpagesContent.Contento;
+      this.overlay = false;
+      this.indeterminate = false;
     },
-    publish() {
-      let contentID = JSON.parse(sessionStorage.getItem("ContentID"));
-      this.publishContent({
-        id: this.taskDetail.content.id,
-        time: this.publishTime
-      });
+    async publish() {
+      this.loading = true;
+      this.check = true;
+      this.fanpages = [];
+      this.fanpages = this.fanpages.concat(
+        this.fanpageFB,
+        this.fanpageWP,
+        // this.fanpageCS,
+        this.websiteCTT
+      );
+      console.log(this.fanpages);
+      this.$v.form.$touch();
+      if (this.fanpages == "") {
+        Swal.fire({
+          title: "Please select at least one channel to post.",
+          type: "warning",
+          timer: 3000
+        });
+      }
+      if (
+        !this.$v.form.$invalid &&
+        this.fanpages != "" &&
+        this.$v.publishTime.$model >= this.localISOTime
+      ) {
+        await this.publishContent({
+          listFanpage: this.fanpages,
+          listTag: this.tags,
+          contentId: this.taskDetail.content.id,
+          time: this.publishTime
+        });
+        this.loading = false;
+      }
+      this.loading = false;
     }
   },
   computed: {
-    ...mapGetters(["getUser", "listTag", "taskDetail"])
+    ...mapGetters([
+      "getUser",
+      "listTag",
+      "taskDetail",
+      "facebook",
+      "wordpress",
+      "fanpagesContent"
+    ])
   },
   created() {
     let role = this.getUser.role;
@@ -163,6 +336,12 @@ export default {
     }
   },
   mounted() {
+    this.check = false;
+    // timezone +7
+    var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+    this.localISOTime = new Date(Date.now() - tzoffset)
+      .toISOString()
+      .slice(0, -1);
     this.fetchData();
   }
 };

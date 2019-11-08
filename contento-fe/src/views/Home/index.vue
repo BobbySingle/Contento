@@ -1,5 +1,11 @@
 <template>
   <v-container>
+    <v-btn
+      fab
+      color="primary"
+      @click="$vuetify.goTo(0)"
+      style="position: fixed; bottom: 20px; right: 20px; z-index:9"
+    >Top</v-btn>
     <!-- /** Slide post */ -->
     <v-row no-gutters>
       <v-col cols="12" md="8">
@@ -7,17 +13,15 @@
           <v-icon color="black" class="mb-2">grade</v-icon>Recommend
         </h2>
         <v-carousel cycle hide-delimiter-background show-arrows-on-hover class="slide">
-          <v-carousel-item v-for="(item,i) in news" :key="i" :src="item.image">
+          <v-carousel-item v-for="(item,i) in topNews" :key="i" :src="item.image[0]">
             <div class="slide-title">
               <v-row class="line-clamp">
-                <router-link to="/">
-                  <h2>{{item.title}}</h2>
-                </router-link>
+                <h2 class="news_title" @click="clickNews(item.idTask)">{{item.contents.name}}</h2>
               </v-row>
-              <v-row justify="end">
+              <v-row justify="start">
                 <v-icon small class="mr-1">today</v-icon>
                 <h4>
-                  {{item.releaseDate}}
+                  {{item.publishTime | moment("DD/MM/YYYY")}}
                   <!-- <v-icon>bar_chart</v-icon>2.4k -->
                 </h4>
               </v-row>
@@ -32,7 +36,7 @@
           <!-- /**List post */ -->
           <div class="inner-frame-post">
             <!-- /**Small post */ -->
-            <div style="margin-bottom:10px;" v-for="item in news" :key="item.id">
+            <div style="margin-bottom:10px;" v-for="item in topNews" :key="item.id">
               <small-news :news="item" />
             </div>
           </div>
@@ -41,7 +45,7 @@
     </v-row>
     <v-row class="py-12">
       <v-col cols="4" md="3" v-for="item in getPaginationNews" :key="item.id">
-          <card-news :news="item" />
+        <card-news :news="item" />
       </v-col>
     </v-row>
     <div class="text-xs-center" style="margin-bottom: 50px">
@@ -74,164 +78,17 @@
 import SmallNews from "../../components/SmallNews/index.vue";
 import CardNews from "../../components/CardNews/index.vue";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { mapActions, mapGetters } from "vuex";
 export default {
   components: { SmallNews, CardNews },
   data() {
     return {
       dialog: false,
-      userSelectedTopics: [],
-      news: [
-        {
-          id: 1,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print,and publishing industries for previewing layouts and visual mockups and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=15",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 2,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=16",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 3,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=17",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 4,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=25",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 5,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=19",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 6,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=20",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 7,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print,and publishing industries for previewing layouts and visual mockups and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1053",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 8,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1052",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 9,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1051",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 10,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1043",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 11,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1042",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 12,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1040",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 13,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print,and publishing industries for previewing layouts and visual mockups and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=104",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 14,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1031",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 15,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1029",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 16,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1022",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 17,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1021",
-          releaseDate: "30/9/2019",
-          link: "/"
-        },
-        {
-          id: 18,
-          title:
-            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups",
-          image: "https://picsum.photos/1500/1000?image=1063",
-          releaseDate: "30/9/2019",
-          link: "/"
-        }
-      ]
+      userSelectedTopics: []
     };
   },
   computed: {
-    ...mapGetters(["getPaginationNews", "listCategory"]),
+    ...mapGetters(["getPaginationNews", "listCategory", "topNews"]),
     isInFirstPage() {
       return this.$store.state.currentPage === 1;
     },
@@ -240,6 +97,10 @@ export default {
     }
   },
   methods: {
+    clickNews(event) {
+      sessionStorage.setItem("NewsID", event);
+      this.$router.push("/News");
+    },
     ...mapActions({
       setCurrentSelectedPage: "viewer/setCurrentSelectedPage",
       setNewsData: "viewer/setNewsData",
@@ -252,36 +113,41 @@ export default {
     },
     async clickOK() {
       await this.createCookie({ key: "CCTT", value: this.userSelectedTopics });
-      await Cookies.set("CCTT", this.userSelectedTopics);
+      await this.$cookies.set("CCTT", this.userSelectedTopics, Infinity);
       await this.getContent();
       this.dialog = false;
     },
     async setData() {
       await this.getTags();
-      // await this.setNewsData(this.news);
-      if (Cookies.get("CCTT") == undefined) {
+      if (this.$cookies.get("CCTT") == undefined) {
         this.dialog = true;
       } else {
-        await this.createCookie({ key: "CCTT", value: Cookies.get("CCTT") });
-        // console.log(Cookies.get("CCTT"));
-        // await Cookies.set("CCTT", Cookies.get("CCTT"));
+        await this.createCookie({
+          key: "CCTT",
+          value: this.$cookies.get("CCTT")
+        });
+        await this.$cookies.set("CCTT", this.$cookies.get("CCTT"), Infinity);
         await this.getContent();
       }
     }
   },
   mounted() {
     axios.defaults.headers = {
-      "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Allow-Credentials": true,
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "*",
       "Content-Type": "application/json",
-      withCredentials: true
+      withCredentials: true,
+      crossDomain: true
     };
     this.setData();
   }
 };
 </script>
 <style scoped>
+.news_title:hover {
+  cursor: pointer;
+}
 a {
   text-decoration: none;
 }
@@ -308,21 +174,10 @@ a {
     rgba(0, 0, 0, 0) 100%
   );
   max-width: 100%;
+  min-width: 100%;
   left: 0px;
   bottom: 0px;
 }
-/* .slide-title {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.65);
-  border-top-right-radius: 20px;
-  border-bottom-left-radius: 20px;
-  padding-left: 30px;
-  padding-right: 30px;
-  max-width: 100%;
-  margin-right: 20px;
-  left: 20px;
-  bottom: 40px;
-} */
 .slide-title h4 {
   color: white;
   font-weight: 200;

@@ -30,7 +30,7 @@ const state = {
   listTag: [],
   listTaskByMarketerID: [],
   listTagByCampaignID: [],
-  taskDetailUpdate: [],
+  taskDetailUpdate: "",
   listContentRequest: [],
   listTaskByWriterID: [],
   listTaskByEditorID: [],
@@ -280,6 +280,7 @@ const actions = {
           text: 'Content has been save successfully!',
           type: 'suc'
         });
+        return 200;
       }
     } catch (error) {
       console.log("ERROR - SAVE CONTENT");
@@ -302,6 +303,7 @@ const actions = {
           text: 'Content has been submit successfully!',
           type: 'suc'
         });
+        return 202;
       }
     } catch (error) {
       Vue.notify({

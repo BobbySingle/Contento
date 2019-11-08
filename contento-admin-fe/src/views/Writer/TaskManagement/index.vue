@@ -4,7 +4,7 @@
       <h1 class="text__h1">Task Management</h1>
     </v-row>
     <!-- /**Begin Search  */ -->
-    <v-row no-gutters class="mx-10">
+    <v-row no-gutters class="mx-6 mb-2">
       <v-col cols="12">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
@@ -17,7 +17,86 @@
           />
         </div>
       </v-col>
-      <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;"></v-col>
+    </v-row>
+    <v-row no-gutters class="mx-6 mb-2">
+      <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+        <v-expansion-panel>
+          <v-expansion-panel-header class="text__14">Advanced Filter:</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-row class=".flex-nowrap">
+              <v-col cols="12" sm="6" md="3">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="[End]From Time"
+                      type="datetime"
+                      v-model="endFromDate"
+                      placeholder="[End] From time"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="endFromDate">
+                    <v-btn icon @click="clearEndFromDate()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-row class=".flex-nowrap mt-3" no-gutters>
+                  <v-col cols="10">
+                    <datetime
+                      title="[End]To Time"
+                      type="datetime"
+                      v-model="endToDate"
+                      placeholder="[End] To time"
+                      input-class="css_time"
+                      value-zone="UTC+07:00"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </v-col>
+                  <v-col cols="2" v-if="endToDate">
+                    <v-btn icon @click="clearEndToDate()">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-select
+                  v-model="status"
+                  :items="listStatusTask"
+                  item-text="name"
+                  item-value="id"
+                  label="Status"
+                  prepend-inner-icon="filter_list"
+                  clearable
+                ></v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="3">
+                <v-select
+                  v-model="campaign"
+                  :items="listFilterCampaignByWriterID"
+                  item-text="name"
+                  item-value="id"
+                  label="Campaign"
+                  prepend-inner-icon="title"
+                  clearable
+                ></v-select>
+              </v-col>
+              <v-col cols="12">
+                <v-row justify="end">
+                  <v-btn color="primary" @click="Clear()">Clear</v-btn>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-row>
     <!-- /** End Search */ -->
 
@@ -36,13 +115,7 @@
             hide-default-footer
             @page-count="pageCount = $event"
           >
-            <template v-slot:item.campaign="{item}">
-              <v-col class="text__14" style="display:flex; align-items:center;">
-                <div>
-                  <span class="content-inner-table text__14">{{item.campaign}}</span>
-                </div>
-              </v-col>
-            </template>
+            <template v-slot:item.campaign="{item}">{{item.campaign.name}}</template>
             <template v-slot:item.title="{item}">
               <div class="content_details">
                 <div>
@@ -64,7 +137,11 @@
               >{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.action="{ item }">
-              <v-btn color="primary" v-if="item.status.id === 2" @click="changeToWork(item.id)">Continue</v-btn>
+              <v-btn
+                color="primary"
+                v-if="item.status.id === 2"
+                @click="changeToWork(item.id)"
+              >Continue</v-btn>
               <v-btn color="secondary" v-if="item.status.id === 1" @click="start(item.id)">Start</v-btn>
             </template>
           </v-data-table>
@@ -90,10 +167,16 @@ export default {
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
+      panel: [],
       /**End Pagination */
       dialog: false,
       menu: false,
       search: "",
+      endFromDate: "",
+      endToDate: "",
+      status: "",
+      campaign: "",
+
       loading: false,
       /**List Content */
       headers: [
@@ -101,7 +184,11 @@ export default {
           text: "Campaign",
           align: "center",
           value: "campaign",
-          width: "15%"
+          width: "15%",
+          filter: value => {
+            if (!this.campaign) return true;
+            return value.id == this.campaign;
+          }
         },
         { text: "Title", value: "title", sortable: false, width: "30%" },
         {
@@ -110,13 +197,55 @@ export default {
           align: "center",
           width: "12.5%"
         },
-        { text: "End", value: "deadline", align: "center", width: "12.5%" },
-        { text: "Status", value: "status", align: "center", width: "10%" },
-        { text: "Action", value: "action", align: "center", width: "10%" }
+        {
+          text: "End",
+          value: "deadline",
+          align: "center",
+          width: "12.5%",
+          filter: value => {
+            if (!this.endFromDate && !this.endToDate) return true;
+            if (this.endFromDate != "" && this.endToDate == "") {
+              return this.endFromDate <= value;
+            } else if (this.endFromDate == "" && this.endToDate != "") {
+              return value <= this.endToDate;
+            } else {
+              return this.endFromDate <= value && value <= this.endToDate;
+            }
+          }
+        },
+        {
+          text: "Status",
+          value: "status",
+          align: "center",
+          width: "10%",
+          filter: value => {
+            if (!this.status) return true;
+            return value.id == this.status;
+          }
+        },
+        {
+          text: "Action",
+          value: "action",
+          align: "center",
+          width: "10%",
+          sortable: false
+        }
       ]
     };
   },
   methods: {
+    Clear() {
+      this.endFromDate = "";
+      this.endToDate = "";
+      this.status = "";
+      this.campaign = "";
+    },
+    clearEndFromDate() {
+      this.endFromDate = "";
+    },
+    clearEndToDate() {
+      this.endToDate = "";
+    },
     changeToWork(id) {
       sessionStorage.setItem("TaskID", id);
       this.$router.push("/WriteContent");
@@ -128,16 +257,28 @@ export default {
     },
     ...mapActions({
       getTaskByWriterId: "contentprocess/getTaskByWriterId",
-      startTask: "contentprocess/startTask"
+      startTask: "contentprocess/startTask",
+      getListStatusTask: "contentprocess/getListStatusTask",
+      getListFilterCampaignByWriterID:
+        "campaign/getListFilterCampaignByWriterID"
     }),
     async fetchData() {
       this.loading = true;
-      await this.getTaskByWriterId(this.$store.getters.getUser.id);
+      await Promise.all([
+        this.getTaskByWriterId(this.$store.getters.getUser.id),
+        this.getListFilterCampaignByWriterID(this.$store.getters.getUser.id),
+        this.getListStatusTask()
+      ]);
       this.loading = false;
     }
   },
   computed: {
-    ...mapGetters(["getUser", "listTaskByWriterID"])
+    ...mapGetters([
+      "getUser",
+      "listTaskByWriterID",
+      "listStatusTask",
+      "listFilterCampaignByWriterID"
+    ])
   },
   created() {
     axios.defaults.headers.common["Authorization"] =
@@ -156,6 +297,25 @@ export default {
 };
 </script>
 <style scoped>
+::v-deep .css_time {
+  cursor: pointer;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+.out_css_time {
+  background: url(../../../assets/calendar.png) no-repeat scroll 7px 7px;
+  width: 100%;
+  padding-left: 30px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #737373;
+  overflow: hidden;
+}
+
+.search-filter {
+  height: 40px;
+  display: flex;
+  margin-bottom: 10px;
+}
 .search-filter {
   height: 40px;
   display: flex;

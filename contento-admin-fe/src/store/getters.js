@@ -10,12 +10,16 @@ const getters = {
   listInfoCustomer: state => state.authentication.listInfoCustomer,
   listWriter: state => state.authentication.listWriter,
   listWriterByMarketerID: state => state.authentication.listWriterByMarketerID,
+  customerDetail: state => state.authentication.customerDetail,
+  profile: state =>state.authentication.profile,
 
   //Campaign
   listCampaign: state => state.campaign.listCampaign,
   detailCampaign: state => state.campaign.detailCampaign,
   listCampaignByCustomerID: state => state.campaign.listCampaignByCustomerID,
   listCampaignByEditorID: state => state.campaign.listCampaignByEditorID,
+  listFilterCampaignByEditorID: state => state.campaign.listFilterCampaignByEditorID,
+  listFilterCampaignByWriterID: state => state.campaign.listFilterCampaignByWriterID,
 
   //ContentProcess
   listCampaignTaskNotFormated: state => state.contentprocess.listCampaignTask,
@@ -38,5 +42,12 @@ const getters = {
   listStatusTask: state => state.contentprocess.listStatusTask,
   listStatusCampaign: state => state.contentprocess.listStatusCampaign,
   listStatusPublish: state => state.contentprocess.listStatusPublish,
+
+  //Batchjob
+  fanpage: state => state.batchjob.fanpage,
+  fanpages: state => state.batchjob.fanpages,
+  facebook: state => state.batchjob.facebook,
+  wordpress: state => state.batchjob.wordpress,
+  fanpagesContent: state => state.batchjob.fanpagesContent
 };
 export default getters;

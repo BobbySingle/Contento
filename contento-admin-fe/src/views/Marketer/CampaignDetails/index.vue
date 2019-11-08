@@ -41,7 +41,7 @@
               </v-row>
               <v-row>
                 <v-col sm="12" md="12">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Categorys</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;">Categories</span>
                   <br />
                   <v-chip
                     class="text__14 chips ma-1"
@@ -254,14 +254,16 @@ export default {
     async fetchData() {
       this.loading = true;
       let campaignID = JSON.parse(sessionStorage["CampaignID"].toString());
-      await this.getDetailCampaign(campaignID);
+      await Promise.all([
+        this.getDetailCampaign(campaignID),
+        this.getListStatusTask(),
+        this.getListCampaignTask(campaignID)
+      ]);
       this.title = this.detailCampaign.title;
       this.customer = this.detailCampaign.customer;
       this.editor = this.detailCampaign.editor;
       this.endDate = this.detailCampaign.endDate;
-      this.listTag = this.detailCampaign.listTag;
-      this.getListStatusTask();
-      this.getListCampaignTask(campaignID);
+      this.listTag = this.detailCampaign.tagFull;
       this.loading = false;
     },
     publish(event) {
@@ -270,7 +272,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getUser", "detailCampaign", "listCampaignTaskNotFormated","listStatusTask"])
+    ...mapGetters([
+      "getUser",
+      "detailCampaign",
+      "listCampaignTaskNotFormated",
+      "listStatusTask"
+    ])
   },
   created() {
     let role = this.getUser.role;
@@ -282,40 +289,7 @@ export default {
     }
   },
   mounted() {
-    /**Begin Load data campaign details */
     this.fetchData();
-    // axios.defaults.headers.common["Authorization"] =
-    //   "Bearer " + this.$store.getters.getAccessToken;
-
-    // axios
-    //   .get(`http://34.87.31.23:5001/api/campaign/campaigns/${campaignID}`)
-    //   .then(rs => {
-    //     this.title = rs.data.title;
-    //     this.customer = rs.data.customer;
-    //     this.editor = rs.data.editor;
-    //     /**Convert Date to ISO */
-    //     this.endDate = rs.data.endDate;
-    //     this.listTag = rs.data.listTag;
-    //   })
-    //   .catch(er => {
-    //     console.log(er);
-    //   });
-    /**End Load data campaign details */
-
-    /**Begin Get list tasks */
-    // axios
-    //   .get(
-    //     `http://34.87.31.23:5002/api/contentprocess/task/campaign/${campaignID}`
-    //   )
-    //   .then(rs => {
-    //     this.listtasks = rs.data;
-    //     this.formatListTask();
-    //     console.log(rs.data);
-    //   })
-    //   .catch(er => {
-    //     console.log(er);
-    //   });
-    /** End Get list campaign */
   }
 };
 </script>

@@ -1,44 +1,23 @@
 <template>
-  <v-app-bar app dense elevate-on-scroll>
+  <!-- <v-app-bar app dense elevate-on-scroll> -->
+  <v-app-bar flat>
+    <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-toolbar-title
-        class="headline text-uppercase"
+        class="headline text-uppercase logo"
         style="display: flex;
     justify-content: center;
     align-items: center;"
+        @click="goHome()"
       >
         <img src="@/assets/Logo.png" style="display:block; height:90%;" />
         <span>ontento</span>
       </v-toolbar-title>
-      <!-- <div style="min-width:30px; width:100px;" /> -->
-      <v-btn text>Trending</v-btn>
-      <v-menu
-        bottom
-        max-height="200"
-        min-width="400"
-        max-width="400"
-        :open-on-hover="true"
-        :offset-y="true"
-        origin="center center"
-        transition="scale-transition"
-      >
-        <template v-slot:activator="{ on }">
-          <v-btn text v-on="on">Category</v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            style="float: left;  width:50%; background: white;"
-            v-for="(item,i) in items"
-            :key="i"
-            @click="clickCategory(item.title)"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
     </v-toolbar-items>
+
     <v-spacer></v-spacer>
-    <v-toolbar-items>
+
+    <!-- <v-toolbar-items>
       <v-text-field
         class="mt-2"
         single-line
@@ -46,71 +25,35 @@
         clearable
         v-model="search"
       ></v-text-field>
-    </v-toolbar-items>
-    <v-spacer></v-spacer>
-    <v-toolbar-items>
-      <v-btn text>Sign Up</v-btn>
-      <v-menu
-        bottom
-        max-height="300"
-        min-width="300"
-        max-width="300"
-        :offset-y="true"
-        origin="center center"
-        transition="scale-transition"
-        :close-on-click="true"
-        :close-on-content-click="false"
-      >
-        <template v-slot:activator="{ on }">
-          <v-btn text v-on="on">Sign In</v-btn>
-        </template>
-        <!--Begin Form Login -->
-        <v-list
-          style="display: flex;
-            justify-content: center;
-            align-items: center;"
+    </v-toolbar-items> -->
+
+    <!-- <v-spacer></v-spacer> -->
+    <!-- <div style="min-width:30px; width:100px;" /> -->
+    <!-- <v-btn text>Trending</v-btn>
+    <v-menu
+      bottom
+      max-height="200"
+      min-width="400"
+      max-width="400"
+      :open-on-hover="true"
+      :offset-y="true"
+      origin="center center"
+      transition="scale-transition"
+    > -->
+      <!-- <template v-slot:activator="{ on }">
+        <v-btn text v-on="on">Category</v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          style="float: left;  width:50%; background: white;"
+          v-for="(item,i) in items"
+          :key="i"
+          @click="clickCategory(item.title)"
         >
-          <div style="width:80%;">
-            <v-form ref="form" v-model="valid" lazy-validation>
-              <v-text-field
-                v-model="username"
-                :counter="8"
-                :rules="usernameRules"
-                label="Username"
-                required
-              ></v-text-field>
-
-              <v-text-field
-                type="password"
-                v-model="password"
-                :counter="8"
-                :rules="passwordRules"
-                label="Password"
-                required
-              ></v-text-field>
-
-              <v-checkbox v-model="checkbox" label="Remember me."></v-checkbox>
-              <v-layout justify-center block>
-                <v-btn
-                  type="submit"
-                  :disabled="!valid"
-                  color="success"
-                  class="mr-4"
-                  @click="validate"
-                >Sign In</v-btn>
-
-                <v-btn color="error" class="mr-4" @click="reset">Reset</v-btn>
-              </v-layout>
-            </v-form>
-          </div>
-        </v-list>
-        <!-- End From Login -->
-      </v-menu>
-      <!-- <v-btn flat text to="/profile">Profile</v-btn> -->
-      <!-- <v-btn icon id="logout">
-      <v-icon>mdi-export</v-icon>
-      </v-btn>-->
-    </v-toolbar-items>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list> -->
+    </v-menu>
   </v-app-bar>
 </template>
 <script>
@@ -146,6 +89,9 @@ export default {
   }),
 
   methods: {
+    goHome() {
+      this.$router.push("/").catch(err => {});
+    },
     clickCategory(event) {
       alert(event);
     },
@@ -163,5 +109,8 @@ export default {
 <style scoped>
 a {
   text-decoration: none;
+}
+.logo:hover {
+  cursor: pointer;
 }
 </style>

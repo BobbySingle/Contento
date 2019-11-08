@@ -8,7 +8,9 @@ import {
   getListCustomerByEditorID,
   editCustomer,
   getListWriter,
-  getListWriterByMarketerID
+  getListWriterByMarketerID,
+  getCustomerDetailByCustomerID,
+  getProfileInfo
 } from "../../services/authentication";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -22,7 +24,9 @@ const state = {
   listEditor: [],
   listInfoCustomer: [],
   listWriter: [],
-  listWriterByMarketerID:[],
+  listWriterByMarketerID: [],
+  customerDetail: "",
+  profile:"",
 };
 const mutations = {
   SET_ACCESS_TOKEN(state, data) {
@@ -61,6 +65,12 @@ const mutations = {
   },
   SET_LISTWRITER_BY_MARKETERID(state, data) {
     state.listWriterByMarketerID = data;
+  },
+  SET_CUSTOMER_DETAIL(state, data) {
+    state.customerDetail = data;
+  },
+  SET_PROFILE(state, data){
+    state.profile = data;
   }
 };
 const actions = {
@@ -68,19 +78,10 @@ const actions = {
     try {
       let rs = await login(payload.email, payload.password);
       if (rs.status == 200) {
-        await Swal.fire({
-          title: 'Success',
-          text: "You have successfully logged in!",
-          type: 'success',
-          confirmButtonText: "OK",
-          timer: 3000,
-          allowOutsideClick: false
-        }).then(result => {
-          commit("SET_LOGGEDUSER", true);
-          commit("SET_ACCESS_TOKEN", rs.data.token);
-          commit("SET_USER", rs.data);
-          localStorage.setItem("Profile", JSON.stringify(rs.data));
-        })
+        commit("SET_LOGGEDUSER", true);
+        commit("SET_ACCESS_TOKEN", rs.data.token);
+        commit("SET_USER", rs.data);
+        localStorage.setItem("Profile", JSON.stringify(rs.data));
       }
     } catch (error) {
       Swal.fire(
@@ -207,6 +208,24 @@ const actions = {
       commit("SET_LISTWRITER_BY_MARKETERID", rs.data);
     } catch (error) {
       console.log("ERROR -  LIST WRITER BY MARKETER ID");
+      console.log(error);
+    }
+  },
+  async getCustomerDetailByCustomerID({ commit }, payload) {
+    try {
+      let rs = await getCustomerDetailByCustomerID(payload);
+      commit("SET_CUSTOMER_DETAIL", rs.data);
+    } catch (error) {
+      console.log("ERROR -  CUSTOMER DETAIL");
+      console.log(error);
+    }
+  },
+  async getProfileInfo({ commit }, payload) {
+    try {
+      let rs = await getProfileInfo(payload);
+      commit("SET_PROFILE", rs.data);
+    } catch (error) {
+      console.log("ERROR -  PROFILE");
       console.log(error);
     }
   },

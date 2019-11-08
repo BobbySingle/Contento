@@ -47,9 +47,8 @@
             color="primary"
             interval-height="100"
             :events="listCampaignTaskFormated"
-            event-color="black"
+            :event-color="getEventColor"
             :event-margin-bottom="3"
-            :now="today"
             :type="type"
             @click:event="showEvent"
             @click:more="viewDay"
@@ -71,7 +70,7 @@
               v-if="selectedEvent"
             >
               <!-- /**Begin Event endDate */ -->
-              <v-row class="flex-nowrap pa-2" style="background-color:#1976d2" no-gutters>
+              <v-row class="flex-nowrap pa-2" :style="{backgroundColor: selectedEvent.status.color}" no-gutters>
                 <v-col cols="6">
                   <span class="pl-1" style="color:white">Deadline</span>
                 </v-col>
@@ -146,8 +145,8 @@
 import { mapGetters, mapActions } from "vuex";
 export default {
   data: () => ({
-    today: "2019-10-10",
-    focus: "2019-10-10",
+    today: "",
+    focus: "",
     type: "month",
     typeToLabel: {
       month: "Month",
@@ -163,8 +162,7 @@ export default {
     events: []
   }),
   computed: {
-    ...mapGetters(["getUser",
-    , "listCampaignTaskFormated"]),
+    ...mapGetters(["getUser", , "listCampaignTaskFormated"]),
     title() {
       const { start, end } = this;
       if (!start || !end) {
@@ -213,7 +211,8 @@ export default {
     this.$refs.calendar.checkChange();
 
     var currentDate = new Date();
-    this.today = this.$moment(String(currentDate)).format("YYYY-MM-DD hh:mm");
+    this.today = this.$moment(String(currentDate)).format("YYYY-MM-DD HH:mm");
+    this.focus = this.$moment(String(currentDate)).format("YYYY-MM-DD HH:mm");
     this.fetchData();
   },
   methods: {
@@ -229,25 +228,17 @@ export default {
     },
     async fetchData() {
       let campaignID = JSON.parse(sessionStorage["CampaignID"].toString());
-      await this.getListCampaignTask(campaignID); 
+      await this.getListCampaignTask(campaignID);
     },
     viewDay({ date }) {
       this.focus = date;
       this.type = "day";
     },
-    // /**Begin set event color */
-    // getEventColor(event) {
-    //   if (event.status == 1) {
-    //     return "#4caf50";
-    //   } else if (2 <= event.status <= 4) {
-    //     return "#fb8c00";
-    //   } else if (event.status == 5) {
-    //     return "#ff5252";
-    //   } else {
-    //     return "#1976d2";
-    //   }
-    // },
-    // /**End set event color */
+    /**Begin set event color */
+    getEventColor(event) {
+      return event.status.color;
+    },
+    /**End set event color */
     setToday() {
       this.focus = this.today;
     },

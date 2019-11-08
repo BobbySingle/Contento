@@ -206,13 +206,15 @@ export default {
       this.$v.form.$touch();
       if (!this.$v.form.$invalid) {
         this.loadingSave = true;
-        await this.saveContent({
+        let status = await this.saveContent({
           id: this.idContent,
           name: this.name,
           content: this.$refs.ckeditor.editorData
         });
-        this.loadingSave = false;
-        this.check = false;
+        if (status == 200) {
+          this.loadingSave = false;
+          this.check = false;
+        }
       }
       this.loadingSave = false;
     },
@@ -222,14 +224,16 @@ export default {
       this.check = true;
       this.$v.form.$touch();
       if (!this.$v.form.$invalid) {
-        await this.submitContent({
+        let status = await this.submitContent({
           idTask: TaskID,
           idContent: this.idContent,
           name: this.name,
           content: this.$refs.ckeditor.editorData
         });
         this.loadingSubmit = false;
-        this.$router.push("/TaskManagement");
+        if (status == 202) {
+          this.$router.push("/TaskManagement");
+        }
       }
       this.loadingSubmit = false;
     },

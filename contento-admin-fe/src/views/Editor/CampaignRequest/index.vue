@@ -143,7 +143,7 @@
               </v-col>
               <v-col cols="12" sm="6" md="3">
                 <v-row justify="center">
-                  <v-btn color="primary" @click="reset()">Reset</v-btn>
+                  <v-btn color="primary" @click="Clear()">Clear</v-btn>
                 </v-row>
               </v-col>
             </v-row>
@@ -327,7 +327,7 @@ export default {
     }
   },
   methods: {
-    reset() {
+    Clear() {
       this.startFromDate = "";
       this.startToDate = "";
       this.endFromDate = "";
@@ -361,10 +361,12 @@ export default {
     }),
     async fetchData() {
       this.loading = true;
-      await this.getListCampaign(this.$store.getters.getUser.id);
-      await this.getListCustomerByEditorID(this.$store.getters.getUser.id);
-      await this.getListStatusCampaign();
-      await this.getListTag();
+      await Promise.all([
+        this.getListCampaign(this.$store.getters.getUser.id),
+        this.getListCustomerByEditorID(this.$store.getters.getUser.id),
+        this.getListStatusCampaign(),
+        this.getListTag()
+      ]);
       this.loading = false;
     }
   },

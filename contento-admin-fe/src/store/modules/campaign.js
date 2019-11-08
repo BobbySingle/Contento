@@ -5,14 +5,18 @@ import {
   editCampaign,
   getDetailCampaign,
   getListCampaignByCustomerID,
-  getListCampaignByEditorID
+  getListCampaignByEditorID,
+  getListFilterCampaignByEditorID,
+  getListFilterCampaignByWriterID
 } from "../../services/campaign";
 import Vue from 'vue'
 const state = {
   listCampaign: [],
-  detailCampaign: [],
+  detailCampaign: "",
   listCampaignByCustomerID: [],
-  listCampaignByEditorID: []
+  listCampaignByEditorID: [],
+  listFilterCampaignByEditorID: [],
+  listFilterCampaignByWriterID: []
 };
 const mutations = {
   SET_LISTCAMPAIGN(state, data) {
@@ -35,6 +39,12 @@ const mutations = {
   },
   SET_LISTCAMPAIGNBYEDITORID: (state, data) => {
     state.listCampaignByEditorID = data;
+  },
+  SET_LIST_FILTER_CAMPAIGN_BY_WRITER_ID: (state, data) => {
+    state.listFilterCampaignByWriterID = data;
+  },
+  SET_LIST_FILTER_CAMPAIGN_BY_EDITOR_ID: (state, data) => {
+    state.listFilterCampaignByEditorID = data;
   }
 };
 const actions = {
@@ -79,17 +89,17 @@ const actions = {
   async editCampaign({ commit }, payload) {
     try {
       let rs = await editCampaign(payload);
-      if(rs.status == 202){
-      commit("UPDATE_CAMPAIGN", rs.data);
-      console.log("UPDATE CAMPAIGN ACTION");
-      console.log(rs.data);
-      Vue.notify({
-        group: 'notice',
-        title: 'Edit successful!',
-        text: 'Campaign has been edited successfully!',
-        type: 'suc'
-      });
-      return 202;
+      if (rs.status == 202) {
+        commit("UPDATE_CAMPAIGN", rs.data);
+        console.log("UPDATE CAMPAIGN ACTION");
+        console.log(rs.data);
+        Vue.notify({
+          group: 'notice',
+          title: 'Edit successful!',
+          text: 'Campaign has been edited successfully!',
+          type: 'suc'
+        });
+        return 202;
       }
     } catch (error) {
       Vue.notify({
@@ -134,7 +144,29 @@ const actions = {
       console.log("ERROR - LIST CAMPAIGN BY EDITOR ID");
       console.log(error);
     }
-  }
+  },
+  async getListFilterCampaignByEditorID({ commit }, payload) {
+    try {
+      let rs = await getListFilterCampaignByEditorID(payload);
+      console.log("LIST FILTER CAMPAIGN BY EDITOR ID - ACTION");
+      console.log(rs.data);
+      commit("SET_LIST_FILTER_CAMPAIGN_BY_EDITOR_ID", rs.data);
+    } catch (error) {
+      console.log("ERROR - LIST FILTER CAMPAIGN BY EDITOR ID");
+      console.log(error);
+    }
+  },
+  async getListFilterCampaignByWriterID({ commit }, payload) {
+    try {
+      let rs = await getListFilterCampaignByWriterID(payload);
+      console.log("LIST FILTER CAMPAIGN BY WRITER ID - ACTION");
+      console.log(rs.data);
+      commit("SET_LIST_FILTER_CAMPAIGN_BY_WRITER_ID", rs.data);
+    } catch (error) {
+      console.log("ERROR - LIST FILTER CAMPAIGN BY WRITER ID");
+      console.log(error);
+    }
+  },
 };
 
 export default {

@@ -181,17 +181,19 @@ export default {
       /**Load list task */
       this.loading = true;
       let campaignID = sessionStorage.getItem("CampaignID");
-      await this.getDetailCampaign(campaignID);
+      await Promise.all([
+        this.getListCampaignTask(campaignID),
+        this.getListTagByCampaignID(campaignID),
+        this.getListWriter(this.$store.getters.getUser.id),
+        this.getDetailCampaign(campaignID)
+      ]);
       this.campaign_title = this.detailCampaign.title;
-      this.campaign_tags = this.detailCampaign.listTag;
+      this.campaign_tags = this.detailCampaign.tagFull;
       this.campaign_customer = this.detailCampaign.customer;
       this.campaign_enddate = this.detailCampaign.endDate;
       sessionStorage.setItem("Task-MaxTime", this.detailCampaign.endDate);
       this.campaign_content = this.detailCampaign.description;
-      await this.getListCampaignTask(campaignID);
       this.loading = false;
-      await this.getListTagByCampaignID(campaignID);
-      await this.getListWriter(this.$store.getters.getUser.id);
     }
   }
 };

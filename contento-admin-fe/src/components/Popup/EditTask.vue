@@ -23,6 +23,7 @@
               <v-col cols="12" sm="12">
                 <v-text-field
                   v-model="title"
+                  :value="title"
                   :counter="255"
                   label="Title:"
                   required
@@ -43,6 +44,7 @@
                 <v-select
                   v-model="writer.id"
                   :items="listWriter"
+                  :value="writer.id"
                   item-text="name"
                   item-value="id"
                   label="Writer"
@@ -83,6 +85,7 @@
                   item-text="name"
                   item-value="id"
                   :items="listTagByCampaignID"
+                  :value="selectedTag"
                   chips
                   clearable
                   label="Category"
@@ -273,24 +276,22 @@ export default {
     async clickEdit(taskID) {
       this.check = false;
       await this.getTaskDetailUpdate(taskID);
-      if (this.taskDetailUpdate != null) {
-        this.selectedTag = this.taskDetailUpdate.tags;
-        this.endtime = this.taskDetailUpdate.deadline;
-        this.publishDate = this.taskDetailUpdate.publishTime;
-        this.content = this.taskDetailUpdate.description;
-        this.writer = this.taskDetailUpdate.writer;
-        this.title = this.taskDetailUpdate.title;
-        this.id = this.taskDetailUpdate.id;
-        if (
-          this.taskDetailUpdate.status.id == 4 ||
-          this.taskDetailUpdate.status.id == 2
-        ) {
-          this.overdue = true;
-          this.widthDialog = "300px";
-        } else {
-          this.overdue = false;
-          this.widthDialog = "800px";
-        }
+      this.selectedTag = this.taskDetailUpdate.tags;
+      this.endtime = this.taskDetailUpdate.deadline;
+      this.publishDate = this.taskDetailUpdate.publishTime;
+      this.content = this.taskDetailUpdate.description;
+      this.writer = this.taskDetailUpdate.writer;
+      this.title = this.taskDetailUpdate.title;
+      this.id = this.taskDetailUpdate.id;
+      if (
+        this.taskDetailUpdate.status.id == 4 ||
+        this.taskDetailUpdate.status.id == 2
+      ) {
+        this.overdue = true;
+        this.widthDialog = "300px";
+      } else {
+        this.overdue = false;
+        this.widthDialog = "800px";
       }
     },
 
@@ -312,8 +313,10 @@ export default {
             tags: this.selectedTag
           });
           if (status == 202) {
-            await this.getListCampaignTask(campaignID);
-            await this.getListTaskByEditorID(this.$store.getters.getUser.id);
+            await Promise.all([
+              this.getListCampaignTask(campaignID),
+              this.getListTaskByEditorID(this.$store.getters.getUser.id)
+            ]);
             this.loadingSave = false;
             this.dialog = false;
           }
@@ -331,8 +334,10 @@ export default {
             tags: this.selectedTag
           });
           if (status == 202) {
-            await this.getListCampaignTask(campaignID);
-            await this.getListTaskByEditorID(this.$store.getters.getUser.id);
+            await Promise.all([
+              this.getListCampaignTask(campaignID),
+              this.getListTaskByEditorID(this.$store.getters.getUser.id)
+            ]);
             this.loadingSave = false;
             this.dialog = false;
           }

@@ -78,8 +78,19 @@
                 ></v-select>
               </v-col>
               <v-col cols="12" sm="6" md="3">
-                <v-row justify="center">
-                  <v-btn color="primary" @click="reset()">Reset</v-btn>
+                <v-select
+                  v-model="campaign"
+                  :items="listFilterCampaignByEditorID"
+                  item-text="name"
+                  item-value="id"
+                  label="Campaign"
+                  prepend-inner-icon="title"
+                  clearable
+                ></v-select>
+              </v-col>
+              <v-col cols="12">
+                <v-row justify="end">
+                  <v-btn color="primary" @click="Clear()">Clear</v-btn>
                 </v-row>
               </v-col>
             </v-row>
@@ -105,11 +116,7 @@
             @page-count="pageCount = $event"
           >
             <template v-slot:item.campaign="{item}">
-              <v-col class="text__14" style="display:flex; align-items:center;">
-                <div>
-                  <span class="content-inner-table text__14">{{item.campaign}}</span>
-                </div>
-              </v-col>
+              <span class="content-inner-table text__14">{{item.campaign.name}}</span>
             </template>
             <template
               v-slot:item.modifiedDate="{item}"
@@ -182,6 +189,7 @@ export default {
       endFromDate: "",
       endToDate: "",
       status: "",
+      campaign: "",
 
       loading: false,
       /**List Content */
@@ -190,7 +198,11 @@ export default {
           text: "Campaign",
           align: "center",
           value: "campaign",
-          width: "15%"
+          width: "15%",
+          filter: value => {
+            if (!this.campaign) return true;
+            return value.id == this.campaign;
+          }
         },
         { text: "Title", value: "title", sortable: false, width: "30%" },
         {
@@ -237,10 +249,11 @@ export default {
     };
   },
   methods: {
-    reset() {
+    Clear() {
       this.endFromDate = "";
       this.endToDate = "";
       this.status = "";
+      this.campaign = "";
     },
     clearEndFromDate() {
       this.endFromDate = "";
@@ -256,22 +269,34 @@ export default {
       getListTaskByEditorID: "contentprocess/getListTaskByEditorID",
       deleteTaskByID: "contentprocess/deleteTaskByID",
       getListWriter: "authentication/getListWriter",
-      getListStatusTask: "contentprocess/getListStatusTask"
+      getListStatusTask: "contentprocess/getListStatusTask",
+      getListFilterCampaignByEditorID:
+        "campaign/getListFilterCampaignByEditorID"
     }),
     async clickDelete(id) {
-      await this.deleteTaskByID(id);
-      await this.getListTaskByEditorID(this.$store.getters.getUser.id);
+      await Promise.all([
+        this.deleteTaskByID(id),
+        this.getListTaskByEditorID(this.$store.getters.getUser.id)
+      ]);
     },
     async fetchData() {
       this.loading = true;
-      await this.getListTaskByEditorID(this.$store.getters.getUser.id);
-      await this.getListWriter(this.$store.getters.getUser.id);
+      await Promise.all([
+        this.getListTaskByEditorID(this.$store.getters.getUser.id),
+        this.getListWriter(this.$store.getters.getUser.id)
+      ]);
+      this.getListFilterCampaignByEditorID(this.$store.getters.getUser.id);
       this.getListStatusTask();
       this.loading = false;
     }
   },
   computed: {
-    ...mapGetters(["getUser", "listTaskByEditorID", "listStatusTask"])
+    ...mapGetters([
+      "getUser",
+      "listTaskByEditorID",
+      "listStatusTask",
+      "listFilterCampaignByEditorID"
+    ])
   },
   created() {
     let role = this.getUser.role;

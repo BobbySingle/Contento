@@ -17,6 +17,7 @@ import ApproveRequest from "../views/Editor/ApproveRequest/index.vue";
 import CampaignRequestDetails from "../views/Editor/CampaignRequestDetails/index.vue";
 import ReviewContent from "../views/Editor/ReviewContent/index.vue";
 import ManageTask from "../views/Editor/ManageTask/index.vue";
+import Profile from "../components/Profile/index.vue";
 
 Vue.use(Router);
 
@@ -34,6 +35,13 @@ export default new Router({
       name: "Access Denied",
       component: Page403,
     },
+    /**Profile */
+    {
+      path: "/Profile",
+      name: "Profile",
+      component: Profile,
+    },
+    /** Marketer */
     {
       path: "/ManageCampaign",
       name: "ManageCampaign",

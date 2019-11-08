@@ -8,5 +8,7 @@ const getters = {
     listCategory: state => state.viewer.tags,
     newsDetails: state => state.viewer.newsDetails,
 
+
+    topNews: state => state.viewer.news.slice(0, 10),
 }
 export default getters;

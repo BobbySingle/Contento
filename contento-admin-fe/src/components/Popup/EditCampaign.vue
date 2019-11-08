@@ -77,7 +77,6 @@
                       :value="customer"
                       class="text__14"
                       prepend-inner-icon="account_circle"
-                      clearable
                       required
                       @blur="$v.customer.$touch()"
                     ></v-select>
@@ -108,7 +107,7 @@
                   :value="editor"
                   class="text__14"
                   prepend-inner-icon="edit"
-                  clearable
+                  :readonly="!isOpen"
                   required
                   @blur="$v.editor.$touch()"
                 ></v-select>
@@ -197,6 +196,7 @@ export default {
       customer: "",
       editor: "",
       content: "",
+      isOpen: false,
       id: "",
       check: false,
       loadingSave: false
@@ -219,15 +219,16 @@ export default {
     async clickEdit(event) {
       this.check = false;
       await this.getDetailCampaign(event);
-      if (this.detailCampaign != null) {
-        this.selectedTag = this.detailCampaign.listTag;
-        this.content = this.detailCampaign.description;
-        this.title = this.detailCampaign.title;
-        this.customer = this.detailCampaign.customer;
-        this.editor = this.detailCampaign.editor;
-        this.endDate = this.detailCampaign.endDate;
-        this.id = this.detailCampaign.id;
+      this.selectedTag = this.detailCampaign.listTag;
+      this.content = this.detailCampaign.description;
+      this.title = this.detailCampaign.title;
+      this.customer = this.detailCampaign.customer;
+      this.editor = this.detailCampaign.editor;
+      this.endDate = this.detailCampaign.endDate;
+      if (this.detailCampaign.status == 1) {
+        this.isOpen = true;
       }
+      this.id = this.detailCampaign.id;
     },
     async update() {
       this.loadingSave = true;
@@ -243,11 +244,11 @@ export default {
           customer: this.customer
         });
         if (status == 202) {
-          this.loadingSave = fasle;
+          this.loadingSave = false;
           this.dialog = false;
         }
       }
-      this.loadingSave = fasle;
+      this.loadingSave = false;
     }
   },
   computed: {

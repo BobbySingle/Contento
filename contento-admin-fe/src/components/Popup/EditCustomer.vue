@@ -1,7 +1,7 @@
  <template>
   <v-dialog v-model="dialog" persistent width="400px">
     <template v-slot:activator="{ on }">
-      <v-btn color="warning" class="mr-2 text__14" v-on="on" @click="clickEdit()">Edit</v-btn>
+      <v-btn color="warning" class="mr-2 text__14" v-on="on" @click="clickEdit(customerID)">Edit</v-btn>
     </template>
     <v-card>
       <v-row class="mx-4 mb-4" justify="center">
@@ -11,42 +11,62 @@
         <v-col md="10">
           <v-row>
             <v-text-field
-              :counter="255"
-              label="Fullname:"
+              v-model="firstname"
+              label="First name:"
               required
-              v-model="fullname"
-              :value="customer.fullname"
               class="text__14"
+              :value="firstname"
+              :error-messages="firstnameErrors"
+              @blur="$v.firstname.$touch()"
+              @input="$v.firstname.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
             <v-text-field
-              :counter="255"
+              v-model="lastname"
+              label="Last name:"
+              required
+              class="text__14"
+              :value="lastname"
+              :error-messages="lastnameErrors"
+              @blur="$v.lastname.$touch()"
+              @input="$v.lastname.$touch()"
+            ></v-text-field>
+          </v-row>
+          <v-row>
+            <v-text-field
+              v-model="phone"
               label="Phone:"
               required
-              v-model="phone"
-              :value="customer.phone"
               class="text__14"
+              :value="phone"
+              :error-messages="phoneErrors"
+              @blur="$v.phone.$touch()"
+              @input="$v.phone.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
             <v-text-field
-              :counter="255"
+              v-model="email"
               label="Email:"
               required
-              v-model="email"
-              :value="customer.email"
               class="text__14"
+              :value="email"
+              :error-messages="emailErrors"
+              @blur="$v.email.$touch()"
+              @input="$v.email.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
             <v-text-field
-              :counter="255"
+              v-model="company"
               label="Company:"
               required
-              v-model="company"
-              :value="customer.company"
               class="text__14"
+              :value="company"
+              :error-messages="companyErrors"
+              @blur="$v.company.$touch()"
+              @input="$v.company.$touch()"
             ></v-text-field>
           </v-row>
         </v-col>
@@ -60,45 +80,99 @@
   </v-dialog>
 </template>
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
+import { required, maxLength, email } from "vuelidate/lib/validators";
 export default {
-  props: ["customer"],
+  props: ["customerID"],
   data() {
     return {
       dialog: false,
-      fullname: "",
-      email: "",
+      firstname: "",
+      lastname: "",
       phone: "",
+      email: "",
       company: "",
       id: ""
     };
   },
-  mounted() {
-    this.fullname = this.customer.fullName;
-    this.email = this.customer.email;
-    this.phone = this.customer.phone;
-    this.company = this.customer.companyName;
-    this.id = this.customer.id;
+  validations: {
+    firstname: { required, maxLength: maxLength(50) },
+    lastname: { required, maxLength: maxLength(50) },
+    phone: { required, maxLength: maxLength(10) },
+    email: { required, email },
+    company: { required, maxLength: maxLength(50) },
+    form: ["firstname", "lastname", "phone", "email", "company"]
+  },
+  computed: {
+    ...mapGetters(["customerDetail"]),
+    emailErrors() {
+      const errors = [];
+      if (!this.$v.email.$dirty) return errors;
+      !this.$v.email.required && errors.push("Please enter your email");
+      !this.$v.email.email && errors.push("Invalid email");
+      return errors;
+    },
+    firstnameErrors() {
+      const errors = [];
+      if (!this.$v.firstname.$dirty) return errors;
+      !this.$v.firstname.maxLength &&
+        errors.push("Firstname up to 50 characters");
+      !this.$v.firstname.required && errors.push("Please enter your firstname");
+      return errors;
+    },
+    lastnameErrors() {
+      const errors = [];
+      if (!this.$v.lastname.$dirty) return errors;
+      !this.$v.lastname.maxLength &&
+        errors.push("Lastname up to 50 characters");
+      !this.$v.lastname.required && errors.push("Please enter your lastname");
+      return errors;
+    },
+    phoneErrors() {
+      const errors = [];
+      if (!this.$v.phone.$dirty) return errors;
+      !this.$v.phone.maxLength && errors.push("Phone up to 10 numbers");
+      !this.$v.phone.required && errors.push("Please enter your phone");
+      return errors;
+    },
+    companyErrors() {
+      const errors = [];
+      if (!this.$v.company.$dirty) return errors;
+      !this.$v.company.maxLength && errors.push("Company up to 50 characters");
+      !this.$v.company.required && errors.push("Please enter your company");
+      return errors;
+    }
   },
   methods: {
-    ...mapActions({ editCustomer: "authentication/editCustomer" }),
-    clickEdit() {
-      this.fullname = this.customer.fullName;
-      this.email = this.customer.email;
-      this.phone = this.customer.phone;
-      this.company = this.customer.companyName;
-      this.id = this.customer.id;
+    ...mapActions({
+      editCustomer: "authentication/editCustomer",
+      getCustomerDetailByCustomerID:
+        "authentication/getCustomerDetailByCustomerID"
+    }),
+    async clickEdit(event) {
+      await this.getCustomerDetailByCustomerID(event);
+      this.firstname = this.customerDetail.firstName;
+      this.lastname = this.customerDetail.lastName;
+      this.email = this.customerDetail.email;
+      this.phone = this.customerDetail.phone;
+      this.company = this.customerDetail.companyName;
+      this.id = this.customerDetail.id;
+      this.$v.form.$reset();
     },
     async update() {
-      console.log(this.id + this.email + this.fullname + this.company);
-      let status = await this.editCustomer({
-        id: this.id,
-        email: this.email,
-        fullName: this.fullname,
-        companyName: this.company
-      });
-      if (status == 202) {
-        this.dialog = false;
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
+        let status = await this.editCustomer({
+          id: this.id,
+          email: this.email,
+          firstName: this.firstname,
+          lastName: this.lastname,
+          phone: this.phone,
+          companyName: this.company
+        });
+        if (status == 202) {
+          this.dialog = false;
+        }
       }
     }
   }

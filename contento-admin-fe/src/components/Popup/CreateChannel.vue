@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="dialog" persistent scrollable width="400px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" v-on="on" class="text__14" @click="clickCreate()">Create Channel</v-btn>
+      <div v-on="on">
+        <v-btn color="primary" class="text__14" @click="clickCreate()">Create Channel</v-btn>
+      </div>
     </template>
     <v-card>
       <v-toolbar dark color="primary">
@@ -28,6 +30,9 @@
                   prepend-inner-icon="public"
                   clearable
                   required
+                  :error-messages="channelErrors"
+                  @blur="$v.channel.$touch()"
+                  @input="$v.channel.$touch()"
                 ></v-select>
               </v-col>
             </v-row>
@@ -54,6 +59,9 @@
                   class="text__14"
                   prepend-inner-icon="title"
                   required
+                  :error-messages="nameErrors"
+                  @blur="$v.name.$touch()"
+                  @input="$v.name.$touch()"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -65,6 +73,9 @@
                   class="text__14"
                   prepend-inner-icon="vpn_key"
                   required
+                  :error-messages="tokenErrors"
+                  @blur="$v.token.$touch()"
+                  @input="$v.token.$touch()"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -75,7 +86,7 @@
   </v-dialog>
 </template>
 <script>
-import { required, minLength, maxLength } from "vuelidate/lib/validators";
+import { required, maxLength } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import axios from "axios";
 export default {
@@ -87,13 +98,14 @@ export default {
       token: "",
       channel: "",
       customer: "",
+      loadingCreate: false,
       listChannel: [
         {
-          id: 1,
+          id: 2,
           name: "Facebook"
         },
         {
-          id: 2,
+          id: 3,
           name: "Wordpress"
         }
       ],
@@ -102,13 +114,71 @@ export default {
       loadingCreate: false
     };
   },
-  validations: {},
+  validations: {
+    name: { required, maxLength: maxLength(50) },
+    token: { required },
+    channel: { required },
+    form: ["name", "token", "channel"]
+  },
   computed: {
-    ...mapGetters(["listCustomer"])
+    ...mapGetters(["listCustomer"]),
+    nameErrors() {
+      const errors = [];
+      if (!this.$v.name.$dirty) return errors;
+      !this.$v.name.maxLength &&
+        errors.push("Name of fanpage up to 50 characters");
+      !this.$v.name.required && errors.push("Please enter name of fanpage");
+      return errors;
+    },
+    tokenErrors() {
+      const errors = [];
+      if (!this.$v.token.$dirty) return errors;
+      !this.$v.token.required && errors.push("Please enter token of fanpage");
+      return errors;
+    },
+    channelErrors() {
+      const errors = [];
+      if (!this.$v.channel.$dirty) return errors;
+      !this.$v.channel.required &&
+        errors.push("Please select channel of fanpage");
+      return errors;
+    }
   },
   methods: {
-    clickCreate() {},
-    create() {}
+    ...mapActions({
+      createFanPage: "batchjob/createFanPage",
+      getFanPages: "batchjob/getFanPages"
+    }),
+    async create() {
+      this.check = true;
+      this.loadingCreate = true;
+      if (this.customer == "") {
+        this.customer = 0;
+      }
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
+        let status = await this.createFanPage({
+          channelId: this.channel,
+          customerId: this.customer,
+          marketerId: this.$store.getters.getUser.id,
+          name: this.name,
+          token: this.token
+        });
+        if (status == 202) {
+          this.getFanPages(this.$store.getters.getUser.id);
+          this.loadingCreate = false;
+          this.dialog = false;
+        }
+      }
+      this.loadingCreate = false;
+    },
+    clickCreate() {
+      this.name = "";
+      this.token = "";
+      this.channel = "";
+      this.customer = "";
+      this.$v.form.$reset();
+    }
   }
 };
 </script>

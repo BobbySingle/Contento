@@ -1,5 +1,5 @@
 import axios from "axios";
-// import Cookie from "js-cookie";
+const API_URL ="http://35.247.168.237:8760/contentproccessservice";
 
 if (localStorage.getItem("Profile") != null) {
     let user = JSON.parse(localStorage.getItem("Profile").toString());
@@ -8,15 +8,20 @@ if (localStorage.getItem("Profile") != null) {
 
 export function createCookie(data) {
     axios.defaults.withCredentials = true;
-    return axios.get(`http://34.87.31.23:5002/api/contentprocess/cookies/viewer?key=${data.key}&value=${data.value}`);
+    axios.defaults.xsrfCookieName = "csrftoken";
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+    axios.defaults.crossDomain = true;
+    return axios.get(`${API_URL}/api/contentprocess/cookies/viewer?key=${data.key}&value=${data.value}`);
 }
 export function getContent() {
-    axios.defaults.withCredentials = true;
-    return axios.get(`http://34.87.31.23:5002/api/contentprocess/content/viewer`);
+    axios.defaults.xsrfCookieName = "csrftoken";
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+    axios.defaults.crossDomain = true;
+    return axios.get(`${API_URL}/api/contentprocess/content/viewer`);
 }
-export function getTags() {   
-    return axios.get(`http://34.87.31.23:5002/api/contentprocess/tags`);
+export function getTags() {
+    return axios.get(`${API_URL}/api/contentprocess/tags`);
 }
-export function getNewsDetails(news_id) {   
-    return axios.get(`http://34.87.31.23:5002/api/contentprocess/content-detail/viewer/${news_id}`);
+export function getNewsDetails(news_id) {
+    return axios.get(`${API_URL}/api/contentprocess/content-detail/viewer/${news_id}`);
 }

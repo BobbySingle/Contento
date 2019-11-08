@@ -30,7 +30,7 @@
           </template>
           <template v-slot:item.action="{item}">
             <v-row justify="center" class="flex-nowrap">
-              <popup-edit-customer :customer="item"></popup-edit-customer>
+              <popup-edit-customer :customerID="item.id"></popup-edit-customer>
               <v-btn color="primary" @click="details(item.id)" class="text__14">Details</v-btn>
             </v-row>
           </template>

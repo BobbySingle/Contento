@@ -6,7 +6,7 @@ const state = {
     itemsPerPage: 4,
     totalPages: 0,
     tags: [],
-    newsDetails:null,
+    newsDetails: null
 }
 const mutations = {
     setCurrentSelectedPage(state, payload) {
@@ -27,7 +27,7 @@ const mutations = {
     setTags(state, payload) {
         state.tags = payload;
     },
-    setNewsDetails(state, payload){
+    setNewsDetails(state, payload) {
         state.newsDetails = payload;
     }
 }
@@ -51,6 +51,7 @@ const actions = {
     async createCookie({ commit }, payload) {
         try {
             let rs = await createCookie(payload);
+            console.log("Cookies");
             console.log(rs);
             if (rs.status == 200) {
                 console.log("OK")
@@ -80,7 +81,7 @@ const actions = {
             let rs = await getTags();
             console.log(rs);
             // if (rs.status == 200) {
-                commit("setTags", rs.data);
+            commit("setTags", rs.data);
             //     console.log("getTags OK");
             //     console.log(rs.data);
             // }
@@ -89,12 +90,12 @@ const actions = {
             console.log(error);
         }
     },
-    async getNewsDetails({commit}, payload){
+    async getNewsDetails({ commit }, payload) {
         try {
             let rs = await getNewsDetails(payload);
             console.log("NEW");
             console.log(rs.data);
-            if(rs.status == 200){
+            if (rs.status == 200) {
                 commit("setNewsDetails", rs.data);
                 return 200;
             }

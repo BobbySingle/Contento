@@ -124,6 +124,7 @@
                       input-class="datetime"
                       input-style="cursor:pointer;"
                       :min-datetime="endtime"
+                      :max-datetime="maxtime"
                       required
                     ></datetime>
                   </v-col>
@@ -179,7 +180,7 @@ export default {
       title: "",
       firstTimeLoad: true,
       check: false,
-      loadingCreate: false,
+      loadingCreate: false
     };
   },
   validations: {
@@ -204,7 +205,6 @@ export default {
   mounted() {
     let now = new Date();
     this.mintime = now.toISOString();
-    this.maxtime = sessionStorage.getItem("Task-MaxTime");
   },
   methods: {
     ...mapActions({ createTask: "contentprocess/createTask" }),
@@ -243,6 +243,7 @@ export default {
       }
       this.writer = [];
       this.title = "";
+      this.maxtime = sessionStorage.getItem("Task-MaxTime");
     }
   }
 };
