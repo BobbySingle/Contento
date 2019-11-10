@@ -11,7 +11,9 @@ import {
   APIgetListWriterByMarketerID,
   APIgetCustomerDetailByCustomerID,
   APIgetProfileInfo,
-  APIeditProfileInfo
+  APIeditProfileInfo,
+  APIcheckPassword,
+  APIchangePassword 
 } from "../../services/authentication";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -20,6 +22,7 @@ import Vue from 'vue'
 const state = {
   access_token: "",
   user: [],
+  fullName: "",
   loggedUser: false,
   listCustomer: [],
   listEditor: [],
@@ -35,6 +38,9 @@ const mutations = {
   },
   SET_USER(state, data) {
     state.user = data;
+  },
+  SET_FULLNAME(state, data) {
+    state.fullName = data;
   },
   SET_LOGGEDUSER(state, data) {
     state.loggedUser = data;
@@ -82,6 +88,7 @@ const actions = {
         commit("SET_LOGGEDUSER", true);
         commit("SET_ACCESS_TOKEN", rs.data.token);
         commit("SET_USER", rs.data);
+        commit("SET_FULLNAME", rs.data.fullName);
         localStorage.setItem("Profile", JSON.stringify(rs.data));
       }
     } catch (error) {
@@ -230,10 +237,46 @@ const actions = {
       console.log(error);
     }
   },
+  async checkPassword({ commit }, payload) {
+    try {
+      let rs = await APIcheckPassword(payload);
+      if (rs.status == 202) {
+        return 202;
+      }
+    } catch (error) {
+    }
+  },
+  async changePassword({ commit }, payload) {
+    try {
+      let rs = await APIchangePassword(payload);
+      if (rs.status == 202) {
+        Vue.notify({
+          group: 'notice',
+          title: 'Change password successful!',
+          text: 'Password has been changed successfully!',
+          type: 'suc'
+        })
+        return 202;
+      }
+    } catch (error) {
+      Vue.notify({
+        group: 'notice',
+        title: 'Change password failed!',
+        text: 'Password has been changed failed!',
+        type: 'warn'
+      })
+      console.log("ERROR -  CHANGE PASSWORD");
+      console.log(error);
+    }
+  },
   async editProfileInfo({ commit }, payload) {
     try {
       let rs = await APIeditProfileInfo(payload);
       commit("SET_PROFILE", rs.data);
+      commit("SET_FULLNAME", rs.data.fullName);
+      let profile = JSON.parse(localStorage.getItem("Profile").toString());
+      profile.fullName = rs.data.fullName;
+      localStorage.setItem("Profile", JSON.stringify(profile));
       Vue.notify({
         group: 'notice',
         title: 'Edit successful!',
@@ -251,6 +294,10 @@ const actions = {
         type: 'warn'
       })
     }
+  },
+  refreshFullName({ commit }) {
+    let profile = JSON.parse(localStorage.getItem("Profile").toString());
+    commit("SET_FULLNAME", profile.fullName);
   },
   setLoggedUser({ commit }, payload) {
     commit("SET_LOGGEDUSER", payload);

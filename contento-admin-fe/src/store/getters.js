@@ -12,6 +12,7 @@ const getters = {
   listWriterByMarketerID: state => state.authentication.listWriterByMarketerID,
   customerDetail: state => state.authentication.customerDetail,
   profile: state =>state.authentication.profile,
+  fullname: state =>state.authentication.fullName,
 
   //Campaign
   listCampaign: state => state.campaign.listCampaign,

@@ -22,6 +22,7 @@
           ></v-text-field>
           <v-text-field
             v-model="password"
+            @keyup.enter="submit"
             label="Password"
             placeholder="Input Password"
             outlined
@@ -77,7 +78,7 @@ export default {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
       !this.$v.email.required && errors.push("Please enter your email");
-      !this.$v.email.email && errors.push("Invalid email"); 
+      !this.$v.email.email && errors.push("Invalid email");
       return errors;
     },
     passwordErrors() {

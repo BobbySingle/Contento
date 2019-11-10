@@ -50,13 +50,8 @@
   </nav>
 </template>
 <script>
+import { mapActions, mapGetters } from "vuex";
 export default {
-  data() {
-    return {
-      fullname: "",
-      imageURL: ""
-    };
-  },
   methods: {
     profile() {
       this.$router.push("/Profile");
@@ -65,16 +60,18 @@ export default {
       localStorage.clear();
       this.$store.state.authentication.loggedUser = false;
       this.$router.push("/");
+    },
+    ...mapActions({ refreshFullName: "authentication/refreshFullName" }),
+    async fetchData() {
+       await this.refreshFullName();
     }
   },
   mounted() {
-    let profile = JSON.parse(localStorage.getItem("Profile").toString());
-    this.fullname = profile.fullName;
-    // if (profile.imagePath == null) {
-    //   this.imageURL = "https://picsum.photos/id/241/3456/2304";
-    // } else {
-    //   this.imageURL = profile.imagePath;
-    // }
+    this.fetchData();
+  }
+  ,
+  computed:{
+    ...mapGetters(["fullname"])
   }
 };
 </script>
