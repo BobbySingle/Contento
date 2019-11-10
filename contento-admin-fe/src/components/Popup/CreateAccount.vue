@@ -1,0 +1,305 @@
+<template>
+  <v-dialog v-model="dialog" scrollable width="800px">
+    <template v-slot:activator="{ on }">
+      <v-btn color="primary" v-on="on" class="text__14" @click="clickCreate()">Create Account</v-btn>
+    </template>
+    <v-card>
+      <v-toolbar dark color="primary">
+        <v-btn icon dark @click="dialog = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-toolbar-title>Add New Account</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-toolbar-items>
+          <v-btn dark text @click="create()" :loading="loadingCreate">Save</v-btn>
+        </v-toolbar-items>
+      </v-toolbar>
+      <v-card-text style="min-height: 300px; padding:0px;">
+        <v-row class="mx-10">
+          <v-col cols="12">
+            <v-text-field
+              v-model="email"
+              label="Email*"
+              class="text__14"
+              required
+              :value="email"
+              readonly
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="firstname"
+              label="First name*"
+              class="text__14"
+              :value="firstname"
+              required
+              :error-messages="firstnameErrors"
+              @blur="$v.firstname.$touch()"
+              @input="$v.firstname.$touch()"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="lastname"
+              label="Last name*"
+              class="text__14"
+              required
+              :value="lastname"
+              :error-messages="lastnameErrors"
+              @blur="$v.lastname.$touch()"
+              @input="$v.lastname.$touch()"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-select
+              v-model="role"
+              label="Role"
+              class="text__14"
+              item-value="id"
+              item-text="name"
+              :value="role"
+              :items="roles"
+              @change="listEmployees"
+            ></v-select>
+          </v-col>
+          <!-- Select Employees  -->
+          <v-col cols="6" v-if="isMarketer">
+            <v-select
+              v-model="editor"
+              label="Editor"
+              class="text__14"
+              item-value="id"
+              item-text="name"
+              :value="editor"
+              :items="editors"
+              multiple
+              chips
+            ></v-select>
+          </v-col>
+
+          <v-col cols="6" v-if="isEditor">
+            <v-select
+              v-model="writer"
+              label="Writer"
+              class="text__14"
+              item-value="id"
+              item-text="name"
+              :value="writer"
+              :items="writers"
+              multiple
+              chips
+            ></v-select>
+          </v-col>
+          <v-col cols="6">
+            <v-select
+              v-model="gender"
+              label="Gender"
+              class="text__14"
+              item-value="id"
+              item-text="name"
+              :value="gender"
+              :items="genders"
+            ></v-select>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="age"
+              type="number"
+              label="Age"
+              class="text__14"
+              :value="age"
+              :error-messages="ageErrors"
+              @blur="$v.age.$touch()"
+              @input="$v.age.$touch()"
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="6">
+            <v-text-field
+              type="number"
+              v-model="phone"
+              label="Phone*"
+              class="text__14"
+              :value="phone"
+              required
+              :error-messages="phoneErrors"
+              @blur="$v.phone.$touch()"
+              @input="$v.phone.$touch()"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="company"
+              label="Company"
+              class="text__14"
+              required
+              :value="company"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+</template>
+<script>
+import CKEditor from "../CKEditor/Ckeditor5";
+import PopupCreateCustomer from "./CreateCustomer.vue";
+import {
+  required,
+  minLength,
+  maxLength,
+  between,
+  email
+} from "vuelidate/lib/validators";
+import { mapActions, mapGetters } from "vuex";
+import axios from "axios";
+export default {
+  components: {
+    CKEditor,
+    PopupCreateCustomer
+  },
+  data() {
+    return {
+      dialog: false,
+      menu: false,
+      firstname: "",
+      lastname: "",
+      email: "",
+      gender: "",
+      age: "",
+      phone: "",
+      company: "",
+      genders: [
+        {
+          id: 1,
+          name: "Male"
+        },
+        {
+          id: 2,
+          name: "Female"
+        },
+        {
+          id: 3,
+          name: "Others"
+        }
+      ],
+      role: "",
+      roles: [
+        {
+          id: 1,
+          name: "Marketer"
+        },
+        {
+          id: 2,
+          name: "Editor"
+        },
+        {
+          id: 3,
+          name: "Writer"
+        }
+      ],
+      editor: [],
+      editors: [
+        {
+          id: 1,
+          name: "Editor 1"
+        },
+        {
+          id: 2,
+          name: "Editor 2"
+        },
+        {
+          id: 3,
+          name: "Editor 3"
+        }
+      ],
+      writer: [],
+      writers: [
+        {
+          id: 1,
+          name: "Writer 1"
+        },
+        {
+          id: 2,
+          name: "Writer 2"
+        },
+        {
+          id: 3,
+          name: "Writer 3"
+        }
+      ],
+      isMarketer: false,
+      isEditor: false,
+      loadingCreate: false
+    };
+  },
+  validations: {
+    firstname: { required, maxLength: maxLength(50) },
+    lastname: { required, maxLength: maxLength(50) },
+    phone: {
+      required,
+      maxLength: maxLength(10),
+      between: between(0, 9999999999)
+    },
+    age: { between: between(18, 100) },
+    email: { email },
+    company: { maxLength: maxLength(50) }
+  },
+  computed: {
+    ...mapGetters([]),
+    firstnameErrors() {
+      const errors = [];
+      if (!this.$v.firstname.$dirty) return errors;
+      !this.$v.firstname.maxLength &&
+        errors.push("Firstname up to 50 characters");
+      !this.$v.firstname.required && errors.push("Please enter your firstname");
+      return errors;
+    },
+    lastnameErrors() {
+      const errors = [];
+      if (!this.$v.lastname.$dirty) return errors;
+      !this.$v.lastname.maxLength &&
+        errors.push("Lastname up to 50 characters");
+      !this.$v.lastname.required && errors.push("Please enter your lastname");
+      return errors;
+    },
+    phoneErrors() {
+      const errors = [];
+      if (!this.$v.phone.$dirty) return errors;
+      !this.$v.phone.maxLength && errors.push("Phone up to 10 numbers");
+      !this.$v.phone.between && errors.push("Phone must be type number");
+      !this.$v.phone.required && errors.push("Please enter your phone");
+      return errors;
+    },
+    ageErrors() {
+      const errors = [];
+      if (!this.$v.age.$dirty) return errors;
+      !this.$v.age.between && errors.push("Age must be between 18 - 100");
+      return errors;
+    }
+  },
+  methods: {
+    ...mapActions({}),
+    listEmployees(event) {
+      if (event == 1) {
+        this.isMarketer = true;
+        this.isEditor = false;
+      } else if (event == 2) {
+        this.isMarketer = false;
+        this.isEditor = true;
+      } else {
+        this.isMarketer = false;
+        this.isEditor = false;
+      }
+    },
+    create() {},
+
+    clickCreate() {}
+  }
+};
+</script>
+<style scoped>
+.chips {
+  color: white !important;
+}
+</style>

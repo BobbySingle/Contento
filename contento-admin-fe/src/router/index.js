@@ -18,6 +18,7 @@ import CampaignRequestDetails from "../views/Editor/CampaignRequestDetails/index
 import ReviewContent from "../views/Editor/ReviewContent/index.vue";
 import ManageTask from "../views/Editor/ManageTask/index.vue";
 import Profile from "../components/Profile/index.vue";
+import ManageAccount from "../views/Admin/ManageAccount/index.vue";
 
 Vue.use(Router);
 
@@ -118,6 +119,12 @@ export default new Router({
       path: "/WriteContent",
       name: "WriteContent",
       component: WriteContent
+    },
+    /**Admin */
+    {
+      path: "/ManageAccount",
+      name: "ManageAccount",
+      component: ManageAccount
     },
   ]
 });

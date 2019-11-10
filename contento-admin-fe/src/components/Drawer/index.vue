@@ -7,9 +7,9 @@
     dark
     style="background-color:#1976d2;"
   >
-    <v-list-item style="background-color:#004ba0; height:48px;" dark >
+    <v-list-item style="background-color:#004ba0; height:48px;" dark>
       <v-list-item-avatar>
-        <v-img src="../../assets/logo.png" ></v-img>
+        <v-img src="../../assets/logo.png"></v-img>
       </v-list-item-avatar>
       <v-list-item-title>Contento</v-list-item-title>
       <v-btn icon @click.stop="mini = !mini">
@@ -64,7 +64,7 @@ export default {
           link: "/ManageCustomer",
           role: "Marketer"
         },
-                {
+        {
           title: "Channel",
           icon: "public",
           link: "/ManageChannel",
@@ -85,7 +85,7 @@ export default {
           role: "Editor"
           // role: "Marketer"
         },
-                {
+        {
           title: "Manage Task",
           icon: "view_list",
           link: "/ManageTask",
@@ -98,6 +98,12 @@ export default {
           link: "/TaskManagement",
           role: "Writer"
           // role: "Marketer"
+        },
+        {
+          title: "Manage Account",
+          icon: "view_list",
+          link: "/ManageAccount",
+          role: "Marketer"
         }
       ],
       mini: true

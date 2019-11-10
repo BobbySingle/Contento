@@ -114,7 +114,12 @@
             :loading="loading"
             @page-count="pageCount = $event"
           >
-            <template v-slot:item.channel="{item}">{{item.channel.name}}</template>
+            <template v-slot:item.channel="{item}">
+              <div>{{item.channel.name}}</div>
+              <div>
+                <v-chip x-small light v-for="topic in item.tags" :key="topic.id">{{topic.name}}</v-chip>
+              </div>
+            </template>
             <template v-slot:item.customer="{item}">{{item.customer.name}}</template>
             <template
               v-slot:item.modifiedDate="{item}"
@@ -240,7 +245,8 @@ export default {
     ...mapActions({
       getListCustomer: "authentication/getListCustomerByMarketerID",
       getFanPages: "batchjob/getFanPages",
-      deleteFanPage: "batchjob/deleteFanPage"
+      deleteFanPage: "batchjob/deleteFanPage",
+      getListTag: "contentprocess/getListTag"
     }),
     async deleteFP(id) {
       this.loading = true;
@@ -254,7 +260,8 @@ export default {
       this.loading = true;
       await Promise.all([
         this.getListCustomer(this.$store.getters.getUser.id),
-        this.getFanPages(this.$store.getters.getUser.id)
+        this.getFanPages(this.$store.getters.getUser.id),
+        this.getListTag()
       ]);
       this.loading = false;
     }

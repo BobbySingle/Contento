@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent scrollable width="400px">
+  <v-dialog v-model="dialog" persistent scrollable width="600px">
     <template v-slot:activator="{ on }">
       <div v-on="on">
         <v-btn color="warning" class="text__14" @click="clickEdit(channelID)">Edit</v-btn>
@@ -52,6 +52,37 @@
             </v-row>
             <v-row>
               <v-col cols="12">
+                <v-select
+                  v-model="tags"
+                  :items="listTag"
+                  item-text="name"
+                  item-value="id"
+                  label="Category"
+                  prepend-inner-icon="category"
+                  multiple
+                  chips
+                  clearable
+                  required
+                  :error-messages="tagsErrors"
+                  @blur="$v.tags.$touch()"
+                  @input="$v.tags.$touch()"
+                >
+                  <template v-slot:prepend-item>
+                    <v-list-item ripple @click="toggle">
+                      <v-list-item-action>
+                        <v-icon :color="listTag.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
+                      </v-list-item-action>
+                      <v-list-item-content>
+                        <v-list-item-title>Select All</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-divider class="mt-2"></v-divider>
+                  </template>
+                </v-select>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
                 <v-text-field
                   v-model="name"
                   :counter="50"
@@ -99,6 +130,7 @@ export default {
       token: "",
       channel: "",
       customer: "",
+      tags: [],
       listChannel: [
         {
           id: 2,
@@ -117,10 +149,22 @@ export default {
     name: { required, maxLength: maxLength(50) },
     token: { required },
     channel: { required },
-    form: ["name", "token", "channel"]
+    tags: { required },
+    form: ["name", "token", "channel", "tags"]
   },
   computed: {
-    ...mapGetters(["listCustomer", "fanpage"]),
+    icon() {
+      if (this.selectAllTags) return "mdi-close-box";
+      if (this.selectSomeTags) return "mdi-minus-box";
+      return "mdi-checkbox-blank-outline";
+    },
+    selectAllTags() {
+      return this.tags.length === this.listTag.length;
+    },
+    selectSomeTags() {
+      return this.tags.length > 0 && !this.selectAllTags;
+    },
+    ...mapGetters(["listCustomer", "fanpage", "listTag"]),
     nameErrors() {
       const errors = [];
       if (!this.$v.name.$dirty) return errors;
@@ -141,9 +185,25 @@ export default {
       !this.$v.channel.required &&
         errors.push("Please select channel of fanpage");
       return errors;
+    },
+    tagsErrors() {
+      const errors = [];
+      if (!this.$v.tags.$dirty) return errors;
+      !this.$v.tags.required &&
+        errors.push("Please select category of fanpage");
+      return errors;
     }
   },
   methods: {
+    toggle() {
+      this.$nextTick(() => {
+        if (this.selectAllTags) {
+          this.tags = [];
+        } else {
+          this.tags = this.listTag.slice();
+        }
+      });
+    },
     ...mapActions({
       getFanPage: "batchjob/getFanPage",
       getFanPages: "batchjob/getFanPages",
@@ -155,6 +215,7 @@ export default {
       this.token = this.fanpage.token;
       this.channel = this.fanpage.channel;
       this.customer = this.fanpage.customer;
+      this.tags = this.fanpage.tagId;
       this.id = event;
       this.$v.form.$reset();
     },
@@ -170,7 +231,8 @@ export default {
           channelId: this.channel,
           customerId: this.customer,
           name: this.name,
-          token: this.token
+          token: this.token,
+          tags: this.tags
         });
         if (status == 202) {
           this.getFanPages(this.$store.getters.getUser.id);
