@@ -23,7 +23,9 @@
               class="text__14"
               required
               :value="email"
-              readonly
+              :error-messages="emailErrors"
+              @blur="$v.email.$touch()"
+              @input="$v.email.$touch()"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -50,46 +52,7 @@
               @input="$v.lastname.$touch()"
             ></v-text-field>
           </v-col>
-          <v-col cols="6">
-            <v-select
-              v-model="role"
-              label="Role"
-              class="text__14"
-              item-value="id"
-              item-text="name"
-              :value="role"
-              :items="roles"
-              @change="listEmployees"
-            ></v-select>
-          </v-col>
-          <!-- Select Employees  -->
-          <v-col cols="6" v-if="isMarketer">
-            <v-select
-              v-model="editor"
-              label="Editor"
-              class="text__14"
-              item-value="id"
-              item-text="name"
-              :value="editor"
-              :items="editors"
-              multiple
-              chips
-            ></v-select>
-          </v-col>
 
-          <v-col cols="6" v-if="isEditor">
-            <v-select
-              v-model="writer"
-              label="Writer"
-              class="text__14"
-              item-value="id"
-              item-text="name"
-              :value="writer"
-              :items="writers"
-              multiple
-              chips
-            ></v-select>
-          </v-col>
           <v-col cols="6">
             <v-select
               v-model="gender"
@@ -101,6 +64,7 @@
               :items="genders"
             ></v-select>
           </v-col>
+
           <v-col cols="6">
             <v-text-field
               v-model="age"
@@ -135,6 +99,104 @@
               required
               :value="company"
             ></v-text-field>
+          </v-col>
+
+          <!-- ROLE -->
+          <v-col cols="12">
+            <v-select
+              v-model="role"
+              label="Role*"
+              class="text__14"
+              item-value="id"
+              item-text="name"
+              :value="role"
+              :items="roles"
+              @change="listEmployees"
+              :error-messages="roleErrors"
+              @blur="$v.role.$touch()"
+              @input="$v.role.$touch()"
+            ></v-select>
+          </v-col>
+          <v-col cols="12">
+            <v-row>
+              <!-- Select Employees  -->
+              <v-col cols="6" v-if="isMarketer">
+                <v-select
+                  v-model="editor"
+                  label="Editor"
+                  class="text__14"
+                  item-value="id"
+                  item-text="name"
+                  :value="editor"
+                  :items="editors"
+                  multiple
+                  chips
+                >
+                  <template v-slot:selection="{ attrs, item,index, select, selected }">
+                    <v-chip color="blue" class="chips" v-if="index === 0">{{ item.name }}</v-chip>
+                    <v-chip
+                      color="blue"
+                      v-if="index === 1"
+                      class="chips caption"
+                    >+{{ editor.length - 1}} others selected</v-chip>
+                  </template>
+                </v-select>
+              </v-col>
+              <v-col cols="6" v-if="isEditor">
+                <v-select
+                  v-model="marketer"
+                  label="Marketer"
+                  class="text__14"
+                  item-value="id"
+                  item-text="name"
+                  :value="marketer"
+                  :items="marketers"
+                  chips
+                >
+                  <template v-slot:selection="{ attrs, item, select, selected }">
+                    <v-chip color="blue" class="chips">{{ item.name }}</v-chip>
+                  </template>
+                </v-select>
+              </v-col>
+              <v-col cols="6" v-if="isEditor">
+                <v-select
+                  v-model="writer"
+                  label="Writer"
+                  class="text__14"
+                  item-value="id"
+                  item-text="name"
+                  :value="writer"
+                  :items="writers"
+                  multiple
+                  chips
+                >
+                  <template v-slot:selection="{ attrs, item,index, select, selected }">
+                    <v-chip color="blue" class="chips" v-if="index == 0">{{ item.name }}</v-chip>
+                    <v-chip
+                      color="blue"
+                      v-if="index === 1"
+                      class="chips caption"
+                    >+{{ writer.length -1 }} others selected</v-chip>
+                  </template>
+                </v-select>
+              </v-col>
+              <v-col cols="6" v-if="isWriter">
+                <v-select
+                  v-model="editor"
+                  label="Editor"
+                  class="text__14"
+                  item-value="id"
+                  item-text="name"
+                  :value="editor"
+                  :items="editors"
+                  chips
+                >
+                  <template v-slot:selection="{ attrs, item, select, selected }">
+                    <v-chip color="blue" class="chips">{{ item.name }}</v-chip>
+                  </template>
+                </v-select>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-card-text>
@@ -228,8 +290,24 @@ export default {
           name: "Writer 3"
         }
       ],
+      marketer: [],
+      marketers: [
+        {
+          id: 1,
+          name: "Marketer 1"
+        },
+        {
+          id: 2,
+          name: "Marketer 2"
+        },
+        {
+          id: 3,
+          name: "Marketer 3"
+        }
+      ],
       isMarketer: false,
       isEditor: false,
+      isWriter: false,
       loadingCreate: false
     };
   },
@@ -242,8 +320,10 @@ export default {
       between: between(0, 9999999999)
     },
     age: { between: between(18, 100) },
-    email: { email },
-    company: { maxLength: maxLength(50) }
+    email: { required, email },
+    company: { maxLength: maxLength(50) },
+    role: { required },
+    form: ["firstname", "lastname", "email", "phone", "role"]
   },
   computed: {
     ...mapGetters([]),
@@ -263,6 +343,13 @@ export default {
       !this.$v.lastname.required && errors.push("Please enter your lastname");
       return errors;
     },
+    emailErrors() {
+      const errors = [];
+      if (!this.$v.email.$dirty) return errors;
+      !this.$v.email.required && errors.push("Please enter your email");
+      !this.$v.email.email && errors.push("Invalid email");
+      return errors;
+    },
     phoneErrors() {
       const errors = [];
       if (!this.$v.phone.$dirty) return errors;
@@ -276,6 +363,12 @@ export default {
       if (!this.$v.age.$dirty) return errors;
       !this.$v.age.between && errors.push("Age must be between 18 - 100");
       return errors;
+    },
+    roleErrors() {
+      const errors = [];
+      if (!this.$v.role.$dirty) return errors;
+      !this.$v.role.required && errors.push("Role must be select");
+      return errors;
     }
   },
   methods: {
@@ -284,17 +377,24 @@ export default {
       if (event == 1) {
         this.isMarketer = true;
         this.isEditor = false;
+        this.isWriter = false;
       } else if (event == 2) {
         this.isMarketer = false;
         this.isEditor = true;
+        this.isWriter = false;
       } else {
         this.isMarketer = false;
         this.isEditor = false;
+        this.isWriter = true;
       }
     },
     create() {},
 
-    clickCreate() {}
+    clickCreate() {
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
+      }
+    }
   }
 };
 </script>
