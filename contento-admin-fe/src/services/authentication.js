@@ -113,3 +113,8 @@ export function APIcreateAccount(data) {
     `${API_URL}/api/authentication/user`, data
   );
 }
+// export function APIgetInfoAccount(id) {
+//   return axios.get(
+//     `${API_URL}/api/authentication/user`, data
+//   );
+// }

@@ -336,11 +336,23 @@ const actions = {
       if (rs.status == 202) {
         console.log("CREATE ACCOUNT");
         console.log(rs.data);
+        Vue.notify({
+          group: 'notice',
+          title: 'Create successful!',
+          text: 'Account has been created successfully!',
+          type: 'suc'
+        })
         return 202;
       }
     } catch (error) {
       console.log("ERROR - CREATE ACCOUNT");
       console.log(error);
+      Vue.notify({
+        group: 'notice',
+        title: 'Create failed!',
+        text: 'Account has been created failed!',
+        type: 'warn'
+      })
     }
   },
   async getMarketersBasic({ commit }) {

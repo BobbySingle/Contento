@@ -11,8 +11,8 @@ const getters = {
   listWriter: state => state.authentication.listWriter,
   listWriterByMarketerID: state => state.authentication.listWriterByMarketerID,
   customerDetail: state => state.authentication.customerDetail,
-  profile: state =>state.authentication.profile,
-  fullname: state =>state.authentication.fullName,
+  profile: state => state.authentication.profile,
+  fullname: state => state.authentication.fullName,
   listAdminAccounts: state => state.authentication.listAdminAccounts,
   listMarketersBasic: state => state.authentication.listMarketersBasic,
   listEditorsBasic: state => state.authentication.listEditorsBasic,
@@ -53,6 +53,7 @@ const getters = {
   fanpages: state => state.batchjob.fanpages,
   facebook: state => state.batchjob.facebook,
   wordpress: state => state.batchjob.wordpress,
-  fanpagesContent: state => state.batchjob.fanpagesContent
+  fanpagesContent: state => state.batchjob.fanpagesContent,
+  fanpagesTag: state => state.batchjob.fanpagesTag
 };
 export default getters;

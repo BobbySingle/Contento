@@ -1,4 +1,4 @@
-import { APIpublishContent, APIgetFanPages, APIgetFanPage, APIcreateFanPage, APIeditFanPage, APIdeleteFanPage, APIgetFanPageFacebook, APIgetFanPageWordpress, APIgetFanPageCustomer, APIgetFanPagesByContentID } from "../../services/batchjob";
+import { APIpublishContent, APIgetFanPages, APIgetFanPage, APIcreateFanPage, APIeditFanPage, APIdeleteFanPage, APIgetFanPageFacebook, APIgetFanPageWordpress, APIgetFanPageCustomer, APIgetFanPagesByContentID, APIgetFanPagesByTagsId } from "../../services/batchjob";
 import Vue from "vue";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -11,7 +11,8 @@ const state = {
     facebook: [],
     wordpress: [],
     customer: [],
-    fanpagesContent: [],
+    // fanpagesContent: [],
+    fanpagesTag:[],
 };
 
 const mutations = {
@@ -34,8 +35,11 @@ const mutations = {
     SET_CUSTOMER(state, data) {
         state.customer = data;
     },
-    SET_FANPAGES_CONTENT(state, data) {
-        state.fanpagesContent = data;
+    // SET_FANPAGES_CONTENT(state, data) {
+    //     state.fanpagesContent = data;
+    // },
+    SET_FANPAGES_TAG(state, data){
+        state.fanpagesTag = data;
     }
 };
 
@@ -200,14 +204,25 @@ const actions = {
             console.log(error);
         }
     },
-    async getFanPagesByContentID({ commit }, payload) {
+    // async getFanPagesByContentID({ commit }, payload) {
+    //     try {
+    //         let rs = await APIgetFanPagesByContentID(payload);
+    //         if (rs.status == 200) {
+    //             commit("SET_FANPAGES_CONTENT", rs.data);
+    //         }
+    //     } catch (error) {
+    //         console.log("ERROR -  FANPAGE CONTENT");
+    //         console.log(error);
+    //     }
+    // },
+    async getFanPagesByTagsID({ commit }, payload) {
         try {
-            let rs = await APIgetFanPagesByContentID(payload);
+            let rs = await APIgetFanPagesByTagsId(payload);
             if (rs.status == 200) {
-                commit("SET_FANPAGES_CONTENT", rs.data);
+                commit("SET_FANPAGES_TAG", rs.data);
             }
         } catch (error) {
-            console.log("ERROR -  FANPAGE CONTENT");
+            console.log("ERROR -  FANPAGE TAG");
             console.log(error);
         }
     },

@@ -1,17 +1,19 @@
 <template>
   <v-dialog v-model="dialog" scrollable width="800px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" v-on="on" class="text__14" @click="clickCreate()">Create Account</v-btn>
+      <v-btn icon color="warning" v-on="on" @click="clickEdit()">
+        <v-icon>edit</v-icon>
+      </v-btn>
     </template>
     <v-card>
       <v-toolbar dark color="primary">
         <v-btn icon dark @click="dialog = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-toolbar-title>Add New Account</v-toolbar-title>
+        <v-toolbar-title>Edit Account</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="create()" :loading="loadingCreate">Create</v-btn>
+          <v-btn dark text @click="edit()" :loading="loadingCreate">Edit</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
@@ -262,48 +264,6 @@ export default {
       ],
       editor: [],
       writer: [],
-      writers: [
-        {
-          id: 1,
-          name: "Writer 1"
-        },
-        {
-          id: 2,
-          name: "Writer 2"
-        },
-        {
-          id: 3,
-          name: "Writer 3"
-        }
-      ],
-      editors: [
-        {
-          id: 1,
-          name: "Editor 1"
-        },
-        {
-          id: 2,
-          name: "Editor 2"
-        },
-        {
-          id: 3,
-          name: "Editor 3"
-        }
-      ],
-      marketers: [
-        {
-          id: 1,
-          name: "Marketer 1"
-        },
-        {
-          id: 2,
-          name: "Marketer 2"
-        },
-        {
-          id: 3,
-          name: "Marketer 3"
-        }
-      ],
       marketer: [],
       isMarketer: false,
       isEditor: false,
@@ -398,25 +358,25 @@ export default {
         this.isWriter = true;
       }
     },
-    async create() {
+    async edit() {
       this.loadingCreate = true;
       this.$v.form.$touch();
       let listMarketers = [];
       let listEditors = [];
       if (!this.$v.form.$invalid) {
-        await this.createAccount({
-          email: this.email,
-          lastName: this.lastname,
-          firstName: this.firstname,
-          gender: this.gender,
-          age: this.age,
-          phone: this.phone,
-          company: this.company,
-          role: this.role,
-          idMarketer: listMarketers.concat(this.marketer),
-          idEditor: listEditors.concat(this.editor),
-          idWriter: this.writer
-        });
+        // await this.createAccount({
+        //   email: this.email,
+        //   lastName: this.lastname,
+        //   firstName: this.firstname,
+        //   gender: this.gender,
+        //   age: this.age,
+        //   phone: this.phone,
+        //   company: this.company,
+        //   role: this.role,
+        //   idMarketer: listMarketers.concat(this.marketer),
+        //   idEditor: listEditors.concat(this.editor),
+        //   idWriter: this.writer
+        // });
         await this.getAdminAccounts();
         this.loadingCreate = false;
         this.dialog = false;
@@ -424,7 +384,7 @@ export default {
       this.loadingCreate = false;
     },
 
-    async clickCreate() {
+    async clickEdit() {
       this.firstname = "";
       this.lastname = "";
       this.email = "";
@@ -433,7 +393,7 @@ export default {
       this.phone = "";
       this.company = "";
       this.role = "";
-      this.writer = []
+      this.writer = [];
       this.editor = [];
       this.marketer = [];
       this.isMarketer = false;

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL ="http://35.247.168.237:8760/batchjobservice";
+const API_URL = "http://35.247.168.237:8760/batchjobservice";
 
 if (localStorage.getItem("Profile") != null) {
     let user = JSON.parse(localStorage.getItem("Profile").toString());
@@ -45,4 +45,8 @@ export function APIgetFanPageCustomer(customerId) {
 
 export function APIgetFanPagesByContentID(contentID) {
     return axios.get(`${API_URL}/api/BatchJob/taskfanpages/content/${contentID}`);
+}
+
+export function APIgetFanPagesByTagsId(tags) {
+    return axios.post(`${API_URL}/api/BatchJob/fanpage/tags`, tags);
 }

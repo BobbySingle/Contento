@@ -107,6 +107,7 @@
                 prepend-inner-icon="category"
                 multiple
                 required
+                @change="changeCategory"
                 @blur="$v.tags.$touch()"
               >
                 <template v-slot:selection="{ attrs, item, select, selected }">
@@ -254,7 +255,8 @@ export default {
       publishContent: "batchjob/publishContent",
       getFanPageFacebook: "batchjob/getFanPageFacebook",
       getFanPageWordpress: "batchjob/getFanPageWordpress",
-      getFanPagesByContentID: "batchjob/getFanPagesByContentID"
+      // getFanPagesByContentID: "batchjob/getFanPagesByContentID",
+      getFanPagesByTagsID: "batchjob/getFanPagesByTagsID"
     }),
     async fetchData() {
       this.overlay = true;
@@ -279,12 +281,13 @@ export default {
       this.content = this.taskDetail.content.content;
       this.tags = this.taskDetail.tag;
       this.name = this.taskDetail.content.name;
-      await this.getFanPagesByContentID(this.taskDetail.content.id);
+      // await this.getFanPagesByContentID(this.taskDetail.content.id);
+      await this.getFanPagesByTagsID(this.tags);
 
       this.customerID = this.taskDetail.customer;
-      this.fanpageFB = this.fanpagesContent.Facebook;
-      this.fanpageWP = this.fanpagesContent.Wordpress;
-      this.websiteCTT = this.fanpagesContent.Contento;
+      this.fanpageFB = this.fanpagesTag.Facebook;
+      this.fanpageWP = this.fanpagesTag.Wordpress;
+      this.websiteCTT = this.fanpagesTag.Contento;
       this.overlay = false;
       this.indeterminate = false;
     },
@@ -321,6 +324,12 @@ export default {
         this.loading = false;
       }
       this.loading = false;
+    },
+    async changeCategory() {
+      await this.getFanPagesByTagsID(this.tags);
+      this.fanpageFB = this.fanpagesTag.Facebook;
+      this.fanpageWP = this.fanpagesTag.Wordpress;
+      this.websiteCTT = this.fanpagesTag.Contento;
     }
   },
   computed: {
@@ -330,7 +339,8 @@ export default {
       "taskDetail",
       "facebook",
       "wordpress",
-      "fanpagesContent"
+      "fanpagesContent",
+      "fanpagesTag"
     ])
   },
   created() {
