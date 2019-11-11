@@ -13,6 +13,10 @@ const getters = {
   customerDetail: state => state.authentication.customerDetail,
   profile: state =>state.authentication.profile,
   fullname: state =>state.authentication.fullName,
+  listAdminAccounts: state => state.authentication.listAdminAccounts,
+  listMarketersBasic: state => state.authentication.listMarketersBasic,
+  listEditorsBasic: state => state.authentication.listEditorsBasic,
+  listWritersBasic: state => state.authentication.listWritersBasic,
 
   //Campaign
   listCampaign: state => state.campaign.listCampaign,

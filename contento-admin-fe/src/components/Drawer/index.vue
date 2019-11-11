@@ -103,7 +103,7 @@ export default {
           title: "Manage Account",
           icon: "view_list",
           link: "/ManageAccount",
-          role: "Marketer"
+          role: "Admin"
         }
       ],
       mini: true

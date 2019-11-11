@@ -11,7 +11,7 @@
         <v-toolbar-title>Add New Account</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="create()" :loading="loadingCreate">Save</v-btn>
+          <v-btn dark text @click="create()" :loading="loadingCreate">Create</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
@@ -128,7 +128,7 @@
                   item-value="id"
                   item-text="name"
                   :value="editor"
-                  :items="editors"
+                  :items="listEditorsBasic"
                   multiple
                   chips
                 >
@@ -150,7 +150,7 @@
                   item-value="id"
                   item-text="name"
                   :value="marketer"
-                  :items="marketers"
+                  :items="listMarketersBasic"
                   chips
                 >
                   <template v-slot:selection="{ attrs, item, select, selected }">
@@ -166,7 +166,7 @@
                   item-value="id"
                   item-text="name"
                   :value="writer"
-                  :items="writers"
+                  :items="listWritersBasic"
                   multiple
                   chips
                 >
@@ -188,7 +188,7 @@
                   item-value="id"
                   item-text="name"
                   :value="editor"
-                  :items="editors"
+                  :items="listEditorsBasic"
                   chips
                 >
                   <template v-slot:selection="{ attrs, item, select, selected }">
@@ -261,20 +261,6 @@ export default {
         }
       ],
       editor: [],
-      editors: [
-        {
-          id: 1,
-          name: "Editor 1"
-        },
-        {
-          id: 2,
-          name: "Editor 2"
-        },
-        {
-          id: 3,
-          name: "Editor 3"
-        }
-      ],
       writer: [],
       writers: [
         {
@@ -290,7 +276,20 @@ export default {
           name: "Writer 3"
         }
       ],
-      marketer: [],
+      editors: [
+        {
+          id: 1,
+          name: "Editor 1"
+        },
+        {
+          id: 2,
+          name: "Editor 2"
+        },
+        {
+          id: 3,
+          name: "Editor 3"
+        }
+      ],
       marketers: [
         {
           id: 1,
@@ -305,6 +304,7 @@ export default {
           name: "Marketer 3"
         }
       ],
+      marketer: [],
       isMarketer: false,
       isEditor: false,
       isWriter: false,
@@ -326,7 +326,11 @@ export default {
     form: ["firstname", "lastname", "email", "phone", "role"]
   },
   computed: {
-    ...mapGetters([]),
+    ...mapGetters([
+      "listMarketersBasic",
+      "listEditorsBasic",
+      "listWritersBasic"
+    ]),
     firstnameErrors() {
       const errors = [];
       if (!this.$v.firstname.$dirty) return errors;
@@ -354,7 +358,7 @@ export default {
       const errors = [];
       if (!this.$v.phone.$dirty) return errors;
       !this.$v.phone.maxLength && errors.push("Phone up to 10 numbers");
-      !this.$v.phone.between && errors.push("Phone must be type number");
+      !this.$v.phone.between && errors.push("Phone must be integer");
       !this.$v.phone.required && errors.push("Please enter your phone");
       return errors;
     },
@@ -372,7 +376,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions({}),
+    ...mapActions({
+      createAccount: "authentication/createAccount",
+      getAdminAccounts: "authentication/getAdminAccounts",
+      getMarketersBasic: "authentication/getMarketersBasic",
+      getEditorsBasic: "authentication/getEditorsBasic",
+      getWritersBasic: "authentication/getWritersBasic"
+    }),
     listEmployees(event) {
       if (event == 1) {
         this.isMarketer = true;
@@ -388,12 +398,53 @@ export default {
         this.isWriter = true;
       }
     },
-    create() {},
-
-    clickCreate() {
+    async create() {
+      this.loadingCreate = true;
       this.$v.form.$touch();
+      let listMarketers = [];
+      let listEditors = [];
       if (!this.$v.form.$invalid) {
+        await this.createAccount({
+          email: this.email,
+          lastName: this.lastname,
+          firstName: this.firstname,
+          gender: this.gender,
+          age: this.age,
+          phone: this.phone,
+          company: this.company,
+          role: this.role,
+          idMarketer: listMarketers.concat(this.marketer),
+          idEditor: listEditors.concat(this.editor),
+          idWriter: this.writer
+        });
+        await this.getAdminAccounts();
+        this.loadingCreate = false;
+        this.dialog = false;
       }
+      this.loadingCreate = false;
+    },
+
+    async clickCreate() {
+      this.firstname = "";
+      this.lastname = "";
+      this.email = "";
+      this.gender = "";
+      this.age = "";
+      this.phone = "";
+      this.company = "";
+      this.role = "";
+      this.writer = "";
+      this.editor = "";
+      this.marketer = "";
+      this.isMarketer = false;
+      this.isEditor = false;
+      this.isWriter = false;
+      this.$v.form.$reset();
+      await Promise.all([
+        this.getMarketersBasic(),
+        this.getEditorsBasic(),
+        this.getWritersBasic()
+      ]);
     }
   }
 };

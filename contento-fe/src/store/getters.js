@@ -10,5 +10,8 @@ const getters = {
 
 
     topNews: state => state.viewer.news.slice(0, 10),
+
+    //Content process
+    listTag: state => state.contentprocess.listTag,
 }
 export default getters;

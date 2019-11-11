@@ -13,7 +13,12 @@ import {
   APIgetProfileInfo,
   APIeditProfileInfo,
   APIcheckPassword,
-  APIchangePassword 
+  APIchangePassword,
+  APIgetAdminAccounts,
+  APIcreateAccount,
+  APIgetMarketers,
+  APIgetEditors,
+  APIgetWriters
 } from "../../services/authentication";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -31,6 +36,10 @@ const state = {
   listWriterByMarketerID: [],
   customerDetail: "",
   profile: "",
+  listAdminAccounts: [],
+  listMarketersBasic: [],
+  listEditorsBasic: [],
+  listWritersBasic: [],
 };
 const mutations = {
   SET_ACCESS_TOKEN(state, data) {
@@ -78,7 +87,19 @@ const mutations = {
   },
   SET_PROFILE(state, data) {
     state.profile = data;
-  }
+  },
+  SET_LISTACCOUNTS(state, data) {
+    state.listAdminAccounts = data;
+  },
+  SET_MARKETERS_BASIC(state, data) {
+    state.listMarketersBasic = data
+  },
+  SET_EDITORS_BASIC(state, data) {
+    state.listEditorsBasic = data
+  },
+  SET_WRITERS_BASIC(state, data) {
+    state.listWritersBasic = data
+  },
 };
 const actions = {
   async login({ commit }, payload) {
@@ -293,6 +314,75 @@ const actions = {
         text: 'Profile has been edited failed!',
         type: 'warn'
       })
+    }
+  },
+  async getAdminAccounts({ commit }) {
+    try {
+      let rs = await APIgetAdminAccounts();
+      if (rs.status == 202) {
+        commit("SET_LISTACCOUNTS", rs.data);
+        console.log("LIST ACCOUNTS");
+        console.log(rs.data);
+      }
+    } catch (error) {
+      console.log("ERROR - LIST ACCOUNTS");
+      console.log(error);
+    }
+
+  },
+  async createAccount({ commit }, payload) {
+    try {
+      let rs = await APIcreateAccount(payload);
+      if (rs.status == 202) {
+        console.log("CREATE ACCOUNT");
+        console.log(rs.data);
+        return 202;
+      }
+    } catch (error) {
+      console.log("ERROR - CREATE ACCOUNT");
+      console.log(error);
+    }
+  },
+  async getMarketersBasic({ commit }) {
+    try {
+      let rs = await APIgetMarketers();
+      if (rs.status == 200) {
+        console.log("GET MARKETER BASIC");
+        console.log(rs.data);
+        commit("SET_MARKETERS_BASIC", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - GET MARKETER BASIC");
+      console.log(error);
+    }
+  },
+  async getEditorsBasic({ commit }) {
+    try {
+      let rs = await APIgetEditors();
+      if (rs.status == 200) {
+        console.log("GET EDITORS BASIC");
+        console.log(rs.data);
+        commit("SET_EDITORS_BASIC", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - GET EDITORS BASIC");
+      console.log(error);
+    }
+  },
+  async getWritersBasic({ commit }) {
+    try {
+      let rs = await APIgetWriters();
+      if (rs.status == 200) {
+        console.log("GET WRITERS BASIC");
+        console.log(rs.data);
+        commit("SET_WRITERS_BASIC", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - GET WRITERS BASIC");
+      console.log(error);
     }
   },
   refreshFullName({ commit }) {

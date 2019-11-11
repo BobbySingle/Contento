@@ -11,14 +11,14 @@
           <input
             class="input-field text__14"
             type="text"
-            placeholder="Title"
+            placeholder="Search "
             name="search"
             v-model="search"
           />
         </div>
       </v-col>
       <v-col sm="4" md="3" style="display:flex; justify-content: center;">
-        <create-account/>
+        <create-account />
       </v-col>
     </v-row>
     <v-row no-gutters class="mx-6 mb-2">
@@ -27,7 +27,29 @@
           <v-expansion-panel-header class="text__14">Advanced Filter:</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-row class=".flex-nowrap">
-              <v-col cols="12" sm="6" md="3">
+              <v-col cols="12" sm="4">
+                <v-select
+                  v-model="roleFilter"
+                  :items="roles"
+                  item-text="name"
+                  item-value="id"
+                  label="Role"
+                  prepend-inner-icon="account_circle"
+                  clearable
+                ></v-select>
+              </v-col>
+              <v-col cols="12" sm="4">
+                <v-select
+                  v-model="activeFilter"
+                  :items="actives"
+                  item-text="name"
+                  item-value="id"
+                  label="isActive"
+                  prepend-inner-icon="account_circle"
+                  clearable
+                ></v-select>
+              </v-col>
+              <v-col cols="12" sm="4">
                 <v-row justify="center">
                   <v-btn color="primary" @click="Clear()">Clear</v-btn>
                 </v-row>
@@ -44,7 +66,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="accounts"
+            :items="listAdminAccounts"
             :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
@@ -66,14 +88,22 @@
                 <span class="text__14">{{ item.role.name }}</span>
               </div>
             </template>
-            <template v-slot:item.status="{item}">
+            <template v-slot:item.isActive="{item}">
               <div>
-                <span class="text__14">{{ item.status.name }}</span>
+                <v-chip color="success" class="text__14" v-if="item.isActive">Active</v-chip>
+                <v-chip color="error" class="text__14" v-if="!item.isActive">Disable</v-chip>
               </div>
             </template>
             <template v-slot:item.action="{item}">
-              <v-btn>Edit</v-btn>
-              <v-btn>Disable</v-btn>
+              <v-btn icon color="warning">
+                <v-icon>edit</v-icon>
+              </v-btn>
+              <v-btn icon color="error" v-if="item.isActive">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+              <v-btn icon color="success" v-if="!item.isActive">
+                <v-icon>mdi-autorenew</v-icon>
+              </v-btn>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -92,7 +122,7 @@ import { mapGetters, mapActions } from "vuex";
 import axios from "axios";
 import CreateAccount from "../../../components/Popup/CreateAccount.vue";
 export default {
-  components: {CreateAccount},
+  components: { CreateAccount },
   data() {
     return {
       /**Begin Pagination */
@@ -107,6 +137,8 @@ export default {
       search: "",
       loading: false,
       /**List Content */
+      roleFilter: "",
+      activeFilter: "",
       headers: [
         {
           text: "Email",
@@ -114,15 +146,33 @@ export default {
           value: "email"
         },
         {
-          text: "Role",
+          text: "Fullname",
           align: "left",
-          value: "role"
+          value: "fullName"
         },
         {
-          text: "Status",
-          value: "status",
+          text: "Role",
+          align: "left",
+          value: "role",
+          filter: value => {
+            if (!this.roleFilter) return true;
+            return value.id == this.roleFilter;
+          }
+        },
+        {
+          text: "isActive",
+          value: "isActive",
           sortable: false,
-          align: "center"
+          align: "center",
+          filter: value => {
+            if (!this.activeFilter) return true;
+            if (this.activeFilter == 1) {
+              return value == true;
+            }
+            if (this.activeFilter == 2) {
+              return value == false;
+            }
+          }
         },
         {
           text: "Action",
@@ -131,37 +181,23 @@ export default {
           align: "center"
         }
       ],
-      accounts: [
+      roles: [
         {
           id: 1,
-          email: "abc@gmail.com",
-          role: { id: 1, name: "Marketer" },
-          status: { id: 1, name: "Active" }
+          name: "Marketer"
         },
         {
           id: 2,
-          email: "abc@gmail.com",
-          role: { id: 2, name: "Editor" },
-          status: { id: 1, name: "Active" }
+          name: "Editor"
         },
         {
           id: 3,
-          email: "abc@gmail.com",
-          role: { id: 3, name: "Writor" },
-          status: { id: 1, name: "Active" }
-        },
-        {
-          id: 4,
-          email: "abc@gmail.com",
-          role: { id: 1, name: "Marketer" },
-          status: { id: 1, name: "Active" }
-        },
-        {
-          id: 5,
-          email: "abc@gmail.com",
-          role: { id: 3, name: "Writor" },
-          status: { id: 1, name: "Active" }
+          name: "Writer"
         }
+      ],
+      actives: [
+        { id: 1, isActive: true, name: "Active" },
+        { id: 2, isActive: false, name: "Disable" }
       ]
     };
   },
@@ -180,6 +216,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions({ getAdminAccounts: "authentication/getAdminAccounts" }),
     Clear() {
       this.startFromDate = "";
       this.startToDate = "";
@@ -201,26 +238,21 @@ export default {
     clearEndToDate() {
       this.endToDate = "";
     },
-    ...mapActions({}),
 
     async fetchData() {
       this.loading = true;
-      //   await Promise.all([
-      //   ]);
+      await Promise.all([this.getAdminAccounts()]);
       this.loading = false;
     }
   },
   computed: {
-    ...mapGetters([])
-  },
-  computed: {
-    ...mapGetters(["getUser"])
+    ...mapGetters(["getUser", "listAdminAccounts"])
   },
   created() {
     axios.defaults.headers.common["Authorization"] =
       "Bearer " + this.$store.getters.getAccessToken;
     let role = this.getUser.role;
-    if (role !== "Marketer" && role != null) {
+    if (role !== "Admin" && role != null) {
       this.$router.push("/403");
     } else if (role == null) {
       this.$store.state.authentication.loggedUser = false;

@@ -81,8 +81,35 @@ export function APIcheckPassword(data) {
     `${API_URL}/api/authentication/check-password`, data
   );
 }
+
 export function APIchangePassword(data) {
   return axios.put(
     `${API_URL}/api/authentication/change-password`, data
+  );
+}
+
+export function APIgetAdminAccounts() {
+  return axios.get(
+    `${API_URL}/api/authentication/user/admin`
+  );
+}
+export function APIgetMarketers() {
+  return axios.get(
+    `${API_URL}/api/authentication/marketers-basic`
+  );
+}
+export function APIgetEditors() {
+  return axios.get(
+    `${API_URL}/api/authentication/editor-basic`
+  );
+}
+export function APIgetWriters() {
+  return axios.get(
+    `${API_URL}/api/authentication/writer-basic`
+  );
+}
+export function APIcreateAccount(data) {
+  return axios.post(
+    `${API_URL}/api/authentication/user`, data
   );
 }

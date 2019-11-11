@@ -1,6 +1,30 @@
 <template>
   <!-- <v-app-bar app dense elevate-on-scroll> -->
   <v-app-bar flat>
+    <!-- <v-menu
+      bottom
+      max-height="200"
+      min-width="400"
+      max-width="400"
+      :open-on-hover="true"
+      :offset-y="true"
+      origin="center center"
+      transition="scale-transition"
+    >
+      <template v-slot:activator="{ on }">
+        <v-btn text v-on="on">Category</v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          style="float: left;  width:50%; background: white;"
+          v-for="(item,i) in items"
+          :key="i"
+          @click="clickCategory(item.title)"
+        >
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>-->
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-toolbar-title
@@ -25,39 +49,16 @@
         clearable
         v-model="search"
       ></v-text-field>
-    </v-toolbar-items> -->
-
-    <!-- <v-spacer></v-spacer> -->
-    <!-- <div style="min-width:30px; width:100px;" /> -->
-    <!-- <v-btn text>Trending</v-btn>
-    <v-menu
-      bottom
-      max-height="200"
-      min-width="400"
-      max-width="400"
-      :open-on-hover="true"
-      :offset-y="true"
-      origin="center center"
-      transition="scale-transition"
-    > -->
-      <!-- <template v-slot:activator="{ on }">
-        <v-btn text v-on="on">Category</v-btn>
-      </template>
-      <v-list>
-        <v-list-item
-          style="float: left;  width:50%; background: white;"
-          v-for="(item,i) in items"
-          :key="i"
-          @click="clickCategory(item.title)"
-        >
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-        </v-list-item>
-      </v-list> -->
-    </v-menu>
+    </v-toolbar-items>-->
+    <sign-in />
+    <sign-up />
   </v-app-bar>
 </template>
 <script>
+import SignIn from "../Dialog/SignIn.vue";
+import SignUp from "../Dialog/SignUp.vue";
 export default {
+  components: { SignIn, SignUp },
   data: () => ({
     search: "",
     items: [
