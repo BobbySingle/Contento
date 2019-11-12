@@ -19,6 +19,7 @@ import ReviewContent from "../views/Editor/ReviewContent/index.vue";
 import ManageTask from "../views/Editor/ManageTask/index.vue";
 import Profile from "../components/Profile/index.vue";
 import ManageAccount from "../views/Admin/ManageAccount/index.vue";
+import ManageContentFanpage from "../views/Marketer/ManageContentFanpage/index.vue";
 
 Vue.use(Router);
 
@@ -82,6 +83,11 @@ export default new Router({
       path: "/CustomerCampaigns",
       name: "CustomerCampaigns",
       component: CustomerCampaigns
+    },
+    {
+      path: "/ManageContentFanpage",
+      name: "ManageContentFanpage",
+      component: ManageContentFanpage
     },
     /**Editor */
     {

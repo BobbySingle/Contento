@@ -179,7 +179,21 @@ export default {
         //   value: "id",
         //   width: "8%"
         // },
-        { text: "Title", value: "title", sortable: false, width: "40%" },
+        {
+          text: "Title",
+          value: "title",
+          sortable: false,
+          width: "40%",
+          filter: value => {
+            if (!this.search) return true;
+            return (
+              value
+                .toString()
+                .toLowerCase()
+                .indexOf(this.search.toLowerCase()) !== -1
+            );
+          }
+        },
         {
           text: "Implementer",
           value: "writer",

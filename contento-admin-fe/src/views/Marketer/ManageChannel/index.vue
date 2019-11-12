@@ -105,7 +105,6 @@
           <v-data-table
             :headers="headers"
             :items="fanpages"
-            :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
             :page.sync="page"
@@ -114,8 +113,38 @@
             :loading="loading"
             @page-count="pageCount = $event"
           >
+            <template v-slot:item.name="{item}">
+              <div class="title py-2" @click="clickFanpage(item.id)">
+                  <span class="text__14">{{ item.name }}</span>
+              </div>
+            </template>
             <template v-slot:item.channel="{item}">
-              <div>{{item.channel.name}}</div>
+              <div>
+                <v-chip
+                  style="color: white;"
+                  color="success"
+                  small
+                  v-if="item.channel.id == 1"
+                >{{item.channel.name}}</v-chip>
+              </div>
+              <div>
+                <v-chip
+                  style="color: white;"
+                  color="#1874ec"
+                  small
+                  v-if="item.channel.id == 2"
+                >{{item.channel.name}}</v-chip>
+              </div>
+              <div>
+                <v-chip
+                  style="color: white;"
+                  color="#444444"
+                  small
+                  v-if="item.channel.id == 3"
+                >{{item.channel.name}}</v-chip>
+              </div>
+            </template>
+            <template v-slot:item.tags="{item}">
               <div>
                 <v-chip x-small light v-for="topic in item.tags" :key="topic.id">{{topic.name}}</v-chip>
               </div>
@@ -171,7 +200,11 @@ export default {
         {
           text: "Name",
           align: "left",
-          value: "name"
+          value: "name",
+          filter: value =>{
+             if (!this.search) return true;
+            return value.toString().toLowerCase().indexOf(this.search.toLowerCase()) !== -1;
+          }
         },
         {
           text: "Channel",
@@ -181,6 +214,11 @@ export default {
             if (!this.channelFilter) return true;
             return value.id == this.channelFilter;
           }
+        },
+        {
+          text: "Category",
+          value: "tags",
+          sortable: false
         },
         {
           text: "Customer",
@@ -241,6 +279,10 @@ export default {
     },
     clearToFilter() {
       this.toFilter = "";
+    },
+    clickFanpage(event) {
+      sessionStorage.setItem("FanpageID", JSON.stringify(event));
+      this.$router.push("/ManageContentFanpage");
     },
     ...mapActions({
       getListCustomer: "authentication/getListCustomerByMarketerID",
@@ -314,5 +356,18 @@ export default {
 
 .input-field:focus {
   box-shadow: 0px 0px 5px 5px rgba(45, 118, 255, 0.6);
+}
+
+.title span {
+  font-weight: bold;
+  /**line-clamp */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+.title:hover {
+  cursor: pointer;
 }
 </style>

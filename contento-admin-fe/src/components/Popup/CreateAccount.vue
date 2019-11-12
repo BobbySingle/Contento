@@ -82,7 +82,7 @@
             <v-text-field
               type="number"
               v-model="phone"
-              label="Phone*"
+              label="Phone"
               class="text__14"
               :value="phone"
               required
@@ -91,18 +91,8 @@
               @input="$v.phone.$touch()"
             ></v-text-field>
           </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="company"
-              label="Company"
-              class="text__14"
-              required
-              :value="company"
-            ></v-text-field>
-          </v-col>
-
           <!-- ROLE -->
-          <v-col cols="12">
+          <v-col cols="6">
             <v-select
               v-model="role"
               label="Role*"
@@ -230,7 +220,6 @@ export default {
       gender: "",
       age: "",
       phone: "",
-      company: "",
       genders: [
         {
           id: 1,
@@ -321,9 +310,8 @@ export default {
     },
     age: { between: between(18, 100) },
     email: { required, email },
-    company: { maxLength: maxLength(50) },
     role: { required },
-    form: ["firstname", "lastname", "email", "phone", "role"]
+    form: ["firstname", "lastname", "email", "role"]
   },
   computed: {
     ...mapGetters([
@@ -411,7 +399,6 @@ export default {
           gender: this.gender,
           age: this.age,
           phone: this.phone,
-          company: this.company,
           role: this.role,
           idMarketer: listMarketers.concat(this.marketer),
           idEditor: listEditors.concat(this.editor),
@@ -431,7 +418,6 @@ export default {
       this.gender = "";
       this.age = "";
       this.phone = "";
-      this.company = "";
       this.role = "";
       this.writer = []
       this.editor = [];

@@ -201,7 +201,10 @@ export default {
         if (this.selectAllTags) {
           this.tags = [];
         } else {
-          this.tags = this.listTag.slice();
+          this.tags = [];
+          this.listTag.forEach(i => {
+            this.tags = this.tags.concat(i.id);
+          });
         }
       });
     },

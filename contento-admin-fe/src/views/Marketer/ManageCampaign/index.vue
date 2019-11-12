@@ -158,7 +158,6 @@
           <v-data-table
             :headers="headers"
             :items="listCampaign"
-            :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
             :page.sync="page"
@@ -258,7 +257,21 @@ export default {
             return value.id == this.customer;
           }
         },
-        { text: "Title", value: "title", sortable: false, width: "35%" },
+        {
+          text: "Title",
+          value: "title",
+          sortable: false,
+          width: "35%",
+          filter: value => {
+            if (!this.search) return true;
+            return (
+              value
+                .toString()
+                .toLowerCase()
+                .indexOf(this.search.toLowerCase()) !== -1
+            );
+          }
+        },
         {
           text: "Start",
           value: "startedDate",

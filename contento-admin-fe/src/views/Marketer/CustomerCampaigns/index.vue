@@ -14,7 +14,7 @@
           <input
             class="input-field text__14"
             type="text"
-            placeholder="Customer,Title"
+            placeholder="Title"
             name="search"
             v-model="search"
           />
@@ -136,7 +136,6 @@
           <v-data-table
             :headers="headers"
             :items="listCampaignByCustomerID"
-            :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
             :page.sync="page"
@@ -226,7 +225,21 @@ export default {
       /**List Content */
       search: "",
       headers: [
-        { text: "Title", value: "title", sortable: false, width: "50%" },
+        {
+          text: "Title",
+          value: "title",
+          sortable: false,
+          width: "50%",
+          filter: value => {
+            if (!this.search) return true;
+            return (
+              value
+                .toString()
+                .toLowerCase()
+                .indexOf(this.search.toLowerCase()) !== -1
+            );
+          }
+        },
         {
           text: "Start",
           value: "startedDate",

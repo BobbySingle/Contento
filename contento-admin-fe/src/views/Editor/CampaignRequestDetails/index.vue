@@ -68,7 +68,6 @@
                   <v-data-table
                     :headers="headers"
                     :items="listCampaignTaskNotFormated"
-                    :search="search"
                     style="width:100%"
                     :mobile-breakpoint="600"
                     :page.sync="page"
@@ -130,7 +129,6 @@ export default {
       /**End Pagination */
       dialog: false,
       menu: false,
-      search: "",
       loading: false,
       /**Campaign Information */
       campaign_title: "",

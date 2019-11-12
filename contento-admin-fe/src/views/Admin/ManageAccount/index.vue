@@ -11,7 +11,7 @@
           <input
             class="input-field text__14"
             type="text"
-            placeholder="Search "
+            placeholder="Fullname"
             name="search"
             v-model="search"
           />
@@ -67,7 +67,6 @@
           <v-data-table
             :headers="headers"
             :items="listAdminAccounts"
-            :search="search"
             style="width:100%"
             :mobile-breakpoint="600"
             :page.sync="page"
@@ -148,7 +147,16 @@ export default {
         {
           text: "Fullname",
           align: "left",
-          value: "fullName"
+          value: "fullName",
+          filter: value => {
+            if (!this.search) return true;
+            return (
+              value
+                .toString()
+                .toLowerCase()
+                .indexOf(this.search.toLowerCase()) !== -1
+            );
+          }
         },
         {
           text: "Role",
