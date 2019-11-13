@@ -85,7 +85,6 @@
               label="Phone"
               class="text__14"
               :value="phone"
-              required
               :error-messages="phoneErrors"
               @blur="$v.phone.$touch()"
               @input="$v.phone.$touch()"
@@ -194,8 +193,6 @@
   </v-dialog>
 </template>
 <script>
-import CKEditor from "../CKEditor/Ckeditor5";
-import PopupCreateCustomer from "./CreateCustomer.vue";
 import {
   required,
   minLength,
@@ -206,10 +203,6 @@ import {
 import { mapActions, mapGetters } from "vuex";
 import axios from "axios";
 export default {
-  components: {
-    CKEditor,
-    PopupCreateCustomer
-  },
   data() {
     return {
       dialog: false,
@@ -304,7 +297,6 @@ export default {
     firstname: { required, maxLength: maxLength(50) },
     lastname: { required, maxLength: maxLength(50) },
     phone: {
-      required,
       maxLength: maxLength(10),
       between: between(0, 9999999999)
     },
@@ -347,7 +339,6 @@ export default {
       if (!this.$v.phone.$dirty) return errors;
       !this.$v.phone.maxLength && errors.push("Phone up to 10 numbers");
       !this.$v.phone.between && errors.push("Phone must be integer");
-      !this.$v.phone.required && errors.push("Please enter your phone");
       return errors;
     },
     ageErrors() {
@@ -369,18 +360,22 @@ export default {
       getAdminAccounts: "authentication/getAdminAccounts",
       getMarketersBasic: "authentication/getMarketersBasic",
       getEditorsBasic: "authentication/getEditorsBasic",
-      getWritersBasic: "authentication/getWritersBasic"
+      getWritersBasic: "authentication/getWritersBasic",
+      getEditorsForWriter: "authentication/getEditorsForWriter"
     }),
-    listEmployees(event) {
+    async listEmployees(event) {
       if (event == 1) {
+        await this.getEditorsBasic();
         this.isMarketer = true;
         this.isEditor = false;
         this.isWriter = false;
       } else if (event == 2) {
+        await Promise.all([this.getMarketersBasic(), this.getWritersBasic()]);
         this.isMarketer = false;
         this.isEditor = true;
         this.isWriter = false;
       } else {
+        await this.getEditorsForWriter();
         this.isMarketer = false;
         this.isEditor = false;
         this.isWriter = true;
@@ -419,7 +414,7 @@ export default {
       this.age = "";
       this.phone = "";
       this.role = "";
-      this.writer = []
+      this.writer = [];
       this.editor = [];
       this.marketer = [];
       this.isMarketer = false;

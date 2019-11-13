@@ -94,13 +94,14 @@
               </div>
             </template>
             <template v-slot:item.action="{item}">
-              <v-btn icon color="warning">
+              <!-- <v-btn icon color="warning">
                 <v-icon>edit</v-icon>
-              </v-btn>
-              <v-btn icon color="error" v-if="item.isActive">
+              </v-btn>-->
+              <edit-account :accountID="item.id" />
+              <v-btn icon color="error" v-if="item.isActive" @click="disableAccount(item.id)">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
-              <v-btn icon color="success" v-if="!item.isActive">
+              <v-btn icon color="success" v-if="!item.isActive" @click="enableAccount(item.id)">
                 <v-icon>mdi-autorenew</v-icon>
               </v-btn>
             </template>
@@ -120,8 +121,9 @@ import moment from "moment";
 import { mapGetters, mapActions } from "vuex";
 import axios from "axios";
 import CreateAccount from "../../../components/Popup/CreateAccount.vue";
+import EditAccount from "../../../components/Popup/EditAccount.vue";
 export default {
-  components: { CreateAccount },
+  components: { CreateAccount, EditAccount },
   data() {
     return {
       /**Begin Pagination */
@@ -224,7 +226,32 @@ export default {
     }
   },
   methods: {
-    ...mapActions({ getAdminAccounts: "authentication/getAdminAccounts" }),
+    ...mapActions({
+      getAdminAccounts: "authentication/getAdminAccounts",
+      isActiveAccount: "authentication/isActiveAccount"
+    }),
+    disableAccount(event) {
+      this.$swal({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then(async result => {
+        if (result.value) {
+          await this.isActiveAccount({
+            id: event,
+            isActive: false
+          });
+        }
+        await this.getAdminAccounts();
+      });
+    },
+    async enableAccount(event) {
+      await this.isActiveAccount({ id: event, isActive: true });
+      await this.getAdminAccounts();
+    },
     Clear() {
       this.startFromDate = "";
       this.startToDate = "";

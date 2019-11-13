@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" scrollable width="800px">
     <template v-slot:activator="{ on }">
-      <v-btn icon color="warning" v-on="on" @click="clickEdit()">
+      <v-btn icon color="warning" v-on="on" @click="clickEdit(accountID)">
         <v-icon>edit</v-icon>
       </v-btn>
     </template>
@@ -23,7 +23,7 @@
               v-model="email"
               label="Email*"
               class="text__14"
-              required
+              readonly
               :value="email"
               :error-messages="emailErrors"
               @blur="$v.email.$touch()"
@@ -87,7 +87,6 @@
               label="Phone"
               class="text__14"
               :value="phone"
-              required
               :error-messages="phoneErrors"
               @blur="$v.phone.$touch()"
               @input="$v.phone.$touch()"
@@ -197,8 +196,6 @@
   </v-dialog>
 </template>
 <script>
-import CKEditor from "../CKEditor/Ckeditor5";
-import PopupCreateCustomer from "./CreateCustomer.vue";
 import {
   required,
   minLength,
@@ -209,10 +206,7 @@ import {
 import { mapActions, mapGetters } from "vuex";
 import axios from "axios";
 export default {
-  components: {
-    CKEditor,
-    PopupCreateCustomer
-  },
+  props: ["accountID"],
   data() {
     return {
       dialog: false,
@@ -265,20 +259,20 @@ export default {
     firstname: { required, maxLength: maxLength(50) },
     lastname: { required, maxLength: maxLength(50) },
     phone: {
-      required,
       maxLength: maxLength(10),
       between: between(0, 9999999999)
     },
     age: { between: between(18, 100) },
     email: { required, email },
     role: { required },
-    form: ["firstname", "lastname", "email", "phone", "role"]
+    form: ["firstname", "lastname", "role"]
   },
   computed: {
     ...mapGetters([
       "listMarketersBasic",
       "listEditorsBasic",
-      "listWritersBasic"
+      "listWritersBasic",
+      "adminUserDetail"
     ]),
     firstnameErrors() {
       const errors = [];
@@ -299,7 +293,6 @@ export default {
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.required && errors.push("Please enter your email");
       !this.$v.email.email && errors.push("Invalid email");
       return errors;
     },
@@ -308,7 +301,6 @@ export default {
       if (!this.$v.phone.$dirty) return errors;
       !this.$v.phone.maxLength && errors.push("Phone up to 10 numbers");
       !this.$v.phone.between && errors.push("Phone must be integer");
-      !this.$v.phone.required && errors.push("Please enter your phone");
       return errors;
     },
     ageErrors() {
@@ -326,25 +318,90 @@ export default {
   },
   methods: {
     ...mapActions({
-      createAccount: "authentication/createAccount",
+      editAccount: "authentication/editAccount",
       getAdminAccounts: "authentication/getAdminAccounts",
       getMarketersBasic: "authentication/getMarketersBasic",
       getEditorsBasic: "authentication/getEditorsBasic",
-      getWritersBasic: "authentication/getWritersBasic"
+      getWritersBasic: "authentication/getWritersBasic",
+      getEditorsForWriter: "authentication/getEditorsForWriter",
+      getAdminUserDetails: "authentication/getAdminUserDetails",
+      setMaketersBasic: "authentication/setMaketersBasic",
+      setEditorsBasic: "authentication/setEditorsBasic",
+      setWritersBasic: "authentication/setWritersBasic",
+      removeElementMarketer: "authentication/removeElementMarketer",
+      removeElementEditor: "authentication/removeElementEditor",
+      removeElementWriter: "authentication/removeElementWriter"
     }),
-    listEmployees(event) {
+    async listEmployees(event) {
       if (event == 1) {
+        await this.getEditorsBasic();
+        if (this.adminUserDetail.role.id == 1) {
+          await this.setEditorsBasic(this.adminUserDetail.editor);
+        } else {
+          await Promise.all([
+            this.removeElementEditor(this.adminUserDetail.id),
+            this.removeElementMarketer(this.adminUserDetail.id),
+            this.removeElementWriter(this.adminUserDetail.id)
+          ]);
+        }
         this.isMarketer = true;
         this.isEditor = false;
         this.isWriter = false;
+        this.editor = [];
+        this.marketer = [];
+        this.writer = [];
+        if (
+          this.adminUserDetail.role.id == 1 &&
+          this.adminUserDetail.choiceEditor
+        ) {
+          this.editor = this.adminUserDetail.choiceEditor;
+        }
       } else if (event == 2) {
+        await Promise.all([this.getMarketersBasic(), this.getWritersBasic()]);
+        if (this.adminUserDetail.role.id == 2) {
+          await this.setWritersBasic(this.adminUserDetail.writer);
+        } else {
+          await Promise.all([
+            this.removeElementEditor(this.adminUserDetail.id),
+            this.removeElementMarketer(this.adminUserDetail.id),
+            this.removeElementWriter(this.adminUserDetail.id)
+          ]);
+        }
         this.isMarketer = false;
         this.isEditor = true;
         this.isWriter = false;
-      } else {
+        this.editor = [];
+        this.marketer = [];
+        this.writer = [];
+        if (
+          this.adminUserDetail.role.id == 2 &&
+          this.adminUserDetail.choiceMarketer
+        ) {
+          this.marketer = this.adminUserDetail.choiceMarketer[0];
+        }
+      } else if (event == 3) {
+        await this.getEditorsBasic();
+        if (this.adminUserDetail.role.id == 3) {
+          await this.setEditorsBasic(this.adminUserDetail.editor);
+        } else {
+          await Promise.all([
+            this.removeElementEditor(this.adminUserDetail.id),
+            this.removeElementMarketer(this.adminUserDetail.id),
+            this.removeElementWriter(this.adminUserDetail.id)
+          ]);
+        }
         this.isMarketer = false;
         this.isEditor = false;
         this.isWriter = true;
+        this.editor = [];
+        this.marketer = [];
+        this.writer = [];
+        if (
+          this.adminUserDetail.role.id == 3 &&
+          this.adminUserDetail.choiceEditor
+        ) {
+          this.editor = this.adminUserDetail.choiceEditor[0];
+        }
       }
     },
     async edit() {
@@ -353,18 +410,19 @@ export default {
       let listMarketers = [];
       let listEditors = [];
       if (!this.$v.form.$invalid) {
-        // await this.createAccount({
-        //   email: this.email,
-        //   lastName: this.lastname,
-        //   firstName: this.firstname,
-        //   gender: this.gender,
-        //   age: this.age,
-        //   phone: this.phone,
-        //   role: this.role,
-        //   idMarketer: listMarketers.concat(this.marketer),
-        //   idEditor: listEditors.concat(this.editor),
-        //   idWriter: this.writer
-        // });
+        await this.editAccount({
+          id: this.accountID,
+          email: this.email,
+          lastName: this.lastname,
+          firstName: this.firstname,
+          gender: this.gender,
+          age: this.age,
+          phone: this.phone,
+          role: this.role,
+          idMarketer: listMarketers.concat(this.marketer),
+          idEditor: listEditors.concat(this.editor),
+          idWriter: this.writer
+        });
         await this.getAdminAccounts();
         this.loadingCreate = false;
         this.dialog = false;
@@ -372,26 +430,48 @@ export default {
       this.loadingCreate = false;
     },
 
-    async clickEdit() {
-      this.firstname = "";
-      this.lastname = "";
-      this.email = "";
-      this.gender = "";
-      this.age = "";
-      this.phone = "";
-      this.role = "";
-      this.writer = [];
-      this.editor = [];
-      this.marketer = [];
-      this.isMarketer = false;
-      this.isEditor = false;
-      this.isWriter = false;
-      this.$v.form.$reset();
+    async clickEdit(event) {
       await Promise.all([
         this.getMarketersBasic(),
         this.getEditorsBasic(),
-        this.getWritersBasic()
+        this.getWritersBasic(),
+        this.getAdminUserDetails(event)
       ]);
+      this.firstname = this.adminUserDetail.firstName;
+      this.lastname = this.adminUserDetail.lastName;
+      this.email = this.adminUserDetail.email;
+      this.gender = this.adminUserDetail.gender;
+      this.age = this.adminUserDetail.age;
+      this.phone = this.adminUserDetail.phone;
+      if (this.adminUserDetail.role.id == 1) {
+        await this.setEditorsBasic(this.adminUserDetail.editor);
+        this.isMarketer = true;
+        this.isEditor = false;
+        this.isWriter = false;
+        this.editor = this.adminUserDetail.choiceEditor;
+      } else if (this.adminUserDetail.role.id == 2) {
+        await Promise.all([
+          this.getMarketersBasic(),
+          this.setWritersBasic(this.adminUserDetail.writer)
+        ]);
+        this.isMarketer = false;
+        this.isEditor = true;
+        this.isWriter = false;
+        if (this.adminUserDetail.choiceMarketer) {
+          this.marketer = this.adminUserDetail.choiceMarketer[0];
+        }
+      } else if (this.adminUserDetail.role.id == 3) {
+        await this.setEditorsBasic(this.adminUserDetail.editor);
+        this.isMarketer = false;
+        this.isEditor = false;
+        this.isWriter = true;
+        if (this.adminUserDetail.choiceEditor) {
+          this.editor = this.adminUserDetail.choiceEditor[0];
+        }
+      }
+      this.role = this.adminUserDetail.role.id;
+      this.writer = this.adminUserDetail.choiceWriter;
+      this.$v.form.$reset();
     }
   }
 };

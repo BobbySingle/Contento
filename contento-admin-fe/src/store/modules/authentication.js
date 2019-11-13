@@ -18,7 +18,11 @@ import {
   APIcreateAccount,
   APIgetMarketers,
   APIgetEditors,
-  APIgetWriters
+  APIgetWriters,
+  APIgetEditorsForWriter,
+  APIgetInfoAccount,
+  APIeditAccount,
+  APIisActiveAccount
 } from "../../services/authentication";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -40,6 +44,7 @@ const state = {
   listMarketersBasic: [],
   listEditorsBasic: [],
   listWritersBasic: [],
+  adminUserDetail: ""
 };
 const mutations = {
   SET_ACCESS_TOKEN(state, data) {
@@ -99,6 +104,21 @@ const mutations = {
   },
   SET_WRITERS_BASIC(state, data) {
     state.listWritersBasic = data
+  },
+  SET_ADMIN_USER_DETAIL(state, data) {
+    state.adminUserDetail = data
+  },
+  DELETE_MARKETER_BASIC(state, id){
+    const IdElementDelete = state.listMarketersBasic.findIndex(l => l.id === id);
+    state.listMarketersBasic.splice(IdElementDelete, 1);
+  },
+  DELETE_EDITOR_BASIC(state, id){
+    const IdElementDelete = state.listEditorsBasic.findIndex(l => l.id === id);
+    state.listEditorsBasic.splice(IdElementDelete, 1);
+  },
+  DELETE_WRITER_BASIC(state, id){
+    const IdElementDelete = state.listWritersBasic.findIndex(l => l.id === id);
+    state.listWritersBasic.splice(IdElementDelete, 1);
   },
 };
 const actions = {
@@ -355,6 +375,56 @@ const actions = {
       })
     }
   },
+  async editAccount({ commit }, payload) {
+    try {
+      let rs = await APIeditAccount(payload);
+      if (rs.status == 202) {
+        console.log("EDIT ACCOUNT");
+        console.log(rs.data);
+        Vue.notify({
+          group: 'notice',
+          title: 'Edit successful!',
+          text: 'Account has been edited successfully!',
+          type: 'suc'
+        })
+        return 202;
+      }
+    } catch (error) {
+      console.log("ERROR - EDIT ACCOUNT");
+      console.log(error);
+      Vue.notify({
+        group: 'notice',
+        title: 'Edit failed!',
+        text: 'Account has been edited failed!',
+        type: 'warn'
+      })
+    }
+  },
+  async isActiveAccount({ commit }, payload) {
+    try {
+      let rs = await APIisActiveAccount(payload);
+      if (rs.status == 202) {
+        console.log("CHANGE STATUS ACCOUNT");
+        console.log(rs.data);
+        Vue.notify({
+          group: 'notice',
+          title: 'Change successful!',
+          text: 'Account has been changed status successfully!',
+          type: 'suc'
+        })
+        return 202;
+      }
+    } catch (error) {
+      console.log("ERROR - CHANGE STATUS ACCOUNT");
+      console.log(error);
+      Vue.notify({
+        group: 'notice',
+        title: 'Change failed!',
+        text: 'Account has been changed status failed!',
+        type: 'warn'
+      })
+    }
+  },
   async getMarketersBasic({ commit }) {
     try {
       let rs = await APIgetMarketers();
@@ -396,6 +466,52 @@ const actions = {
       console.log("ERROR - GET WRITERS BASIC");
       console.log(error);
     }
+  },
+  async getEditorsForWriter({ commit }) {
+    try {
+      let rs = await APIgetEditorsForWriter();
+      if (rs.status == 200) {
+        console.log("GET EDITORS FOR WRITER");
+        console.log(rs.data);
+        commit("SET_EDITORS_BASIC", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - GET EDITORS FOR WRITER");
+      console.log(error);
+    }
+  },
+  async getAdminUserDetails({ commit }, payload) {
+    try {
+      let rs = await APIgetInfoAccount(payload);
+      if (rs.status == 200) {
+        console.log("GET ADMIN USER DETAIL");
+        console.log(rs.data);
+        commit("SET_ADMIN_USER_DETAIL", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - GET ADMIN USER DETAIL");
+      console.log(error);
+    }
+  },
+  removeElementMarketer({ commit }, payload) {
+    commit("DELETE_MARKETER_BASIC", payload);
+  },
+  removeElementEditor({ commit }, payload) {
+    commit("DELETE_EDITOR_BASIC", payload);
+  },
+  removeElementWriter({ commit }, payload) {
+    commit("DELETE_WRITER_BASIC", payload);
+  },
+  setMaketersBasic({ commit }, payload) {
+    commit("SET_MARKETERS_BASIC", payload);
+  },
+  setEditorsBasic({ commit }, payload) {
+    commit("SET_EDITORS_BASIC", payload);
+  },
+  setWritersBasic({ commit }, payload) {
+    commit("SET_WRITERS_BASIC", payload);
   },
   refreshFullName({ commit }) {
     let profile = JSON.parse(localStorage.getItem("Profile").toString());

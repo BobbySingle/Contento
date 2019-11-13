@@ -108,13 +108,28 @@ export function APIgetWriters() {
     `${API_URL}/api/authentication/writer-basic`
   );
 }
+export function APIgetEditorsForWriter() {
+  return axios.get(
+    `${API_URL}/api/authentication/editor-basic-writer`
+  );
+}
 export function APIcreateAccount(data) {
   return axios.post(
     `${API_URL}/api/authentication/user`, data
   );
 }
-// export function APIgetInfoAccount(id) {
-//   return axios.get(
-//     `${API_URL}/api/authentication/user`, data
-//   );
-// }
+export function APIgetInfoAccount(id) {
+  return axios.get(
+    `${API_URL}/api/authentication/user-detail/${id}`,
+  );
+}
+export function APIeditAccount(data) {
+  return axios.put(
+    `${API_URL}/api/authentication/user`, data
+  );
+}
+export function APIisActiveAccount(data) {
+  return axios.put(
+    `${API_URL}/api/authentication/user-delete`, data
+  );
+}

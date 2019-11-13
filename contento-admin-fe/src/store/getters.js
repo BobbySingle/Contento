@@ -17,6 +17,7 @@ const getters = {
   listMarketersBasic: state => state.authentication.listMarketersBasic,
   listEditorsBasic: state => state.authentication.listEditorsBasic,
   listWritersBasic: state => state.authentication.listWritersBasic,
+  adminUserDetail: state => state.authentication.adminUserDetail,
 
   //Campaign
   listCampaign: state => state.campaign.listCampaign,
