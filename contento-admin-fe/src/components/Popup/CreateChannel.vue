@@ -105,8 +105,20 @@
                   prepend-inner-icon="vpn_key"
                   required
                   :error-messages="tokenErrors"
-                  @blur="$v.token.$touch()"
+                  @blur="$v.token.$touch(),setLink()"
                   @input="$v.token.$touch()"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="link"
+                  label="Link"
+                  class="text__14"
+                  prepend-inner-icon="public"
+                  required
+                  disabled
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -126,6 +138,7 @@ export default {
       dialog: false,
       menu: false,
       name: "",
+      link: "",
       token: "",
       channel: "",
       customer: "",
@@ -196,6 +209,9 @@ export default {
     }
   },
   methods: {
+    setLink() {
+      this.link = "Link updating...";
+    },
     toggle() {
       this.$nextTick(() => {
         if (this.selectAllTags) {
@@ -241,6 +257,7 @@ export default {
       this.token = "";
       this.channel = "";
       this.customer = "";
+      this.link = "";
       this.tags = [];
       this.$v.form.$reset();
     }

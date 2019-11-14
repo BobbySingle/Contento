@@ -178,7 +178,7 @@
                 label="Contento Website"
                 prepend-inner-icon="mdi-web"
                 multiple
-                attach
+                @change="changeWebsite"
               >
                 <template v-slot:selection="{ attrs, item,index, select, selected }">
                   <v-chip
@@ -190,8 +190,28 @@
               </v-select>
             </v-col>
           </v-row>
+          <v-row no-gutters class=".flex-nowrap" justify="end" v-if="showAds">
+            <v-switch v-model="isAds" label="Advertise this content" class="mr-3"></v-switch>
+            <div class="mt-2">
+              <datetime
+                title="Set time to end advertise"
+                type="datetime"
+                v-model="endAds"
+                placeholder="Time end advertise"
+                :min-datetime="minAds"
+                input-class="css_time"
+                class="text__14 out_css_time"
+                auto
+              ></datetime>
+            </div>
+          </v-row>
           <v-row justify="end">
-            <v-btn color="primary" class="text__14" @click="publish()" :loading="loading">Publish</v-btn>
+            <v-btn
+              color="primary"
+              class="text__14 ml-3"
+              @click="publish()"
+              :loading="loading"
+            >Publish</v-btn>
           </v-row>
         </v-col>
       </v-row>
@@ -221,6 +241,10 @@ export default {
       fanpageFB: [],
       fanpageWP: [],
       // fanpageCS: [],
+      isAds: false,
+      showAds: false,
+      endAds: "",
+      minAds: "",
       websiteCTT: [],
       title: "",
       name: "",
@@ -288,6 +312,19 @@ export default {
       this.fanpageFB = this.fanpagesTag.Facebook;
       this.fanpageWP = this.fanpagesTag.Wordpress;
       this.websiteCTT = this.fanpagesTag.Contento;
+      if (this.websiteCTT == "") {
+        this.showAds = false;
+      } else {
+        this.showAds = true;
+      }
+      this.minAds = this.$moment()
+        .add(4, "days")
+        .startOf("day")
+        .toISOString();
+      this.endAds = this.$moment()
+        .add(5, "days")
+        .startOf("day")
+        .toISOString();
       this.overlay = false;
       this.indeterminate = false;
     },
@@ -330,6 +367,17 @@ export default {
       this.fanpageFB = this.fanpagesTag.Facebook;
       this.fanpageWP = this.fanpagesTag.Wordpress;
       this.websiteCTT = this.fanpagesTag.Contento;
+    },
+    changeWebsite() {
+      if (this.websiteCTT == "") {
+        this.showAds = false;
+      } else {
+        this.showAds = true;
+      }
+      this.minAds = this.$moment()
+        .add(4, "days")
+        .startOf("day")
+        .toISOString();
     }
   },
   computed: {
@@ -363,6 +411,22 @@ export default {
 };
 </script>
 <style scoped>
+::v-deep .css_time {
+  cursor: pointer;
+  padding-left: 10px;
+  padding-top: 10px;
+  width: 100%;
+}
+.out_css_time {
+  background: url(../../../assets/calendar.png) no-repeat scroll 7px 7px;
+  max-width: 400px;
+  min-width: 300px;
+  padding-left: 30px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #737373;
+  overflow: hidden;
+}
+
 ::v-deep .v-expansion-panels {
   z-index: inherit;
 }
@@ -371,6 +435,7 @@ export default {
   align-items: center;
   height: 100%;
 }
+
 .endtime {
   border-bottom: 1px solid #999999;
   height: 32px;
