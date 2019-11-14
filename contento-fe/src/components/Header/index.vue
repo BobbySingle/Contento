@@ -1,7 +1,7 @@
 <template>
   <!-- <v-app-bar app dense elevate-on-scroll> -->
   <v-app-bar flat>
-    <!-- <v-menu
+    <v-menu
       bottom
       max-height="200"
       min-width="400"
@@ -17,14 +17,14 @@
       <v-list>
         <v-list-item
           style="float: left;  width:50%; background: white;"
-          v-for="(item,i) in items"
-          :key="i"
-          @click="clickCategory(item.title)"
+          v-for="item in listTag"
+          :key="item.id"
+          @click="clickCategory(item.id)"
         >
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item-title>{{ item.name }}</v-list-item-title>
         </v-list-item>
       </v-list>
-    </v-menu>-->
+    </v-menu>
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-toolbar-title
@@ -34,11 +34,10 @@
     align-items: center;"
         @click="goHome()"
       >
-        <img src="@/assets/Logo.png" style="display:block; height:90%;" />
+        <img src="@/assets/Logo.png" style="display:block; height:90%; width:auto;" />
         <span>ontento</span>
       </v-toolbar-title>
     </v-toolbar-items>
-
     <v-spacer></v-spacer>
 
     <!-- <v-toolbar-items>
@@ -50,31 +49,28 @@
         v-model="search"
       ></v-text-field>
     </v-toolbar-items>-->
-    <sign-in />
-    <sign-up />
+    <div v-if="!this.$store.state.authentication.loggedUser">
+      <sign-in />
+      <sign-up />
+    </div>
+    <div v-if="this.$store.state.authentication.loggedUser">
+      <v-divider vertical inset dark></v-divider>
+      <v-btn text style="text-transform: capitalize; color:black;" @click="profile()">{{fullname}}</v-btn>
+      <v-divider vertical inset dark></v-divider>
+      <v-btn icon @click="logout()" style=" color:black;">
+        <v-icon>mdi-export</v-icon>
+      </v-btn>
+    </div>
   </v-app-bar>
 </template>
 <script>
 import SignIn from "../Dialog/SignIn.vue";
 import SignUp from "../Dialog/SignUp.vue";
+import { mapActions, mapGetters } from "vuex";
 export default {
   components: { SignIn, SignUp },
   data: () => ({
     search: "",
-    items: [
-      { title: "Topic 1" },
-      { title: "Topic 2" },
-      { title: "Topic 3" },
-      { title: "Topic 4" },
-      { title: "Topic 5" },
-      { title: "Topic 6" },
-      { title: "Topic 7" },
-      { title: "Topic 8" },
-      { title: "Topic 9" },
-      { title: "Topic 10" },
-      { title: "Topic 11" },
-      { title: "Topic 12" }
-    ],
     valid: true,
     username: "",
     usernameRules: [
@@ -88,8 +84,8 @@ export default {
     ],
     checkbox: false
   }),
-
   methods: {
+    ...mapActions({ getContent: "viewer/getContent" }),
     goHome() {
       this.$router.push("/").catch(err => {});
     },
@@ -103,7 +99,29 @@ export default {
     },
     reset() {
       this.$refs.form.reset();
+    },
+    async logout() {
+      localStorage.clear();
+      this.$store.state.authentication.loggedUser = false;
+      await this.getContent();
+      this.$router.push("/").catch(err => {});
+    },
+    ...mapActions({
+      refreshFullName: "authentication/refreshFullName",
+      getTags: "viewer/getTags"
+    }),
+    async fetchData() {
+      await this.getTags();
+      if (localStorage.getItem("ProfileUser")) {
+        await this.refreshFullName();
+      }
     }
+  },
+  mounted() {
+    this.fetchData();
+  },
+  computed: {
+    ...mapGetters(["fullname", "listTag", "getUser"])
   }
 };
 </script>

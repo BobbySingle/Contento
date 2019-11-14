@@ -1,4 +1,4 @@
-import { createCookie, getContent, getTags, getNewsDetails } from "../../services/viewer"
+import { APIcreateCookie, APIgetContent, APIgetTags, APIgetNewsDetails } from "../../services/viewer"
 
 const state = {
     news: [],
@@ -6,6 +6,7 @@ const state = {
     itemsPerPage: 4,
     totalPages: 0,
     tags: [],
+    listTag: [],
     newsDetails: null
 }
 const mutations = {
@@ -29,7 +30,9 @@ const mutations = {
     },
     setNewsDetails(state, payload) {
         state.newsDetails = payload;
-    }
+    }, SET_LISTTAG(state, data) {
+        state.listTag = data;
+    },
 }
 const actions = {
     setCurrentSelectedPage({ commit }, payload) {
@@ -50,7 +53,7 @@ const actions = {
     },
     async createCookie({ commit }, payload) {
         try {
-            let rs = await createCookie(payload);
+            let rs = await APIcreateCookie(payload);
             console.log("Cookies");
             console.log(rs);
             if (rs.status == 200) {
@@ -62,9 +65,9 @@ const actions = {
             console.log(error);
         }
     },
-    async getContent({ commit }, ) {
+    async getContent({ commit }, payload) {
         try {
-            let rs = await getContent();
+            let rs = await APIgetContent(payload);
             console.log(rs);
             if (rs.status == 200) {
                 commit("setNewsData", rs.data);
@@ -78,13 +81,10 @@ const actions = {
     },
     async getTags({ commit }) {
         try {
-            let rs = await getTags();
+            let rs = await APIgetTags();
             console.log(rs);
-            // if (rs.status == 200) {
             commit("setTags", rs.data);
-            //     console.log("getTags OK");
-            //     console.log(rs.data);
-            // }
+
         } catch (error) {
             console.log("getTags Not OK");
             console.log(error);
@@ -92,7 +92,7 @@ const actions = {
     },
     async getNewsDetails({ commit }, payload) {
         try {
-            let rs = await getNewsDetails(payload);
+            let rs = await APIgetNewsDetails(payload);
             console.log("NEW");
             console.log(rs.data);
             if (rs.status == 200) {
@@ -102,7 +102,7 @@ const actions = {
         } catch (error) {
             console.log(error);
         }
-    }
+    },
 }
 
 export default {

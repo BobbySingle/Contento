@@ -88,7 +88,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getPaginationNews", "listCategory", "topNews"]),
+    ...mapGetters(["getPaginationNews", "listCategory", "topNews", "getUser"]),
     isInFirstPage() {
       return this.$store.state.currentPage === 1;
     },
@@ -127,7 +127,7 @@ export default {
           value: this.$cookies.get("CCTT")
         });
         await this.$cookies.set("CCTT", this.$cookies.get("CCTT"), Infinity);
-        await this.getContent();
+        await this.getContent(this.getUser.id);
       }
     }
   },
