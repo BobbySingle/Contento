@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto" height="300px" @click="clickNews(news.idTask)">
+  <v-card class="mx-auto" height="300px" @click="clickNews(news)">
     <v-img :src="news.image[0]" height="200px"></v-img>
 
     <v-card-text class="black--text">
@@ -15,14 +15,28 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 export default {
   props: ["news"],
   data() {
     return {};
   },
+  computed: {
+    ...mapGetters(["getUser"])
+  },
   methods: {
-    clickNews(event) {
-      sessionStorage.setItem("NewsID", event);
+    ...mapActions({
+      countContent: "viewer/countContent"
+    }),
+    async clickNews(event) {
+      sessionStorage.setItem("NewsID", event.idTask);
+      if (this.$store.state.authentication.loggedUser) {
+        await this.countContent({
+          idUser: this.getUser.id,
+          idTask: event.idTask,
+          tags: event.listIntTags
+        });
+      }
       this.$router.push("/News");
     }
   }

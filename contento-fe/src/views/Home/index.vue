@@ -10,13 +10,13 @@
     <v-row no-gutters>
       <v-col cols="12" md="8">
         <h2 class="topic-title">
-          <v-icon color="black" class="mb-2">grade</v-icon>Recommend
+          <v-icon color="black" class="mb-2">grade</v-icon>Hot News
         </h2>
         <v-carousel cycle hide-delimiter-background show-arrows-on-hover class="slide">
-          <v-carousel-item v-for="(item,i) in topNews" :key="i" :src="item.image[0]">
+          <v-carousel-item v-for="(item,i) in trends" :key="i" :src="item.image[0]">
             <div class="slide-title">
               <v-row class="line-clamp">
-                <h2 class="news_title" @click="clickNews(item.idTask)">{{item.contents.name}}</h2>
+                <h2 class="news_title" @click="clickNews(item)">{{item.contents.name}}</h2>
               </v-row>
               <v-row justify="start">
                 <v-icon small class="mr-1">today</v-icon>
@@ -32,31 +32,58 @@
       <v-col class="d-none d-md-block" md="4">
         <!-- /** frame-post */ -->
         <div class="frame-post">
-          <h2 style="text-align: center;">What's Hot</h2>
+          <h2 style="text-align: center;">Sponsored Content</h2>
           <!-- /**List post */ -->
           <div class="inner-frame-post">
             <!-- /**Small post */ -->
-            <div style="margin-bottom:10px;" v-for="item in topNews" :key="item.id">
+            <div style="margin-bottom:10px;" v-for="item in ads" :key="item.id">
               <small-news :news="item" />
             </div>
           </div>
         </div>
       </v-col>
     </v-row>
-    <v-row class="py-12">
-      <v-col cols="4" md="3" v-for="item in getPaginationNews" :key="item.id">
+    <v-row>
+      <v-col cols="12">
+        <h2 class="topic-title">
+          <v-icon color="black" class="mb-2">grade</v-icon>For you
+        </h2>
+      </v-col>
+      <v-col cols="12" sm="4" md="3" v-for="item in getPaginationNews" :key="item.id">
         <card-news :news="item" />
       </v-col>
     </v-row>
     <div class="text-xs-center" style="margin-bottom: 50px">
       <v-pagination
-        v-model="this.$store.state.viewer.currentPage"
+        v-model="$store.state.viewer.currentPage"
         :length="this.$store.state.viewer.totalPages"
         :total-visible="7"
         @input="onClickPage"
         next=":disabled='isInLastPage'"
         previous=":disabled='isInFirstPage'"
       ></v-pagination>
+    </div>
+    <div v-if="this.$store.state.authentication.loggedUser">
+      <v-row>
+        <v-col cols="12">
+          <h2 class="topic-title">
+            <v-icon color="black" class="mb-2">grade</v-icon>May be you favorite
+          </h2>
+        </v-col>
+        <v-col cols="12" sm="4" md="3" v-for="item in getPaginationRecommend" :key="item.id">
+          <card-news :news="item" />
+        </v-col>
+      </v-row>
+      <div class="text-xs-center" style="margin-bottom: 50px">
+        <v-pagination
+          v-model="$store.state.viewer.currentRecommendPage"
+          :length="this.$store.state.viewer.totalRecommendPages"
+          :total-visible="7"
+          @input="onClickRecommendPage"
+          next=":disabled='isInLastRecommendPage'"
+          previous=":disabled='isInFirstRecommendPage'"
+        ></v-pagination>
+      </div>
     </div>
     <v-dialog v-model="dialog" persistent width="500">
       <v-card>
@@ -88,58 +115,90 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getPaginationNews", "listCategory", "topNews", "getUser"]),
+    ...mapGetters([
+      "getPaginationNews",
+      "getPaginationRecommend",
+      "listCategory",
+      "trends",
+      "getUser",
+      "ads",
+      "recommend"
+    ]),
     isInFirstPage() {
-      return this.$store.state.currentPage === 1;
+      return this.$store.state.viewer.currentPage === 1;
     },
     isInLastPage() {
-      return this.$store.state.currentPage === this.$store.state.totalPages;
+      return (
+        this.$store.state.viewer.currentPage ===
+        this.$store.state.viewer.totalPages
+      );
+    },
+    isInFirstRecommendPage() {
+      return this.$store.state.viewer.currentRecommendPage === 1;
+    },
+    isInLastRecommendPage() {
+      return (
+        this.$store.state.viewer.currentRecommendPage ===
+        this.$store.state.viewer.totalRecommendPages
+      );
     }
   },
   methods: {
-    clickNews(event) {
-      sessionStorage.setItem("NewsID", event);
+    async clickNews(event) {
+      sessionStorage.setItem("NewsID", event.idTask);
+      if (this.$store.state.authentication.loggedUser) {
+        await this.countContent({
+          idUser: this.getUser.id,
+          idTask: event.idTask,
+          tags: event.listIntTags
+        });
+      }
       this.$router.push("/News");
     },
     ...mapActions({
       setCurrentSelectedPage: "viewer/setCurrentSelectedPage",
-      setNewsData: "viewer/setNewsData",
-      createCookie: "viewer/createCookie",
+      setCurrentRecommendSelectedPage: "viewer/setCurrentRecommendSelectedPage",
       getContent: "viewer/getContent",
-      getTags: "viewer/getTags"
+      getTags: "viewer/getTags",
+      getTrends: "viewer/getTrends",
+      getAds: "viewer/getAds",
+      countContent: "viewer/countContent",
+      getRecommendNews: "viewer/getRecommendNews"
     }),
-    onClickPage(selectedPage) {
-      this.setCurrentSelectedPage(selectedPage);
+    onClickPage(page) {
+      this.setCurrentSelectedPage(page);
+    },
+    onClickRecommendPage(page) {
+      this.setCurrentRecommendSelectedPage(page);
     },
     async clickOK() {
-      await this.createCookie({ key: "CCTT", value: this.userSelectedTopics });
-      await this.$cookies.set("CCTT", this.userSelectedTopics, Infinity);
-      await this.getContent();
+      localStorage.setItem("guest", JSON.stringify(this.userSelectedTopics));
+      if (this.userSelectedTopics == "") {
+        await this.getContent({ tags: [0] });
+      } else {
+        await this.getContent({ tags: this.userSelectedTopics });
+      }
       this.dialog = false;
     },
     async setData() {
-      await this.getTags();
-      if (this.$cookies.get("CCTT") == undefined) {
+      await Promise.all([this.getTags(), this.getTrends(), this.getAds()]);
+      let guest = JSON.parse(localStorage.getItem("guest"));
+      if (this.$store.state.authentication.loggedUser) {
+        await this.getRecommendNews(this.getUser.id);
+      }
+      if (guest == undefined) {
+        await this.getContent({ tags: [0] });
         this.dialog = true;
       } else {
-        await this.createCookie({
-          key: "CCTT",
-          value: this.$cookies.get("CCTT")
-        });
-        await this.$cookies.set("CCTT", this.$cookies.get("CCTT"), Infinity);
-        await this.getContent(this.getUser.id);
+        if (guest == "") {
+          await this.getContent({ tags: [0] });
+        } else {
+          await this.getContent({ tags: guest });
+        }
       }
     }
   },
   mounted() {
-    axios.defaults.headers = {
-      "Access-Control-Allow-Credentials": true,
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "*",
-      "Content-Type": "application/json",
-      withCredentials: true,
-      crossDomain: true
-    };
     this.setData();
   }
 };

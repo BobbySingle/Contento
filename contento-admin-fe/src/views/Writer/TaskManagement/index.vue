@@ -144,7 +144,7 @@
           </v-data-table>
           <v-row justify="center">
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount"></v-pagination>
+              <v-pagination v-model="page" :length="pageCount" :total-visible="7"></v-pagination>
             </div>
           </v-row>
         </v-row>

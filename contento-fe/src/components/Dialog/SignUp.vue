@@ -225,6 +225,7 @@ export default {
       getTags: "viewer/getTags",
       register: "authentication/register",
       getContent: "viewer/getContent",
+      getRecommendNews: "viewer/getRecommendNews"
     }),
     async fetchData() {
       await Promise.all([this.getTags()]);
@@ -241,7 +242,10 @@ export default {
           tags: this.tags
         });
         if (status == 202) {
-          await this.getContent(this.getUser.id);
+          await this.getContent({ id: this.getUser.id, tags: [0] });
+          if (this.$store.state.authentication.loggedUser) {
+            await this.getRecommendNews(this.getUser.id);
+          }
           this.loading = false;
           this.dialog = false;
         }

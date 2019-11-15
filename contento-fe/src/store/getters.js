@@ -8,9 +8,21 @@ const getters = {
     listCategory: state => state.viewer.tags,
     newsDetails: state => state.viewer.newsDetails,
     listTag: state => state.viewer.tags,
+    trends: state => state.viewer.trends,
+    ads: state => state.viewer.ads,
+    recommend: state => state.viewer.recommend,
+    getPaginationRecommend: state =>
+    state.viewer.recommend.slice(
+        (state.viewer.currentRecommendPage - 1) * state.viewer.itemsPerRecommendPage,
+        (state.viewer.currentRecommendPage - 1) * state.viewer.itemsPerRecommendPage + state.viewer.itemsPerRecommendPage
+    ),
 
+    getPaginationCate: state =>
+    state.viewer.category.slice(
+        (state.viewer.currentCatePage - 1) * state.viewer.itemsPerCatePage,
+        (state.viewer.currentCatePage - 1) * state.viewer.itemsPerCatePage + state.viewer.itemsPerCatePage
+    ),
 
-    topNews: state => state.viewer.news.slice(0, 10),
 
     //authentication
     profile: state => state.authentication.profile,

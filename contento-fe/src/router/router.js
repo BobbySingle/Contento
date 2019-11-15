@@ -3,6 +3,7 @@ import Router from "vue-router";
 import Home from "@/views/Home/index";
 import Profile from "@/views/Profile/index";
 import News from "@/views/News/index";
+import Category from "@/views/Category/index";
 
 Vue.use(Router);
 
@@ -24,6 +25,11 @@ export default new Router({
       path: "/news",
       name: "News",
       component: News
+    }, 
+    {
+      path: "/category",
+      name: "Category",
+      component: Category
     },
   ]
 });

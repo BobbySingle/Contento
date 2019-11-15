@@ -19,7 +19,7 @@
           style="float: left;  width:50%; background: white;"
           v-for="item in listTag"
           :key="item.id"
-          @click="clickCategory(item.id)"
+          @click="clickCategory(item)"
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
         </v-list-item>
@@ -85,25 +85,37 @@ export default {
     checkbox: false
   }),
   methods: {
-    ...mapActions({ getContent: "viewer/getContent" }),
+    ...mapActions({
+      getContent: "viewer/getContent",
+      getNewsTags: "viewer/getNewsTags",
+      setCategoryName: "viewer/setCategoryName"
+    }),
     goHome() {
       this.$router.push("/").catch(err => {});
     },
     clickCategory(event) {
-      alert(event);
-    },
-    validate() {
-      if (this.$refs.form.validate()) {
-        alert("OK");
-      }
+      sessionStorage.setItem("category", JSON.stringify(event));
+      this.getNewsTags(event.id);
+      this.setCategoryName(event.name);
+      this.$router.push("/Category").catch(err => {});
     },
     reset() {
       this.$refs.form.reset();
     },
     async logout() {
-      localStorage.clear();
+      localStorage.removeItem("ProfileUser");
       this.$store.state.authentication.loggedUser = false;
-      await this.getContent();
+      let guest = JSON.parse(localStorage.getItem("guest"));
+      if (guest == undefined) {
+        await this.getContent({ tags: [0] });
+        this.dialog = true;
+      } else {
+        if (guest == "") {
+          await this.getContent({ tags: [0] });
+        } else {
+          await this.getContent({ tags: guest });
+        }
+      }
       this.$router.push("/").catch(err => {});
     },
     ...mapActions({

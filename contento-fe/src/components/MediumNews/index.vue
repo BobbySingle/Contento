@@ -1,9 +1,9 @@
 <template>
-  <!-- /**Small card  */ -->
+  <!-- /**Medium card  */ -->
   <v-card class="mx-1" @click="clickNews(news)">
     <v-list-item three-line>
       <v-list-item-avatar color="white" tile size="80" style="border-radius:5px;">
-        <!-- /**Small image */ -->
+        <!-- /**Medium image */ -->
         <v-img :src="news.image[0]"></v-img>
       </v-list-item-avatar>
       <v-list-item-content>

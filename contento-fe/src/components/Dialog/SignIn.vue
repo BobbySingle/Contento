@@ -95,7 +95,8 @@ export default {
   methods: {
     ...mapActions({
       login: "authentication/login",
-      getContent: "viewer/getContent"
+      getContent: "viewer/getContent",
+      getRecommendNews: "viewer/getRecommendNews"
     }),
     async signIn() {
       this.$v.login.$touch();
@@ -106,7 +107,10 @@ export default {
           password: this.password
         });
         if (status == 200) {
-          await this.getContent(this.getUser.id);
+          await this.getContent({ id: this.getUser.id, tags: [0] });
+          if (this.$store.state.authentication.loggedUser) {
+            await this.getRecommendNews(this.getUser.id);
+          }
           this.loading = false;
           this.dialog = false;
         }

@@ -7,26 +7,32 @@ if (localStorage.getItem("ProfileUser") != null) {
 }
 
 export function APIcreateCookie(data) {
-    axios.defaults.withCredentials = true;
-    axios.defaults.xsrfCookieName = "csrftoken";
-    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-    axios.defaults.crossDomain = true;
     return axios.get(`${API_URL}/api/contentprocess/cookies/viewer?key=${data.key}&value=${data.value}`);
 }
-export function APIgetContent(userID) {
-    axios.defaults.xsrfCookieName = "csrftoken";
-    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-    axios.defaults.crossDomain = true;
-    if (userID == undefined) {
-        return axios.get(`${API_URL}/api/contentprocess/content/viewer`);
-    }
-    return axios.get(`${API_URL}/api/contentprocess/content/viewer/?id=${userID}`);
+export function APIgetContent(data) {
+    return axios.post(`${API_URL}/api/contentprocess/content/viewer`, data);
 
 }
 export function APIgetTags() {
     return axios.get(`${API_URL}/api/contentprocess/tags`);
 }
+
 export function APIgetNewsDetails(news_id) {
     return axios.get(`${API_URL}/api/contentprocess/content-detail/viewer/${news_id}`);
 }
 
+export function APIgetTrends() {
+    return axios.get(`${API_URL}/api/contentprocess/content/trends`);
+}
+export function APIgetAds() {
+    return axios.get(`${API_URL}/api/contentprocess/content/ads`);
+}
+export function APIgetNewsByTags(tagId) {
+    return axios.get(`${API_URL}/api/contentprocess/content/tag/${tagId}`);
+}
+export function APICountContent(data) {
+    return axios.put(`${API_URL}/api/contentprocess/count-content`, data);
+}
+export function APIrecommend(userID) {
+    return axios.get(`${API_URL}/api/contentprocess/content/recommend/${userID}`);
+}
