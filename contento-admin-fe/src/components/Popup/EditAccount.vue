@@ -5,114 +5,101 @@
         <v-icon>edit</v-icon>
       </v-btn>
     </template>
-    <v-card>
-      <v-toolbar dark color="primary">
-        <v-btn icon dark @click="dialog = false">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-        <v-toolbar-title>Edit Account</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-toolbar-items>
-          <v-btn dark text @click="edit()" :loading="loadingCreate">Edit</v-btn>
-        </v-toolbar-items>
-      </v-toolbar>
-      <v-card-text style="min-height: 300px; padding:0px;">
-        <v-row class="mx-10">
-          <v-col cols="12">
-            <v-text-field
-              v-model="email"
-              label="Email*"
-              class="text__14"
-              readonly
-              :value="email"
-              :error-messages="emailErrors"
-              @blur="$v.email.$touch()"
-              @input="$v.email.$touch()"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="firstname"
-              label="First name*"
-              class="text__14"
-              :value="firstname"
-              required
-              :error-messages="firstnameErrors"
-              @blur="$v.firstname.$touch()"
-              @input="$v.firstname.$touch()"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="lastname"
-              label="Last name*"
-              class="text__14"
-              required
-              :value="lastname"
-              :error-messages="lastnameErrors"
-              @blur="$v.lastname.$touch()"
-              @input="$v.lastname.$touch()"
-            ></v-text-field>
-          </v-col>
+    <v-stepper v-model="stepper" alt-labels>
+      <v-stepper-header flat>
+        <v-stepper-step :complete="stepper > 1" step="1">Information</v-stepper-step>
+        <v-divider v-if="isWriter || isEditor"></v-divider>
+        <v-stepper-step :complete="stepper > 2" step="2" v-if="isWriter || isEditor">
+          <div>Select Manager</div>
+          <small>Optional</small>
+        </v-stepper-step>
+        <v-divider v-if="isMarketer"></v-divider>
+        <v-stepper-step step="2" v-if="isMarketer">
+          <div>Select Member</div>
+          <small>Optional</small>
+        </v-stepper-step>
+        <v-divider v-if="isEditor"></v-divider>
+        <v-stepper-step step="3" v-if="isEditor">
+          Select Member
+          <small>Optional</small>
+        </v-stepper-step>
+      </v-stepper-header>
 
-          <v-col cols="6">
-            <v-select
-              v-model="gender"
-              label="Gender"
-              class="text__14"
-              item-value="id"
-              item-text="name"
-              :value="gender"
-              :items="genders"
-            ></v-select>
-          </v-col>
-
-          <v-col cols="6">
-            <v-text-field
-              v-model="age"
-              type="number"
-              label="Age"
-              class="text__14"
-              :value="age"
-              :error-messages="ageErrors"
-              @blur="$v.age.$touch()"
-              @input="$v.age.$touch()"
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="6">
-            <v-text-field
-              type="number"
-              v-model="phone"
-              label="Phone"
-              class="text__14"
-              :value="phone"
-              :error-messages="phoneErrors"
-              @blur="$v.phone.$touch()"
-              @input="$v.phone.$touch()"
-            ></v-text-field>
-          </v-col>
-
-          <!-- ROLE -->
-          <v-col cols="6">
-            <v-select
-              v-model="role"
-              label="Role*"
-              class="text__14"
-              item-value="id"
-              item-text="name"
-              :value="role"
-              :items="roles"
-              @change="listEmployees"
-              :error-messages="roleErrors"
-              @blur="$v.role.$touch()"
-              @input="$v.role.$touch()"
-            ></v-select>
-          </v-col>
-          <v-col cols="12">
+      <v-stepper-items>
+        <v-stepper-content step="1">
+          <v-card class="mb-12" height="300px" flat>
             <v-row>
-              <!-- Select Employees  -->
-              <v-col cols="6" v-if="isMarketer">
+              <v-col cols="12">
+                <v-text-field
+                  v-model="email"
+                  label="Email*"
+                  class="text__14"
+                  flat
+                  outlined
+                  required
+                  :value="email"
+                  :error-messages="emailErrors"
+                  @blur="$v.email.$touch()"
+                  @input="$v.email.$touch()"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  v-model="firstname"
+                  label="First name*"
+                  class="text__14"
+                  :value="firstname"
+                  flat
+                  outlined
+                  required
+                  :error-messages="firstnameErrors"
+                  @blur="$v.firstname.$touch()"
+                  @input="$v.firstname.$touch()"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  v-model="lastname"
+                  label="Last name*"
+                  class="text__14"
+                  flat
+                  outlined
+                  required
+                  :value="lastname"
+                  :error-messages="lastnameErrors"
+                  @blur="$v.lastname.$touch()"
+                  @input="$v.lastname.$touch()"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-select
+                  v-model="role"
+                  label="Role*"
+                  class="text__14"
+                  item-value="id"
+                  item-text="name"
+                  flat
+                  outlined
+                  :value="role"
+                  :items="roles"
+                  @change="listEmployees"
+                  :error-messages="roleErrors"
+                  @blur="$v.role.$touch()"
+                  @input="$v.role.$touch()"
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-card>
+          <v-row justify="end">
+            <v-btn color="primary" @click="checkData">Continue</v-btn>
+            <v-btn text @click="cancelStepper()">Cancel</v-btn>
+          </v-row>
+        </v-stepper-content>
+
+        <v-stepper-content step="2" v-if="isWriter">
+          <v-card class="mb-12" height="300px" flat>
+            <v-row>
+              <v-col cols="12">
                 <v-select
                   v-model="editor"
                   label="Editor"
@@ -120,8 +107,59 @@
                   item-value="id"
                   item-text="name"
                   :value="editor"
+                  flat
+                  outlined
+                  :items="listEditorsBasic"
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-card>
+          <v-row justify="end">
+            <v-btn color="primary" @click="edit()" :loading="loadingEdit">Update</v-btn>
+            <v-btn text @click="cancelStepper()">Cancel</v-btn>
+          </v-row>
+        </v-stepper-content>
+
+        <v-stepper-content step="2" v-if="isEditor">
+          <v-card class="mb-12" height="300px" flat>
+            <v-row>
+              <v-col cols="12">
+                <v-select
+                  v-model="marketer"
+                  label="Marketer"
+                  class="text__14"
+                  item-value="id"
+                  item-text="name"
+                  :value="marketer"
+                  flat
+                  outlined
+                  :items="listMarketersBasic"
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-card>
+          <v-row justify="end">
+            <v-btn color="primary" @click="stepper = 3">Continue</v-btn>
+
+            <v-btn text @click="cancelStepper()">Cancel</v-btn>
+          </v-row>
+        </v-stepper-content>
+        <v-stepper-content step="2" v-if="isMarketer">
+          <v-card class="mb-12" height="300px" flat>
+            <v-row>
+              <v-col cols="12">
+                <v-select
+                  v-model="editor"
+                  label="Editor"
+                  class="text__14"
+                  item-value="id"
+                  item-text="name"
+                  :value="editor"
+                  flat
+                  outlined
                   :items="listEditorsBasic"
                   multiple
+                  clearable
                   chips
                 >
                   <template v-slot:selection="{ attrs, item,index, select, selected }">
@@ -134,32 +172,30 @@
                   </template>
                 </v-select>
               </v-col>
-              <v-col cols="6" v-if="isEditor">
-                <v-select
-                  v-model="marketer"
-                  label="Marketer"
-                  class="text__14"
-                  item-value="id"
-                  item-text="name"
-                  :value="marketer"
-                  :items="listMarketersBasic"
-                  chips
-                >
-                  <template v-slot:selection="{ attrs, item, select, selected }">
-                    <v-chip color="blue" class="chips">{{ item.name }}</v-chip>
-                  </template>
-                </v-select>
-              </v-col>
-              <v-col cols="6" v-if="isEditor">
+            </v-row>
+          </v-card>
+          <v-row justify="end">
+            <v-btn color="primary" @click="edit()" :loading="loadingEdit">Update</v-btn>
+
+            <v-btn text @click="cancelStepper()">Cancel</v-btn>
+          </v-row>
+        </v-stepper-content>
+        <v-stepper-content step="3" v-if="isEditor">
+          <v-card class="mb-12" height="300px" flat>
+            <v-row>
+              <v-col cols="12">
                 <v-select
                   v-model="writer"
                   label="Writer"
                   class="text__14"
                   item-value="id"
                   item-text="name"
+                  flat
+                  outlined
                   :value="writer"
                   :items="listWritersBasic"
                   multiple
+                  clearable
                   chips
                 >
                   <template v-slot:selection="{ attrs, item,index, select, selected }">
@@ -172,27 +208,16 @@
                   </template>
                 </v-select>
               </v-col>
-              <v-col cols="6" v-if="isWriter">
-                <v-select
-                  v-model="editor"
-                  label="Editor"
-                  class="text__14"
-                  item-value="id"
-                  item-text="name"
-                  :value="editor"
-                  :items="listEditorsBasic"
-                  chips
-                >
-                  <template v-slot:selection="{ attrs, item, select, selected }">
-                    <v-chip color="blue" class="chips">{{ item.name }}</v-chip>
-                  </template>
-                </v-select>
-              </v-col>
             </v-row>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
+          </v-card>
+          <v-row justify="end">
+            <v-btn color="primary" @click="edit()" :loading="loadingEdit">Update</v-btn>
+
+            <v-btn text @click="cancelStepper()">Cancel</v-btn>
+          </v-row>
+        </v-stepper-content>
+      </v-stepper-items>
+    </v-stepper>
   </v-dialog>
 </template>
 <script>
@@ -211,26 +236,11 @@ export default {
     return {
       dialog: false,
       menu: false,
+      stepper: 1,
+
       firstname: "",
       lastname: "",
       email: "",
-      gender: "",
-      age: "",
-      phone: "",
-      genders: [
-        {
-          id: 1,
-          name: "Male"
-        },
-        {
-          id: 2,
-          name: "Female"
-        },
-        {
-          id: 3,
-          name: "Others"
-        }
-      ],
       role: "",
       roles: [
         {
@@ -252,17 +262,12 @@ export default {
       isMarketer: false,
       isEditor: false,
       isWriter: false,
-      loadingCreate: false
+      loadingEdit: false
     };
   },
   validations: {
     firstname: { required, maxLength: maxLength(50) },
     lastname: { required, maxLength: maxLength(50) },
-    phone: {
-      maxLength: maxLength(10),
-      between: between(0, 9999999999)
-    },
-    age: { between: between(18, 100) },
     email: { required, email },
     role: { required },
     form: ["firstname", "lastname", "role"]
@@ -294,19 +299,6 @@ export default {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
       !this.$v.email.email && errors.push("Invalid email");
-      return errors;
-    },
-    phoneErrors() {
-      const errors = [];
-      if (!this.$v.phone.$dirty) return errors;
-      !this.$v.phone.maxLength && errors.push("Phone up to 10 numbers");
-      !this.$v.phone.between && errors.push("Phone must be integer");
-      return errors;
-    },
-    ageErrors() {
-      const errors = [];
-      if (!this.$v.age.$dirty) return errors;
-      !this.$v.age.between && errors.push("Age must be between 18 - 100");
       return errors;
     },
     roleErrors() {
@@ -357,9 +349,14 @@ export default {
           this.editor = this.adminUserDetail.choiceEditor;
         }
       } else if (event == 2) {
-        await Promise.all([this.getMarketersBasic(), this.getWritersBasic()]);
+        await Promise.all([
+          this.getMarketersBasic(),
+          this.getWritersBasic(),
+          this.getEditorsBasic()
+        ]);
         if (this.adminUserDetail.role.id == 2) {
           await this.setWritersBasic(this.adminUserDetail.writer);
+          await this.setMaketersBasic(this.adminUserDetail.marketer);
         } else {
           await Promise.all([
             this.removeElementEditor(this.adminUserDetail.id),
@@ -378,6 +375,12 @@ export default {
           this.adminUserDetail.choiceMarketer
         ) {
           this.marketer = this.adminUserDetail.choiceMarketer[0];
+        }
+        if (
+          this.adminUserDetail.role.id == 2 &&
+          this.adminUserDetail.choiceWriter
+        ) {
+          this.writer = this.adminUserDetail.choiceWriter;
         }
       } else if (event == 3) {
         await this.getEditorsBasic();
@@ -405,7 +408,7 @@ export default {
       }
     },
     async edit() {
-      this.loadingCreate = true;
+      this.loadingEdit = true;
       this.$v.form.$touch();
       let listMarketers = [];
       let listEditors = [];
@@ -424,13 +427,23 @@ export default {
           idWriter: this.writer
         });
         await this.getAdminAccounts();
-        this.loadingCreate = false;
+        this.loadingEdit = false;
         this.dialog = false;
       }
-      this.loadingCreate = false;
+      this.loadingEdit = false;
     },
-
+    checkData() {
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
+        this.stepper = 2;
+      }
+    },
+    cancelStepper() {
+      this.dialog = false;
+      this.stepper = 1;
+    },
     async clickEdit(event) {
+      this.stepper = 1;
       await Promise.all([
         this.getMarketersBasic(),
         this.getEditorsBasic(),
@@ -440,9 +453,9 @@ export default {
       this.firstname = this.adminUserDetail.firstName;
       this.lastname = this.adminUserDetail.lastName;
       this.email = this.adminUserDetail.email;
-      this.gender = this.adminUserDetail.gender;
-      this.age = this.adminUserDetail.age;
-      this.phone = this.adminUserDetail.phone;
+      this.writer = [];
+      this.editor = [];
+      this.marketer = [];
       if (this.adminUserDetail.role.id == 1) {
         await this.setEditorsBasic(this.adminUserDetail.editor);
         this.isMarketer = true;
@@ -477,6 +490,12 @@ export default {
 };
 </script>
 <style scoped>
+::v-deep .v-stepper__label {
+  display: block !important;
+}
+::v-deep .v-stepper__header {
+  box-shadow: none !important;
+}
 .chips {
   color: white !important;
 }

@@ -1,4 +1,4 @@
-import { APIpublishContent, APIgetFanPages, APIgetFanPage, APIcreateFanPage, APIeditFanPage, APIdeleteFanPage, APIgetFanPageFacebook, APIgetFanPageWordpress, APIgetFanPageCustomer, APIgetFanPagesByContentID, APIgetFanPagesByTagsId } from "../../services/batchjob";
+import { APIpublishContent, APIgetFanPages, APIgetFanPage, APIcreateFanPage, APIeditFanPage, APIdeleteFanPage, APIgetFanPageFacebook, APIgetFanPageWordpress, APIgetFanPageCustomer, APIgetFanPagesByContentID, APIgetFanPagesByTagsId, APIcheckTokenGetLink } from "../../services/batchjob";
 import Vue from "vue";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -13,6 +13,7 @@ const state = {
     customer: [],
     // fanpagesContent: [],
     fanpagesTag:[],
+    link: "",
 };
 
 const mutations = {
@@ -40,6 +41,9 @@ const mutations = {
     // },
     SET_FANPAGES_TAG(state, data){
         state.fanpagesTag = data;
+    },
+    SET_LINK(state,data){
+        state.link = data;
     }
 };
 
@@ -223,6 +227,19 @@ const actions = {
             }
         } catch (error) {
             console.log("ERROR -  FANPAGE TAG");
+            console.log(error);
+        }
+    },
+    async checkTokenGetLink({ commit }, payload) {
+        try {
+            let rs = await APIcheckTokenGetLink(payload);
+            console.log("LINK",rs);
+            if (rs.status == 202) {
+                commit("SET_LINK", rs.data.link);
+                return 202;
+            }
+        } catch (error) {
+            console.log("ERROR -  LINK");
             console.log(error);
         }
     },

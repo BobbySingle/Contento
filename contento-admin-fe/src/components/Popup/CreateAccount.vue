@@ -108,12 +108,7 @@
                   flat
                   outlined
                   :items="listEditorsBasic"
-                  chips
-                >
-                  <template v-slot:selection="{ attrs, item, select, selected }">
-                    <v-chip color="blue" class="chips">{{ item.name }}</v-chip>
-                  </template>
-                </v-select>
+                ></v-select>
               </v-col>
             </v-row>
           </v-card>
@@ -137,12 +132,7 @@
                   flat
                   outlined
                   :items="listMarketersBasic"
-                  chips
-                >
-                  <template v-slot:selection="{ attrs, item, select, selected }">
-                    <v-chip color="blue" class="chips">{{ item.name }}</v-chip>
-                  </template>
-                </v-select>
+                ></v-select>
               </v-col>
             </v-row>
           </v-card>
@@ -167,6 +157,7 @@
                   outlined
                   :items="listEditorsBasic"
                   multiple
+                  clearable
                   chips
                 >
                   <template v-slot:selection="{ attrs, item,index, select, selected }">
@@ -202,6 +193,7 @@
                   :value="writer"
                   :items="listWritersBasic"
                   multiple
+                  clearable
                   chips
                 >
                   <template v-slot:selection="{ attrs, item,index, select, selected }">
@@ -315,11 +307,6 @@ export default {
   validations: {
     firstname: { required, maxLength: maxLength(50) },
     lastname: { required, maxLength: maxLength(50) },
-    phone: {
-      maxLength: maxLength(10),
-      between: between(0, 9999999999)
-    },
-    age: { between: between(18, 100) },
     email: { required, email },
     role: { required },
     form: ["firstname", "lastname", "email", "role"]
@@ -409,7 +396,6 @@ export default {
       this.loadingCreate = false;
     },
     checkData() {
-      this.loadingCreate = true;
       this.$v.form.$touch();
       if (!this.$v.form.$invalid) {
         this.stepper = 2;
@@ -446,6 +432,9 @@ export default {
 <style scoped>
 ::v-deep .v-stepper__label {
   display: block !important;
+}
+::v-deep .v-stepper__header {
+  box-shadow: none !important;
 }
 .chips {
   color: white !important;

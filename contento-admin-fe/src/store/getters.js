@@ -55,6 +55,7 @@ const getters = {
   facebook: state => state.batchjob.facebook,
   wordpress: state => state.batchjob.wordpress,
   fanpagesContent: state => state.batchjob.fanpagesContent,
-  fanpagesTag: state => state.batchjob.fanpagesTag
+  fanpagesTag: state => state.batchjob.fanpagesTag,
+  linkFanpage: state => state.batchjob.link,
 };
 export default getters;

@@ -50,3 +50,7 @@ export function APIgetFanPagesByContentID(contentID) {
 export function APIgetFanPagesByTagsId(tags) {
     return axios.post(`${API_URL}/api/BatchJob/fanpage/tags`, tags);
 }
+
+export function APIcheckTokenGetLink(data) {
+    return axios.post(`${API_URL}/api/BatchJob/fanpages/token`, data);
+}

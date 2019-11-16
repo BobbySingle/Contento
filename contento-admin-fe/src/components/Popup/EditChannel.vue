@@ -110,6 +110,19 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="link"
+                  label="Link"
+                  class="text__14"
+                  prepend-inner-icon="public"
+                  :placeholder="placeholder"
+                  required
+                  disabled
+                ></v-text-field>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-card-text>
@@ -128,6 +141,7 @@ export default {
       menu: false,
       name: "",
       token: "",
+      link:"",
       channel: "",
       customer: "",
       tags: [],
@@ -142,7 +156,9 @@ export default {
         }
       ],
       check: false,
-      loadingSave: false
+      loadingSave: false,
+      placeholder: "",
+      wrongTokenErrors: ""
     };
   },
   validations: {
@@ -164,7 +180,7 @@ export default {
     selectSomeTags() {
       return this.tags.length > 0 && !this.selectAllTags;
     },
-    ...mapGetters(["listCustomer", "fanpage", "listTag"]),
+    ...mapGetters(["listCustomer", "fanpage", "listTag", "linkFanpage"]),
     nameErrors() {
       const errors = [];
       if (!this.$v.name.$dirty) return errors;
@@ -177,6 +193,9 @@ export default {
       const errors = [];
       if (!this.$v.token.$dirty) return errors;
       !this.$v.token.required && errors.push("Please enter token of fanpage");
+      if (this.wrongTokenErrors) {
+        errors.push(this.wrongTokenErrors);
+      }
       return errors;
     },
     channelErrors() {
@@ -195,12 +214,45 @@ export default {
     }
   },
   methods: {
+    async setLink() {
+      let status = await this.checkTokenGetLink({
+        channelId: this.channel,
+        token: this.token
+      });
+      if (status == 202) {
+        this.link = this.linkFanpage;
+        this.wrongTokenErrors = "";
+      } else {
+        if (!this.channel == "") {
+          this.placeholder = "Link is not exist. Please check token again";
+          this.wrongTokenErrors = "Token is not valid";
+        } else {
+          this.wrongTokenErrors = "Please choose a channel first";
+        }
+      }
+    },
+    async changeChannel() {
+      let status = await this.checkTokenGetLink({
+        channelId: this.channel,
+        token: this.token
+      });
+      if (status == 202) {
+        this.link = this.linkFanpage;
+        this.wrongTokenErrors = "";
+      } else {
+        if (!this.channel == "") {
+          this.wrongTokenErrors = "Token is not valid";
+        } else {
+          this.wrongTokenErrors = "Please choose a channel first";
+        }
+      }
+    },
     toggle() {
       this.$nextTick(() => {
         if (this.selectAllTags) {
           this.tags = [];
         } else {
-          this.tags=[];
+          this.tags = [];
           this.listTag.forEach(i => {
             this.tags = this.tags.concat(i.id);
           });
@@ -210,9 +262,12 @@ export default {
     ...mapActions({
       getFanPage: "batchjob/getFanPage",
       getFanPages: "batchjob/getFanPages",
-      editFanPage: "batchjob/editFanPage"
+      editFanPage: "batchjob/editFanPage",
+      checkTokenGetLink: "batchjob/checkTokenGetLink"
     }),
     async clickEdit(event) {
+      this.placeholder = "Loading link fanpage...";
+      this.wrongTokenErrors = "";
       await this.getFanPage(event);
       this.name = this.fanpage.name;
       this.token = this.fanpage.token;
@@ -220,6 +275,7 @@ export default {
       this.customer = this.fanpage.customer;
       this.tags = this.fanpage.tagId;
       this.id = event;
+      await this.setLink();
       this.$v.form.$reset();
     },
     async update() {
