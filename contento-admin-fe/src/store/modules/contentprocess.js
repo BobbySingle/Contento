@@ -293,6 +293,29 @@ const actions = {
       });
     }
   },
+  async autoSaveContent({ commit }, payload) {
+    try {
+      let rs = await APIsaveContent(payload);
+      if (rs.status == 200) {
+        Vue.notify({
+          group: 'notice',
+          title: 'Auto save successful!',
+          text: 'Content has been auto save successfully!',
+          type: 'suc'
+        });
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - SAVE CONTENT");
+      console.log(error);
+      Vue.notify({
+        group: 'notice',
+        title: 'Auto save failed!',
+        text: 'Content has been auto save failed!',
+        type: 'warn'
+      });
+    }
+  },
   async submitContent({ commit }, payload) {
     try {
       let rs = await APIsubmitContent(payload);

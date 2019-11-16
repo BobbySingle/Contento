@@ -169,7 +169,8 @@ export default {
       check: false,
       loadingSave: false,
       loadingSubmit: false,
-      btnChange: "fullscreen"
+      btnChange: "fullscreen",
+      runInterval: ""
     };
   },
   validations: {
@@ -188,6 +189,20 @@ export default {
       this.$store.state.authentication.loggedUser = false;
       this.$router.push("/");
     }
+    /**Refresh Data */
+    this.runInterval = setInterval(async () => {
+      if (!this.$v.form.$invalid) {
+        console.log("Auto Save");
+        await this.autoSaveContent({
+          id: this.idContent,
+          name: this.name,
+          content: this.$refs.ckeditor.editorData
+        });
+      }
+    }, 60000);
+  },
+  beforeDestroy() {
+    clearInterval(this.runInterval);
   },
   mounted() {
     this.fetchData();
@@ -241,6 +256,7 @@ export default {
       getTaskDetail: "contentprocess/getTaskDetail",
       setApprovalContentRequest: "contentprocess/setApprovalContentRequest",
       saveContent: "contentprocess/saveContent",
+      autoSaveContent: "contentprocess/autoSaveContent",
       submitContent: "contentprocess/submitContent"
     }),
     async fetchData() {

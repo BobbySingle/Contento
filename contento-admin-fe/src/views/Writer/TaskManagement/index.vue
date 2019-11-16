@@ -116,7 +116,7 @@
             <template v-slot:item.title="{item}">
               <div class="content_details">
                 <div>
-                  <span class="text__14">{{ item.title }}</span>
+                  <span class="title_fontbold">{{ item.title }}</span>
                 </div>
               </div>
             </template>
@@ -386,6 +386,13 @@ export default {
 }
 .content_details:hover {
   cursor: pointer;
+}
+.title_fontbold {
+  font-size: 14px;
+}
+.title_fontbold:hover {
+  font-size: 14px;
+  font-weight: 650;
 }
 .tr-table-content:hover {
   background-color: rgba(100, 100, 100, 0.1);

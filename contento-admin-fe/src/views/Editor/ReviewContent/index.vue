@@ -80,6 +80,7 @@
                       outlined
                       prepend-inner-icon="edit"
                       :value="name"
+                      readonly
                       required
                       @blur="$v.name.$touch()"
                       @input="$v.name.$touch()"

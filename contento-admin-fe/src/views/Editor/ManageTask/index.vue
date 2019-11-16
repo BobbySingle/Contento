@@ -245,7 +245,7 @@ export default {
           align: "center",
           width: "10%"
         }
-      ]
+      ],
     };
   },
   filters: {

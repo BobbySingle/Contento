@@ -192,13 +192,14 @@
           </v-row>
           <v-row no-gutters class=".flex-nowrap" justify="end" v-if="showAds">
             <v-switch v-model="isAds" label="Advertise this content" class="mr-3"></v-switch>
-            <div class="mt-2">
+            <div class="mt-2" v-if="isAds">
               <datetime
                 title="Set time to end advertise"
                 type="datetime"
                 v-model="endAds"
                 placeholder="Time end advertise"
-                :min-datetime="minAds"
+                :min-datetime="publishTime"
+                value-zone="UTC+07:00"
                 input-class="css_time"
                 class="text__14 out_css_time"
                 auto
@@ -241,10 +242,11 @@ export default {
       fanpageFB: [],
       fanpageWP: [],
       // fanpageCS: [],
+
       isAds: false,
       showAds: false,
       endAds: "",
-      minAds: "",
+
       websiteCTT: [],
       title: "",
       name: "",
@@ -298,7 +300,6 @@ export default {
       var newDateUTC7 = new Date(millisecondsTime - this.tzoffset)
         .toISOString()
         .slice(0, -1);
-      console.log(newDateUTC7);
       this.publishTime = newDateUTC7;
       this.writer = this.taskDetail.writer.name;
       this.editor = this.taskDetail.editor.name;
@@ -317,11 +318,7 @@ export default {
       } else {
         this.showAds = true;
       }
-      this.minAds = this.$moment()
-        .add(4, "days")
-        .startOf("day")
-        .toISOString();
-      this.endAds = this.$moment()
+      this.endAds = this.$moment(this.publishTime)
         .add(5, "days")
         .startOf("day")
         .toISOString();
@@ -351,12 +348,23 @@ export default {
         this.fanpages != "" &&
         this.$v.publishTime.$model >= this.localISOTime
       ) {
-        await this.publishContent({
-          listFanpage: this.fanpages,
-          listTag: this.tags,
-          contentId: this.taskDetail.content.id,
-          time: this.publishTime
-        });
+        if (this.isAds) {
+          await this.publishContent({
+            listFanpage: this.fanpages,
+            listTag: this.tags,
+            contentId: this.taskDetail.content.id,
+            time: this.publishTime,
+            adsTime: this.endAds,
+            isAds: true
+          });
+        } else {
+          await this.publishContent({
+            listFanpage: this.fanpages,
+            listTag: this.tags,
+            contentId: this.taskDetail.content.id,
+            time: this.publishTime
+          });
+        }
         console.log(this.publishTime);
         this.loading = false;
       }
@@ -374,10 +382,6 @@ export default {
       } else {
         this.showAds = true;
       }
-      this.minAds = this.$moment()
-        .add(4, "days")
-        .startOf("day")
-        .toISOString();
     }
   },
   computed: {
@@ -390,6 +394,14 @@ export default {
       "fanpagesContent",
       "fanpagesTag"
     ])
+  },
+  watch: {
+    publishTime() {
+      this.endAds = this.$moment(this.publishTime)
+        .add(5, "days")
+        .startOf("day")
+        .toISOString();
+    }
   },
   created() {
     let role = this.getUser.role;
@@ -455,5 +467,30 @@ export default {
 .datetime {
   width: 100%;
   padding-left: 10px;
+}
+
+::v-deep p {
+  text-align: justify;
+}
+::v-deep .table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+::v-deep .image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+::v-deep .image img {
+  max-width: 100%;
+  max-height: 100%;
+}
+::v-deep .table td {
+  font-size: 14px;
+  text-align: center;
+  font-style: italic;
+  font-weight: bold;
 }
 </style>
