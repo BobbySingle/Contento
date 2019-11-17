@@ -18,6 +18,7 @@ const getters = {
   listEditorsBasic: state => state.authentication.listEditorsBasic,
   listWritersBasic: state => state.authentication.listWritersBasic,
   adminUserDetail: state => state.authentication.adminUserDetail,
+  freelanceAccount: state => state.authentication.freelanceAccount,
 
   //Campaign
   listCampaign: state => state.campaign.listCampaign,

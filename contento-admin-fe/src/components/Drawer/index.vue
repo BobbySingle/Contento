@@ -104,7 +104,13 @@ export default {
           icon: "view_list",
           link: "/ManageAccount",
           role: "Admin"
-        }
+        },
+        {
+          title: "Freelance Account",
+          icon: "mdi-account-outline",
+          link: "/ManageFreelanceAccount",
+          role: "Admin"
+        },
       ],
       mini: true
     };

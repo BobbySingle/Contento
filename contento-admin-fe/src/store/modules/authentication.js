@@ -22,7 +22,10 @@ import {
   APIgetEditorsForWriter,
   APIgetInfoAccount,
   APIeditAccount,
-  APIisActiveAccount
+  APIisActiveAccount,
+  APIgetFreelanceAccount,
+  APIgetManagerOfAccount,
+  APIdisableAccount
 } from "../../services/authentication";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -44,7 +47,8 @@ const state = {
   listMarketersBasic: [],
   listEditorsBasic: [],
   listWritersBasic: [],
-  adminUserDetail: ""
+  adminUserDetail: "",
+  freelanceAccount: [],
 };
 const mutations = {
   SET_ACCESS_TOKEN(state, data) {
@@ -108,18 +112,21 @@ const mutations = {
   SET_ADMIN_USER_DETAIL(state, data) {
     state.adminUserDetail = data
   },
-  DELETE_MARKETER_BASIC(state, id){
+  DELETE_MARKETER_BASIC(state, id) {
     const IdElementDelete = state.listMarketersBasic.findIndex(l => l.id === id);
     state.listMarketersBasic.splice(IdElementDelete, 1);
   },
-  DELETE_EDITOR_BASIC(state, id){
+  DELETE_EDITOR_BASIC(state, id) {
     const IdElementDelete = state.listEditorsBasic.findIndex(l => l.id === id);
     state.listEditorsBasic.splice(IdElementDelete, 1);
   },
-  DELETE_WRITER_BASIC(state, id){
+  DELETE_WRITER_BASIC(state, id) {
     const IdElementDelete = state.listWritersBasic.findIndex(l => l.id === id);
     state.listWritersBasic.splice(IdElementDelete, 1);
   },
+  SET_FREELANCE_ACCOUNT(state, data) {
+    state.freelanceAccount = data;
+  }
 };
 const actions = {
   async login({ commit }, payload) {
@@ -242,12 +249,30 @@ const actions = {
       console.log(error);
     }
   },
+  async getListEditorBasicByMarketerID({ commit }, payload) {
+    try {
+      let rs = await APIgetListEditorByMarketerID(payload);
+      commit("SET_EDITORS_BASIC", rs.data);
+    } catch (error) {
+      console.log("ERROR -  LIST EDITOR BASIC BY MARKETER ID");
+      console.log(error);
+    }
+  },
   async getListWriter({ commit }, payload) {
     try {
       let rs = await APIgetListWriter(payload);
       commit("SET_LISTWRITER", rs.data);
     } catch (error) {
       console.log("ERROR -  LIST WRITER ");
+      console.log(error);
+    }
+  },
+  async getListWriterBasic({ commit }, payload) {
+    try {
+      let rs = await APIgetListWriter(payload);
+      commit("SET_WRITERS_BASIC", rs.data);
+    } catch (error) {
+      console.log("ERROR -  LIST WRITER BASIC");
       console.log(error);
     }
   },
@@ -400,6 +425,31 @@ const actions = {
       })
     }
   },
+  async assignMember({ commit }, payload) {
+    try {
+      let rs = await APIeditAccount(payload);
+      if (rs.status == 202) {
+        console.log("ASSIGN ACCOUNT");
+        console.log(rs.data);
+        Vue.notify({
+          group: 'notice',
+          title: 'Assign successful!',
+          text: 'Account has been assigned successfully!',
+          type: 'suc'
+        })
+        return 202;
+      }
+    } catch (error) {
+      console.log("ERROR - ASSIGN ACCOUNT");
+      console.log(error);
+      Vue.notify({
+        group: 'notice',
+        title: 'Assign failed!',
+        text: 'Account has been assigned failed!',
+        type: 'warn'
+      })
+    }
+  },
   async isActiveAccount({ commit }, payload) {
     try {
       let rs = await APIisActiveAccount(payload);
@@ -448,6 +498,12 @@ const actions = {
         commit("SET_EDITORS_BASIC", rs.data);
         return 200;
       }
+      if (rs.status == 204) {
+        console.log("GET EDITORS BASIC");
+        console.log(rs.data);
+        commit("SET_EDITORS_BASIC", []);
+        return 200;
+      }
     } catch (error) {
       console.log("ERROR - GET EDITORS BASIC");
       console.log(error);
@@ -462,6 +518,12 @@ const actions = {
         commit("SET_WRITERS_BASIC", rs.data);
         return 200;
       }
+      if (rs.status == 204) {
+        console.log("GET WRITERS BASIC");
+        console.log(rs.data);
+        commit("SET_WRITERS_BASIC", []);
+        return 200;
+      }
     } catch (error) {
       console.log("ERROR - GET WRITERS BASIC");
       console.log(error);
@@ -474,6 +536,11 @@ const actions = {
         console.log("GET EDITORS FOR WRITER");
         console.log(rs.data);
         commit("SET_EDITORS_BASIC", rs.data);
+        return 200;
+      } if (rs.status == 204) {
+        console.log("GET EDITORS FOR WRITER");
+        console.log(rs.data);
+        commit("SET_EDITORS_BASIC", []);
         return 200;
       }
     } catch (error) {
@@ -493,6 +560,60 @@ const actions = {
     } catch (error) {
       console.log("ERROR - GET ADMIN USER DETAIL");
       console.log(error);
+    }
+  },
+  async getFreelanceAccount({ commit }) {
+    try {
+      let rs = await APIgetFreelanceAccount();
+      if (rs.status == 200) {
+        console.log("GET FREELANCE ACCOUNT");
+        console.log(rs.data);
+        commit("SET_FREELANCE_ACCOUNT", rs.data);
+        return 200;
+      }
+      if (rs.status == 204) {
+        console.log("GET FREELANCE ACCOUNT");
+        console.log(rs.data);
+        commit("SET_FREELANCE_ACCOUNT", []);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - GET FREELANCE ACCOUNT");
+      console.log(error);
+    }
+  },
+  async getManagerOfAccount({ commit }, payload) {
+    try {
+      let rs = await APIgetManagerOfAccount(payload);
+      if (rs.status == 200) {
+        return rs.data;
+      }
+    } catch (error) {
+      console.log("ERROR - GET MANAGER OF ACCOUNT");
+      console.log(error);
+    }
+  },
+  async disableAccount({ commit }, payload) {
+    try {
+      let rs = await APIdisableAccount(payload);
+      if (rs.status == 202) {
+        Vue.notify({
+          group: 'notice',
+          title: 'Disable successful!',
+          text: 'Account has been disable successfully!',
+          type: 'suc'
+        })
+        return 202;
+      }
+    } catch (error) {
+      console.log("ERROR - DISABLE ACCOUNT");
+      console.log(error);
+      Vue.notify({
+        group: 'notice',
+        title: 'Disable failed!',
+        text: 'Account has been disable failed!',
+        type: 'warn'
+      })
     }
   },
   removeElementMarketer({ commit }, payload) {

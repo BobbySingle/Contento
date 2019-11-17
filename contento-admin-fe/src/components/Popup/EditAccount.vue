@@ -413,7 +413,7 @@ export default {
       let listMarketers = [];
       let listEditors = [];
       if (!this.$v.form.$invalid) {
-        await this.editAccount({
+        let status = await this.editAccount({
           id: this.accountID,
           email: this.email,
           lastName: this.lastname,
@@ -426,9 +426,11 @@ export default {
           idEditor: listEditors.concat(this.editor),
           idWriter: this.writer
         });
-        await this.getAdminAccounts();
-        this.loadingEdit = false;
-        this.dialog = false;
+        if (status == 202) {
+          await this.getAdminAccounts();
+          this.loadingEdit = false;
+          this.dialog = false;
+        }
       }
       this.loadingEdit = false;
     },

@@ -133,3 +133,18 @@ export function APIisActiveAccount(data) {
     `${API_URL}/api/authentication/user-delete`, data
   );
 }
+export function APIgetFreelanceAccount() {
+  return axios.get(
+    `${API_URL}/api/authentication/free-user`,
+  );
+}
+export function APIgetManagerOfAccount(userID) {
+  return axios.get(
+    `${API_URL}/api/authentication/manager-id/${userID}`,
+  );
+}
+export function APIdisableAccount(data) {
+  return axios.put(
+    `${API_URL}/api/authentication/accounts`, data
+  );
+}

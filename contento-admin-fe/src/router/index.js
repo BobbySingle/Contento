@@ -20,6 +20,7 @@ import ManageTask from "../views/Editor/ManageTask/index.vue";
 import Profile from "../components/Profile/index.vue";
 import ManageAccount from "../views/Admin/ManageAccount/index.vue";
 import ManageContentFanpage from "../views/Marketer/ManageContentFanpage/index.vue";
+import ManageFreelanceAccount from "../views/Admin/ManageFreelanceAccount/index.vue";
 
 Vue.use(Router);
 
@@ -131,6 +132,11 @@ export default new Router({
       path: "/ManageAccount",
       name: "ManageAccount",
       component: ManageAccount
+    },
+    {
+      path: "/ManageFreelanceAccount",
+      name: "ManageFreelanceAccount",
+      component: ManageFreelanceAccount
     },
   ]
 });

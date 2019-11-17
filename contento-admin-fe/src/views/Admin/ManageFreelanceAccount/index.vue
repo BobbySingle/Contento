@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1 class="text__h1">Manage Account</h1>
+      <h1 class="text__h1">Freelance Account</h1>
     </v-row>
     <!-- /**Begin Search  */ -->
     <v-row no-gutters class="mx-6">
-      <v-col sm="8" md="9">
+      <v-col cols="12">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
           <input
@@ -16,9 +16,6 @@
             v-model="search"
           />
         </div>
-      </v-col>
-      <v-col sm="4" md="3" style="display:flex; justify-content: center;">
-        <create-account />
       </v-col>
     </v-row>
     <v-row no-gutters class="mx-6 mb-2">
@@ -66,7 +63,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listAdminAccounts"
+            :items="freelanceAccount"
             style="width:100%"
             :mobile-breakpoint="600"
             :page.sync="page"
@@ -94,14 +91,7 @@
               </div>
             </template>
             <template v-slot:item.action="{item}">
-              <!-- <v-btn icon color="warning">
-                <v-icon>edit</v-icon>
-              </v-btn>-->
-              <edit-account :accountID="item.id" />
-              <disable-account :account="item"  v-if="item.isActive"  />
-              <v-btn icon color="success" v-if="!item.isActive" @click="enableAccount(item.id)">
-                <v-icon>mdi-autorenew</v-icon>
-              </v-btn>
+              <assign-member :accountID="item.id" v-if="item.isActive" />
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -119,10 +109,9 @@ import moment from "moment";
 import { mapGetters, mapActions } from "vuex";
 import axios from "axios";
 import CreateAccount from "../../../components/Popup/CreateAccount.vue";
-import EditAccount from "../../../components/Popup/EditAccount.vue";
-import DisableAccount from "../../../components/Popup/DisableAccount.vue";
+import AssignMember from "../../../components/Popup/AssignMember.vue";
 export default {
-  components: { CreateAccount, EditAccount, DisableAccount },
+  components: { CreateAccount, AssignMember },
   data() {
     return {
       /**Begin Pagination */
@@ -184,7 +173,7 @@ export default {
           }
         },
         {
-          text: "Action",
+          text: "Assign",
           value: "action",
           sortable: false,
           align: "center"
@@ -226,32 +215,9 @@ export default {
   },
   methods: {
     ...mapActions({
-      getAdminAccounts: "authentication/getAdminAccounts",
-      isActiveAccount: "authentication/isActiveAccount"
+      isActiveAccount: "authentication/isActiveAccount",
+      getFreelanceAccount: "authentication/getFreelanceAccount"
     }),
-    disableAccount(event) {
-      this.$swal({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
-      }).then(async result => {
-        if (result.value) {
-          await this.isActiveAccount({
-            id: event,
-            isActive: false
-          });
-        }
-        await this.getAdminAccounts();
-      });
-    },
-    async enableAccount(event) {
-      await this.isActiveAccount({ id: event, isActive: true });
-      await this.getAdminAccounts();
-    },
     Clear() {
       this.startFromDate = "";
       this.startToDate = "";
@@ -273,26 +239,15 @@ export default {
     clearEndToDate() {
       this.endToDate = "";
     },
-
+    assign() {},
     async fetchData() {
       this.loading = true;
-      await Promise.all([this.getAdminAccounts()]);
+      await Promise.all([this.getFreelanceAccount()]);
       this.loading = false;
     }
   },
   computed: {
-    ...mapGetters(["getUser", "listAdminAccounts"])
-  },
-  created() {
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
-    let role = this.getUser.role;
-    if (role !== "Admin" && role != null) {
-      this.$router.push("/403");
-    } else if (role == null) {
-      this.$store.state.authentication.loggedUser = false;
-      this.$router.push("/");
-    }
+    ...mapGetters(["getUser", "freelanceAccount"])
   },
   mounted() {
     this.fetchData();

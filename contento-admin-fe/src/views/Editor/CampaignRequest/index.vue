@@ -137,7 +137,7 @@
                   clearable
                 ></v-select>
               </v-col>
-              <v-col cols="12" sm="6" md="3">
+              <v-col cols="12" sm="6" md="3" align-self="center">
                 <v-row justify="center">
                   <v-btn color="primary" @click="Clear()">Clear</v-btn>
                 </v-row>
