@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1 class="text__h1">Manage Account</h1>
+      <h1 class="text__h1">Manage User Account</h1>
     </v-row>
     <!-- /**Begin Search  */ -->
     <v-row no-gutters class="mx-6">
-      <v-col sm="8" md="9">
+      <v-col cols="8" md="9" align-self="center" class="pr-10">
         <div class="search-filter">
           <v-icon class="icon">searchs</v-icon>
           <input
@@ -17,47 +17,19 @@
           />
         </div>
       </v-col>
-      <v-col sm="4" md="3" style="display:flex; justify-content: center;">
-        <create-account />
+      <v-col cols="4" md="3" align-self="center" class="mt-4">
+        <v-select
+          v-model="activeFilter"
+          :items="actives"
+          item-text="name"
+          item-value="id"
+          outlined
+          dense
+          label="Status"
+          prepend-inner-icon="account_circle"
+          clearable
+        ></v-select>
       </v-col>
-    </v-row>
-    <v-row no-gutters class="mx-6 mb-2">
-      <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
-        <v-expansion-panel>
-          <v-expansion-panel-header class="text__14">Advanced Filter:</v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <v-row class=".flex-nowrap">
-              <v-col cols="12" sm="4">
-                <v-select
-                  v-model="roleFilter"
-                  :items="roles"
-                  item-text="name"
-                  item-value="id"
-                  label="Role"
-                  prepend-inner-icon="account_circle"
-                  clearable
-                ></v-select>
-              </v-col>
-              <v-col cols="12" sm="4">
-                <v-select
-                  v-model="activeFilter"
-                  :items="actives"
-                  item-text="name"
-                  item-value="id"
-                  label="isActive"
-                  prepend-inner-icon="account_circle"
-                  clearable
-                ></v-select>
-              </v-col>
-              <v-col cols="12" sm="4" align-self="center">
-                <v-row justify="center">
-                  <v-btn color="primary" @click="Clear()">Clear</v-btn>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
     </v-row>
     <!-- /** End Search */ -->
 
@@ -66,7 +38,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="listAdminAccounts"
+            :items="listViewerAccounts"
             style="width:100%"
             :mobile-breakpoint="600"
             :page.sync="page"
@@ -94,14 +66,14 @@
               </div>
             </template>
             <template v-slot:item.action="{item}">
-              <!-- <v-btn icon color="warning">
-                <v-icon>edit</v-icon>
-              </v-btn>-->
-              <edit-account :accountID="item.id" />
-              <disable-account :account="item"  v-if="item.isActive"  />
-              <v-btn icon color="success" v-if="!item.isActive" @click="enableAccount(item.id)">
-                <v-icon>mdi-autorenew</v-icon>
-              </v-btn>
+              <v-row class="flex-nowrap">
+                <v-btn icon color="error" v-if="item.isActive" @click="disableAccount(item.id)">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+                <v-btn icon color="success" v-if="!item.isActive" @click="enableAccount(item.id)">
+                  <v-icon>mdi-autorenew</v-icon>
+                </v-btn>
+              </v-row>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -120,9 +92,8 @@ import { mapGetters, mapActions } from "vuex";
 import axios from "axios";
 import CreateAccount from "../../../components/Popup/CreateAccount.vue";
 import EditAccount from "../../../components/Popup/EditAccount.vue";
-import DisableAccount from "../../../components/Popup/DisableAccount.vue";
 export default {
-  components: { CreateAccount, EditAccount, DisableAccount },
+  components: { CreateAccount, EditAccount },
   data() {
     return {
       /**Begin Pagination */
@@ -162,14 +133,10 @@ export default {
         {
           text: "Role",
           align: "left",
-          value: "role",
-          filter: value => {
-            if (!this.roleFilter) return true;
-            return value.id == this.roleFilter;
-          }
+          value: "role"
         },
         {
-          text: "isActive",
+          text: "Status",
           value: "isActive",
           sortable: false,
           align: "center",
@@ -226,7 +193,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getAdminAccounts: "authentication/getAdminAccounts",
+      getViewerAccounts: "authentication/getViewerAccounts",
       isActiveAccount: "authentication/isActiveAccount"
     }),
     disableAccount(event) {
@@ -245,12 +212,12 @@ export default {
             isActive: false
           });
         }
-        await this.getAdminAccounts();
+        await this.getViewerAccounts();
       });
     },
     async enableAccount(event) {
       await this.isActiveAccount({ id: event, isActive: true });
-      await this.getAdminAccounts();
+      await this.getViewerAccounts();
     },
     Clear() {
       this.startFromDate = "";
@@ -276,12 +243,12 @@ export default {
 
     async fetchData() {
       this.loading = true;
-      await Promise.all([this.getAdminAccounts()]);
+      await Promise.all([this.getViewerAccounts()]);
       this.loading = false;
     }
   },
   computed: {
-    ...mapGetters(["getUser", "listAdminAccounts"])
+    ...mapGetters(["getUser", "listViewerAccounts"])
   },
   created() {
     axios.defaults.headers.common["Authorization"] =

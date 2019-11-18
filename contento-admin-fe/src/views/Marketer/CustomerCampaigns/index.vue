@@ -180,7 +180,7 @@
             <template v-slot:item.action="{item}">
               <v-row class="flex-nowrap">
                 <popup-edit-campaign :campaignID="item.id" />
-                <v-btn color="success" fab small @click="clickCalendar(item.id)" class="mx-3">
+                <v-btn color="primary" icon fab small @click="clickCalendar(item.id)">
                   <v-icon>event</v-icon>
                 </v-btn>
               </v-row>

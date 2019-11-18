@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog" persistent scrollable width="600px">
     <template v-slot:activator="{ on }">
       <div v-on="on">
-        <v-btn color="warning" class="text__14" @click="clickEdit(channelID)">Edit</v-btn>
+        <v-btn color="warning" class="text__14" @click="clickEdit(channelID)" icon><v-icon>edit</v-icon></v-btn>
       </div>
     </template>
     <v-card>
@@ -119,7 +119,7 @@
                   prepend-inner-icon="public"
                   :placeholder="placeholder"
                   required
-                  disabled
+                  readonly
                 ></v-text-field>
               </v-col>
             </v-row>

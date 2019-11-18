@@ -15,7 +15,7 @@ export default {
     } else if (role === "Writer") {
       this.$router.push("/TaskManagement");
     }else if (role === "Admin") {
-      this.$router.push("/ManageAccount");
+      this.$router.push("/ManageSystemAccount");
     } else {
       localStorage.clear();
       this.$store.state.authentication.loggedUser = false;

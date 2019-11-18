@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" scrollable width="800px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" fab small v-on="on" @click="clickEdit(campaignID)">
+      <v-btn color="warning" icon fab small v-on="on" @click="clickEdit(campaignID)">
         <v-icon>edit</v-icon>
       </v-btn>
     </template>

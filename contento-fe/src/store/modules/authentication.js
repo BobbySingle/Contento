@@ -37,16 +37,29 @@ const actions = {
                 return 200;
             }
         } catch (error) {
-            Swal.fire(
-                {
-                    title: 'Warning',
-                    text: "Your email or password is incorrect. Please try again!",
-                    icon: 'warning',
-                    confirmButtonText: "OK",
-                    timer: 3000,
-                    allowOutsideClick: false
-                }
-            );
+            if (error.response.status == 403) {
+                Swal.fire(
+                    {
+                        title: 'Error',
+                        titleText: "Your account has been locked!",
+                        text: "Please contact the administrator for more details. Huongntdse62600@fpt.edu.vn",
+                        icon: 'error',
+                        confirmButtonText: "OK",
+                        timer: 3000,
+                        allowOutsideClick: false
+                    })
+            } else {
+                Swal.fire(
+                    {
+                        title: 'Warning',
+                        text: "Your email or password is incorrect. Please try again!",
+                        icon: 'warning',
+                        confirmButtonText: "OK",
+                        timer: 3000,
+                        allowOutsideClick: false
+                    }
+                )
+            };
             console.log("ERROR - LOGIN ACTION");
             console.log(error);
         }
@@ -79,6 +92,19 @@ const actions = {
                 }
             }
         } catch (error) {
+            if (error.response.status == 409) {
+                Swal.fire(
+                    {
+                        title: 'Warning',
+                        titleText: "Email has been existed!",
+                        text: "Please change your email to register",
+                        icon: 'error',
+                        confirmButtonText: "OK",
+                        timer: 3000,
+                        allowOutsideClick: false
+                    })
+                return 409;
+            }
             console.log("ERROR");
             console.log(error);
         }

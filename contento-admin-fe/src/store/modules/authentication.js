@@ -25,7 +25,8 @@ import {
   APIisActiveAccount,
   APIgetFreelanceAccount,
   APIgetManagerOfAccount,
-  APIdisableAccount
+  APIdisableAccount,
+  APIgetViewerAccounts
 } from "../../services/authentication";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -49,6 +50,7 @@ const state = {
   listWritersBasic: [],
   adminUserDetail: "",
   freelanceAccount: [],
+  listViewerAccounts: [],
 };
 const mutations = {
   SET_ACCESS_TOKEN(state, data) {
@@ -126,6 +128,9 @@ const mutations = {
   },
   SET_FREELANCE_ACCOUNT(state, data) {
     state.freelanceAccount = data;
+  },
+  SET_VIEWER_ACCOUNT(state, data) {
+    state.listViewerAccounts = data;
   }
 };
 const actions = {
@@ -140,18 +145,31 @@ const actions = {
         localStorage.setItem("Profile", JSON.stringify(rs.data));
       }
     } catch (error) {
-      Swal.fire(
-        {
-          title: 'Warning',
-          text: "Your email or password is incorrect. Please try again!",
-          type: 'warning',
-          confirmButtonText: "OK",
-          timer: 3000,
-          allowOutsideClick: false
-        }
-      );
-      console.log("ERROR - LOGIN ACTION");
-      console.log(error);
+      if (error.response.status == 403) {
+        Swal.fire(
+          {
+            title: 'Error',
+            titleText: "Your account has been locked!",
+            text:"Please contact the administrator for more details. Huongntdse62600@fpt.edu.vn",
+            type: 'error',
+            confirmButtonText: "OK",
+            timer: 3000,
+            allowOutsideClick: false
+          })
+      } else {
+        Swal.fire(
+          {
+            title: 'Warning',
+            text: "Your email or password is incorrect. Please try again!",
+            type: 'warning',
+            confirmButtonText: "OK",
+            timer: 3000,
+            allowOutsideClick: false
+          }
+        );
+        console.log("ERROR - LOGIN ACTION");
+        console.log(error);
+      }
     }
   },
 
@@ -575,6 +593,26 @@ const actions = {
         console.log("GET FREELANCE ACCOUNT");
         console.log(rs.data);
         commit("SET_FREELANCE_ACCOUNT", []);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - GET FREELANCE ACCOUNT");
+      console.log(error);
+    }
+  },
+  async getViewerAccounts({ commit }) {
+    try {
+      let rs = await APIgetViewerAccounts();
+      if (rs.status == 202) {
+        console.log("GET VIEWER ACCOUNT");
+        console.log(rs.data);
+        commit("SET_VIEWER_ACCOUNT", rs.data);
+        return 202;
+      }
+      if (rs.status == 204) {
+        console.log("GET VIEWER ACCOUNT");
+        console.log(rs.data);
+        commit("SET_VIEWER_ACCOUNT", []);
         return 200;
       }
     } catch (error) {

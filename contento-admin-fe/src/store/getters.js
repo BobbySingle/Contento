@@ -19,6 +19,7 @@ const getters = {
   listWritersBasic: state => state.authentication.listWritersBasic,
   adminUserDetail: state => state.authentication.adminUserDetail,
   freelanceAccount: state => state.authentication.freelanceAccount,
+  listViewerAccounts: state => state.authentication.listViewerAccounts,
 
   //Campaign
   listCampaign: state => state.campaign.listCampaign,
@@ -58,5 +59,6 @@ const getters = {
   fanpagesContent: state => state.batchjob.fanpagesContent,
   fanpagesTag: state => state.batchjob.fanpagesTag,
   linkFanpage: state => state.batchjob.link,
+  listContentOfFanpage: state => state.batchjob.listContentOfFanpage,
 };
 export default getters;

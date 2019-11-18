@@ -43,12 +43,12 @@ export function APIgetFanPageCustomer(customerId) {
     return axios.get(`${API_URL}/api/BatchJob/fanpages/customer/${customerId}`);
 }
 
-export function APIgetFanPagesByContentID(contentID) {
-    return axios.get(`${API_URL}/api/BatchJob/taskfanpages/content/${contentID}`);
-}
-
 export function APIgetFanPagesByTagsId(tags) {
     return axios.post(`${API_URL}/api/BatchJob/fanpage/tags`, tags);
+}
+
+export function APIgetListContentByFanPagesID(id) {
+    return axios.get(`${API_URL}/api/BatchJob/contents/fanpages/${id}`);
 }
 
 export function APIcheckTokenGetLink(data) {

@@ -1,4 +1,4 @@
-import { APIpublishContent, APIgetFanPages, APIgetFanPage, APIcreateFanPage, APIeditFanPage, APIdeleteFanPage, APIgetFanPageFacebook, APIgetFanPageWordpress, APIgetFanPageCustomer, APIgetFanPagesByContentID, APIgetFanPagesByTagsId, APIcheckTokenGetLink } from "../../services/batchjob";
+import { APIpublishContent, APIgetFanPages, APIgetFanPage, APIcreateFanPage, APIeditFanPage, APIdeleteFanPage, APIgetFanPageFacebook, APIgetFanPageWordpress, APIgetFanPageCustomer, APIgetFanPagesByContentID, APIgetFanPagesByTagsId, APIcheckTokenGetLink, APIgetListContentByFanPagesID } from "../../services/batchjob";
 import Vue from "vue";
 import router from "@/router/index";
 import Swal from 'sweetalert2';
@@ -11,9 +11,9 @@ const state = {
     facebook: [],
     wordpress: [],
     customer: [],
-    // fanpagesContent: [],
-    fanpagesTag:[],
+    fanpagesTag: [],
     link: "",
+    listContentOfFanpage: []
 };
 
 const mutations = {
@@ -36,13 +36,13 @@ const mutations = {
     SET_CUSTOMER(state, data) {
         state.customer = data;
     },
-    // SET_FANPAGES_CONTENT(state, data) {
-    //     state.fanpagesContent = data;
-    // },
-    SET_FANPAGES_TAG(state, data){
+    SET_CONTENTS_OF_FANPAGE(state, data) {
+        state.listContentOfFanpage = data;
+    },
+    SET_FANPAGES_TAG(state, data) {
         state.fanpagesTag = data;
     },
-    SET_LINK(state,data){
+    SET_LINK(state, data) {
         state.link = data;
     }
 };
@@ -208,17 +208,17 @@ const actions = {
             console.log(error);
         }
     },
-    // async getFanPagesByContentID({ commit }, payload) {
-    //     try {
-    //         let rs = await APIgetFanPagesByContentID(payload);
-    //         if (rs.status == 200) {
-    //             commit("SET_FANPAGES_CONTENT", rs.data);
-    //         }
-    //     } catch (error) {
-    //         console.log("ERROR -  FANPAGE CONTENT");
-    //         console.log(error);
-    //     }
-    // },
+    async getListContentByFanPagesID({ commit }, payload) {
+        try {
+            let rs = await APIgetListContentByFanPagesID(payload);
+            if (rs.status == 200) {
+                commit("SET_CONTENTS_OF_FANPAGE", rs.data);
+            }
+        } catch (error) {
+            console.log("ERROR -  LIST CONTENT FANPAGE");
+            console.log(error);
+        }
+    },
     async getFanPagesByTagsID({ commit }, payload) {
         try {
             let rs = await APIgetFanPagesByTagsId(payload);
@@ -233,7 +233,7 @@ const actions = {
     async checkTokenGetLink({ commit }, payload) {
         try {
             let rs = await APIcheckTokenGetLink(payload);
-            console.log("LINK",rs);
+            console.log("LINK", rs);
             if (rs.status == 202) {
                 commit("SET_LINK", rs.data.link);
                 return 202;

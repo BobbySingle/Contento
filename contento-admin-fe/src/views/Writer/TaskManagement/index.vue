@@ -136,10 +136,14 @@
             <template v-slot:item.action="{ item }">
               <v-btn
                 color="primary"
+                icon
+                fab
                 v-if="item.status.id === 2"
                 @click="changeToWork(item.id)"
-              >Continue</v-btn>
-              <v-btn color="secondary" v-if="item.status.id === 1" @click="start(item.id)">Start</v-btn>
+              ><v-icon>format_size</v-icon></v-btn>
+              <v-btn icon fab v-if="item.status.id === 1" @click="start(item.id)">
+                <v-icon>mdi-power</v-icon>
+              </v-btn>
             </template>
           </v-data-table>
           <v-row justify="center">

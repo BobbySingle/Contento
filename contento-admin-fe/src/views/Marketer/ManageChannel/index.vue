@@ -114,8 +114,8 @@
             @page-count="pageCount = $event"
           >
             <template v-slot:item.name="{item}">
-              <div class="title py-2" @click="clickFanpage(item.id)">
-                  <span class="text__14">{{ item.name }}</span>
+              <div class="title py-2" @click="clickFanpage(item)">
+                <span class="text__14">{{ item.name }}</span>
               </div>
             </template>
             <template v-slot:item.channel="{item}">
@@ -150,13 +150,26 @@
               </div>
             </template>
             <template v-slot:item.customer="{item}">{{item.customer.name}}</template>
-            <template
-              v-slot:item.modifiedDate="{item}"
-            >{{item.modifiedDate|localTime()|moment("HH:mm DD/MM/YYYY")}}</template>
+            <template v-slot:item.modifiedDate="{item}">
+              <span
+                v-if="item.channel.id != 1"
+              >{{item.modifiedDate|localTime()|moment("HH:mm DD/MM/YYYY")}}</span>
+            </template>
             <template v-slot:item.action="{item}">
-              <v-row class="flex-nowrap" justify="center" v-if="item.id > 1">
-                <edit-channel :channelID="item.id" />
-                <v-btn color="error" class="ml-2" @click="deleteFP(item.id)">Delete</v-btn>
+              <v-row class="flex-nowrap" justify="center">
+                <edit-channel :channelID="item.id" v-if="item.id > 1" />
+                <v-btn
+                  icon
+                  color="error"
+                  class="ml-2"
+                  @click="deleteFP(item.id)"
+                  v-if="item.id > 1"
+                >
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+                <v-btn icon color="primary" class="ml-2" @click="gotoURL(item)">
+                  <v-icon>mdi-link</v-icon>
+                </v-btn>
               </v-row>
             </template>
           </v-data-table>
@@ -201,9 +214,14 @@ export default {
           text: "Name",
           align: "left",
           value: "name",
-          filter: value =>{
-             if (!this.search) return true;
-            return value.toString().toLowerCase().indexOf(this.search.toLowerCase()) !== -1;
+          filter: value => {
+            if (!this.search) return true;
+            return (
+              value
+                .toString()
+                .toLowerCase()
+                .indexOf(this.search.toLowerCase()) !== -1
+            );
           }
         },
         {
@@ -218,7 +236,8 @@ export default {
         {
           text: "Category",
           value: "tags",
-          sortable: false
+          sortable: false,
+          width: "20%"
         },
         {
           text: "Customer",
@@ -280,15 +299,29 @@ export default {
     clearToFilter() {
       this.toFilter = "";
     },
+    async gotoURL(event) {
+      if (event.id == 1) {
+        window.open("http://contento-view.s3-website-ap-southeast-1.amazonaws.com/");
+      } else {
+        let status = await this.checkTokenGetLink({
+          channelId: event.channel.id,
+          token: event.token
+        });
+        if (status == 202) {
+          window.open(this.linkFanpage);
+        }
+      }
+    },
     clickFanpage(event) {
-      sessionStorage.setItem("FanpageID", JSON.stringify(event));
+      sessionStorage.setItem("Fanpage", JSON.stringify(event));
       this.$router.push("/ManageContentFanpage");
     },
     ...mapActions({
       getListCustomer: "authentication/getListCustomerByMarketerID",
       getFanPages: "batchjob/getFanPages",
       deleteFanPage: "batchjob/deleteFanPage",
-      getListTag: "contentprocess/getListTag"
+      getListTag: "contentprocess/getListTag",
+      checkTokenGetLink: "batchjob/checkTokenGetLink"
     }),
     async deleteFP(id) {
       this.loading = true;
@@ -309,7 +342,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["listCustomer", "fanpages"])
+    ...mapGetters(["listCustomer", "fanpages", "linkFanpage"])
   },
   mounted() {
     this.fetchData();

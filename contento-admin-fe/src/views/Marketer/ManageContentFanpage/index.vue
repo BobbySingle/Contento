@@ -1,5 +1,8 @@
 <template>
   <v-container>
+    <v-row>
+      <v-btn text @click="$router.go(-1)">Back</v-btn>
+    </v-row>
     <v-row justify="center" class="mb-5">
       <h1 class="text__h1">Manage Content's Fanpage</h1>
     </v-row>
@@ -35,7 +38,7 @@
         <v-row>
           <v-data-table
             :headers="headers"
-            :items="example"
+            :items="listContentOfFanpage"
             style="width:100%"
             :mobile-breakpoint="600"
             :page.sync="page"
@@ -45,10 +48,23 @@
             @page-count="pageCount = $event"
           >
             <template
-              v-slot:item.publishTime="{item}"
-            >{{item.publishTime| localTime()| moment("HH:mm DD/MM/YYYY")}}</template>
-            <template v-slot:item.status="{item}">
-              <v-chip style="color: white;" :color="item.status.color" small>{{item.status.name}}</v-chip>
+              v-slot:item.publish_time="{item}"
+            >{{item.publish_time| localTime()| moment("HH:mm DD/MM/YYYY")}}</template>
+            <template v-slot:item.listTag="{item}">
+              <div>
+                <v-chip x-small light v-for="topic in item.listTag" :key="topic.id">{{topic.name}}</v-chip>
+              </div>
+            </template>
+            <template v-slot:item.isAds="{item}">
+              <div>
+                <v-chip v-if="item.isAds" color="success">Advertising</v-chip>
+                <v-chip v-else color="warning">No Advertising</v-chip>
+              </div>
+            </template>
+            <template v-slot:item.action="{item}">
+              <v-btn icon fab @click="clickDetail(item.id)">
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -83,15 +99,14 @@ export default {
       endFromDate: "",
       endToDate: "",
       status: "",
-
+      dataFanpage: [],
       loading: false,
       /**List Content */
       headers: [
         {
           text: "Title",
-          value: "title",
+          value: "name",
           sortable: false,
-          width: "30%",
           filter: value => {
             if (!this.search) return true;
             return (
@@ -104,16 +119,14 @@ export default {
         },
         {
           text: "Publish Time",
-          value: "publishTime",
-          align: "center",
-          width: "12.5%"
+          value: "publish_time",
+          align: "center"
         },
         {
-          text: "Status",
-          value: "status",
+          text: "Category",
+          value: "listTag",
           sortable: false,
-          align: "center",
-          width: "10%"
+          width: "20%"
         },
         {
           text: "Action",
@@ -121,14 +134,6 @@ export default {
           sortable: false,
           align: "center",
           width: "10%"
-        }
-      ],
-      example: [
-        {
-          id: 1,
-          title: "Banana Milk Almond,...",
-          publishTime: "",
-          status: { id: 7, name: "Published", color: "success" }
         }
       ]
     };
@@ -158,17 +163,66 @@ export default {
     clearEndToDate() {
       this.endToDate = "";
     },
-
-    ...mapActions({}),
+    clickDetail(event) {
+      sessionStorage.setItem("ContentID", JSON.stringify(event));
+      this.$router.push("/ContentPublishDetail");
+    },
+    ...mapActions({
+      getListContentByFanPagesID: "batchjob/getListContentByFanPagesID"
+    }),
     async fetchData() {
       this.loading = true;
-      // await Promise.all([
-      // ]);
+      this.dataFanpage = JSON.parse(sessionStorage.getItem("Fanpage"));
+      if (this.dataFanpage.channel.id == 1) {
+        this.headers = [];
+        this.headers = [
+          {
+            text: "Title",
+            value: "name",
+            sortable: false,
+            filter: value => {
+              if (!this.search) return true;
+              return (
+                value
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(this.search.toLowerCase()) !== -1
+              );
+            }
+          },
+          {
+            text: "Publish Time",
+            value: "publish_time",
+            align: "center"
+          },
+          {
+            text: "Category",
+            value: "listTag",
+            sortable: false,
+            width: "20%"
+          },
+          {
+            text: "Ads Status",
+            value: "isAds",
+            sortable: false,
+            align: "center",
+            width: "10%"
+          },
+          {
+            text: "Action",
+            value: "action",
+            sortable: false,
+            align: "center",
+            width: "10%"
+          }
+        ];
+      }
+      await Promise.all([this.getListContentByFanPagesID(this.dataFanpage.id)]);
       this.loading = false;
     }
   },
   computed: {
-    ...mapGetters(["getUser"])
+    ...mapGetters(["getUser", "listContentOfFanpage"])
   },
   created() {
     let role = this.getUser.role;

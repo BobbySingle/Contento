@@ -9,6 +9,7 @@ import PublishChannel from "../views/Marketer/PublishChannel/index.vue";
 import ManageChannel from "../views/Marketer/ManageChannel/index.vue";
 import Calendar from "../views/Marketer/Calendar/index.vue";
 import ManagePublish from "../views/Marketer/ManagePublish/index.vue";
+import ContentPublishDetail from "../views/Marketer/ContentPublishDetail/index.vue";
 import ManageCustomer from "../views/Marketer/ManageCustomer/index.vue";
 import CustomerCampaigns from "../views/Marketer/CustomerCampaigns/index.vue";
 import Page403 from "../views/Error/Page403.vue";
@@ -18,9 +19,10 @@ import CampaignRequestDetails from "../views/Editor/CampaignRequestDetails/index
 import ReviewContent from "../views/Editor/ReviewContent/index.vue";
 import ManageTask from "../views/Editor/ManageTask/index.vue";
 import Profile from "../components/Profile/index.vue";
-import ManageAccount from "../views/Admin/ManageAccount/index.vue";
+import ManageSystemAccount from "../views/Admin/ManageSystemAccount/index.vue";
 import ManageContentFanpage from "../views/Marketer/ManageContentFanpage/index.vue";
 import ManageFreelanceAccount from "../views/Admin/ManageFreelanceAccount/index.vue";
+import ManageViewerAccount from "../views/Admin/ManageViewerAccount/index.vue";
 
 Vue.use(Router);
 
@@ -90,6 +92,11 @@ export default new Router({
       name: "ManageContentFanpage",
       component: ManageContentFanpage
     },
+    {
+      path: "/ContentPublishDetail",
+      name: "ContentPublishDetail",
+      component: ContentPublishDetail
+    },
     /**Editor */
     {
       path: "/CampaignRequest",
@@ -129,14 +136,19 @@ export default new Router({
     },
     /**Admin */
     {
-      path: "/ManageAccount",
-      name: "ManageAccount",
-      component: ManageAccount
+      path: "/ManageSystemAccount",
+      name: "ManageSystemAccount",
+      component: ManageSystemAccount
     },
     {
       path: "/ManageFreelanceAccount",
       name: "ManageFreelanceAccount",
       component: ManageFreelanceAccount
+    },
+    {
+      path: "/ManageViewerAccount",
+      name: "ManageViewerAccount",
+      component: ManageViewerAccount
     },
   ]
 });

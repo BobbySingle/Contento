@@ -13,7 +13,7 @@
       <Drawer />
       <router-view />
     </v-content>
-    <Footer v-if="this.$store.state.authentication.loggedUser" />
+    <Footer v-if="this.$store.state.authentication.loggedUser" class="mt-12"/>
   </v-app>
 </template>
 

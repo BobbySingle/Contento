@@ -123,20 +123,32 @@
               <v-btn
                 class="text__14"
                 color="primary"
+                icon
+                fab
                 v-if="item.status.id === 5"
                 @click="publish(item.id)"
-              >Publish</v-btn>
+              >
+                <v-icon>mdi-publish</v-icon>
+              </v-btn>
               <v-btn
                 class="text__14"
-                color="primary"
+                color="warning"
+                icon
+                fab
                 v-if="item.status.id === 6"
                 @click="publish(item.id)"
-              >Change</v-btn>
+              >
+                <v-icon>mdi-autorenew</v-icon>
+              </v-btn>
               <v-btn
                 class="text__14"
-                disabled
+                icon
+                fab
                 v-if="item.status.id != 5 && item.status.id != 6"
-              >Publish</v-btn>
+                @click="clickDetail(item.id)"
+              >
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
             </template>
           </v-data-table>
           <v-row justify="center">
@@ -273,6 +285,10 @@ export default {
     publish(event) {
       sessionStorage.setItem("ContentID", JSON.stringify(event));
       this.$router.push("/PublishChannel");
+    },
+    clickDetail(event) {
+      sessionStorage.setItem("ContentID", JSON.stringify(event));
+      this.$router.push("/ContentPublishDetail");
     },
     ...mapActions({
       getListTaskByMarketerID: "contentprocess/getListTaskByMarketerID",

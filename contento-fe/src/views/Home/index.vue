@@ -67,7 +67,7 @@
       <v-row>
         <v-col cols="12">
           <h2 class="topic-title">
-            <v-icon color="black" class="mb-2">grade</v-icon>May be you favorite
+            <v-icon color="black" class="mb-2 ml-2">mdi-newspaper-variant-multiple-outline</v-icon> Recommend for you
           </h2>
         </v-col>
         <v-col cols="12" sm="4" md="3" v-for="item in getPaginationRecommend" :key="item.id">

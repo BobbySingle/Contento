@@ -93,6 +93,11 @@ export function APIgetAdminAccounts() {
     `${API_URL}/api/authentication/user/admin`
   );
 }
+export function APIgetViewerAccounts() {
+  return axios.get(
+    `${API_URL}/api/authentication/viewer/admin`
+  );
+}
 export function APIgetMarketers() {
   return axios.get(
     `${API_URL}/api/authentication/marketers-basic`

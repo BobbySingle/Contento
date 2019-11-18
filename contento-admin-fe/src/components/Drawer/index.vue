@@ -102,13 +102,19 @@ export default {
         {
           title: "Manage Account",
           icon: "view_list",
-          link: "/ManageAccount",
+          link: "/ManageSystemAccount",
           role: "Admin"
         },
         {
           title: "Freelance Account",
           icon: "mdi-account-outline",
           link: "/ManageFreelanceAccount",
+          role: "Admin"
+        },
+        {
+          title: "User Account",
+          icon: "mdi-account-circle",
+          link: "/ManageViewerAccount",
           role: "Admin"
         },
       ],

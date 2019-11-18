@@ -120,7 +120,7 @@
                   prepend-inner-icon="public"
                   :placeholder="placeholder"
                   required
-                  disabled
+                  readonly
                 ></v-text-field>
               </v-col>
             </v-row>

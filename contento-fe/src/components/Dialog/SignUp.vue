@@ -248,6 +248,8 @@ export default {
           }
           this.loading = false;
           this.dialog = false;
+        } else {
+          this.loading = false;
         }
       }
     },

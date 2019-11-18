@@ -163,7 +163,6 @@ export default {
         }
       } else if (this.role == 2) {
         !this.$v.editor.$touch();
-        alert("Disable" + this.idDisable + "- Succes" + this.editor);
         if (!this.$v.editor.$invalid) {
           let status = await this.disableAccount({
             proAccount: this.idDisable,

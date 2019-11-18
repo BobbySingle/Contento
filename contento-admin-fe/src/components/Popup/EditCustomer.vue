@@ -1,7 +1,9 @@
  <template>
   <v-dialog v-model="dialog" persistent width="400px">
     <template v-slot:activator="{ on }">
-      <v-btn color="warning" class="mr-2 text__14" v-on="on" @click="clickEdit(customerID)">Edit</v-btn>
+      <v-btn color="warning" icon class="mr-2 text__14" v-on="on" @click="clickEdit(customerID)">
+        <v-icon>edit</v-icon>
+      </v-btn>
     </template>
     <v-card>
       <v-row class="mx-4 mb-4" justify="center">
