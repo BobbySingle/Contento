@@ -2,7 +2,9 @@
   <v-dialog v-model="dialog" persistent scrollable width="600px">
     <template v-slot:activator="{ on }">
       <div v-on="on">
-        <v-btn color="warning" class="text__14" @click="clickEdit(channelID)" icon><v-icon>edit</v-icon></v-btn>
+        <v-btn color="warning" class="text__14" @click="clickEdit(channelID)" icon>
+          <v-icon>edit</v-icon>
+        </v-btn>
       </div>
     </template>
     <v-card>
@@ -137,7 +139,7 @@ export default {
       menu: false,
       name: "",
       token: "",
-      link:"",
+      link: "",
       channel: "",
       customer: "",
       tags: [],
@@ -207,6 +209,13 @@ export default {
       !this.$v.tags.required &&
         errors.push("Please select category of fanpage");
       return errors;
+    }
+  },
+  watch: {
+    token() {
+      if (!this.token) {
+        this.link = "";
+      }
     }
   },
   methods: {

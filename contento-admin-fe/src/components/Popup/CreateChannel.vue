@@ -211,6 +211,13 @@ export default {
       return errors;
     }
   },
+  watch: {
+    token() {
+      if (!this.token) {
+        this.link = "";
+      }
+    }
+  },
   methods: {
     async setLink() {
       let status = await this.checkTokenGetLink({
