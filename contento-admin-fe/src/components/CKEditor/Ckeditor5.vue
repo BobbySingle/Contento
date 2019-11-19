@@ -32,11 +32,10 @@ export default {
       type: Boolean,
       default: false
     },
-    typeing:{
+    typeing: {
       type: String,
       required: false
     }
-
   },
   data() {
     return {
@@ -50,10 +49,10 @@ export default {
   },
   methods: {
     updateField() {
-      this.$emit('ckeditorContent',this.editorData);
+      this.$emit("ckeditorContent", this.editorData);
     },
     onReady(editor) {
-      console.log('on ready')
+      console.log("on ready");
       // Insert the toolbar before the editable area.
       editor.ui
         .getEditableElement()
@@ -61,8 +60,8 @@ export default {
           editor.ui.view.toolbar.element,
           editor.ui.getEditableElement()
         );
-        this.editorInstance = editor;
-        this.editorInstance.isReadOnly = this.readOnly;
+      this.editorInstance = editor;
+      this.editorInstance.isReadOnly = this.readOnly;
     },
     changeEditorReadOnly() {
       this.editorInstance.isReadOnly = !this.editorInstance.isReadOnly;
@@ -75,3 +74,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+::v-deep table {
+  width: 100% !important;
+}
+</style>

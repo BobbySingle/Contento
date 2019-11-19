@@ -114,6 +114,9 @@
                     />
                   </v-col>
                 </v-row>
+                <v-row justify="end">
+                  <span class="mr-3">Words: {{countWord}}</span>
+                </v-row>
                 <v-row justify="center" class="flex-nowrap my-2">
                   <v-btn color="secondary" class="mx-1" @click="$router.go(-1)">Cancel</v-btn>
                   <v-btn color="warning" class="mx-1" @click="save()" :loading="loadingSave">Save</v-btn>
@@ -179,7 +182,23 @@ export default {
     form: ["name", "content"]
   },
   computed: {
-    ...mapGetters(["getUser", "taskDetail"])
+    ...mapGetters(["getUser", "taskDetail"]),
+    countWord() {
+      if (this.content) {
+        var cont = this.content;
+        console.log(this.content);
+        cont = cont.replace(/<[^>]*>/g, " "); //remove tag html
+        // cont = cont.replace(/(^\s*)|(\s*$)/g, ""); //exclude  start and end white-space
+        cont = cont.replace(/&nbsp;/g, ""); // remove &nbsp
+        cont = cont.replace(/[!@#$%^&*(),.?":{}|<>\`\~\/\\]+/g, ""); //remove special charactor
+        cont = cont.replace(/[ ]{2,}/g, " "); //2 or more space to 1
+        cont = cont.trim();
+        console.log(cont);
+        var words = cont.split(" ").length;
+        return words;
+      }
+      return 0;
+    }
   },
   created() {
     let role = this.getUser.role;
@@ -199,7 +218,7 @@ export default {
           content: this.$refs.ckeditor.editorData
         });
       }
-    }, 60000);
+    }, 180000);
   },
   beforeDestroy() {
     clearInterval(this.runInterval);

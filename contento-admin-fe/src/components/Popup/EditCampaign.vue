@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" scrollable width="800px">
+  <v-dialog v-model="dialog" persistent scrollable width="800px">
     <template v-slot:activator="{ on }">
       <v-btn color="warning" icon fab small v-on="on" @click="clickEdit(campaignID)">
         <v-icon>edit</v-icon>
@@ -156,6 +156,7 @@
               </v-col>
               <v-col cols="12" md="12">
                 <CKEditor
+                  style="color: black"
                   ref="ckeditor"
                   :content="content"
                   v-model="content"

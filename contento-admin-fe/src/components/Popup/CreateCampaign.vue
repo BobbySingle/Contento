@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" scrollable width="800px">
+  <v-dialog v-model="dialog" persistent scrollable width="800px">
     <template v-slot:activator="{ on }">
       <v-btn color="primary" v-on="on" class="text__14" @click="clickCreate()">Create Campaign</v-btn>
     </template>
@@ -146,6 +146,7 @@
               </v-col>
               <v-col cols="12" md="12">
                 <CKEditor
+                  style="color: black;"
                   ref="ckeditor"
                   :content="content"
                   v-model="content"
@@ -184,7 +185,9 @@ export default {
       title: "",
       firstTimeLoad: true,
       check: false,
-      loadingSave: false
+      loadingSave: false,
+      campaignForm:
+        '<figure class="table"><table><thead><tr><th colspan="2"><h3 style="text-align:center;">Campaign Request</h3></th></tr></thead><tbody><tr><th>Promise</th><td>&nbsp;</td></tr><tr><th>Slogan</th><td>&nbsp;</td></tr><tr><th>Target Customers</th><td>&nbsp;</td></tr><tr><th>Reasons to believe</th><td>&nbsp;</td></tr><tr><th>Function Products</th><td>&nbsp;</td></tr><tr><th>Story</th><td>&nbsp;</td></tr><tr><th>Brand Logo</th><td>&nbsp;</td></tr><tr><th>Positioning maps</th><td>&nbsp;</td></tr><tr><th>Character</th><td>&nbsp;</td></tr><tr><th>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</th><td>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td></tr></tbody></table></figure>'
     };
   },
   validations: {
@@ -242,10 +245,10 @@ export default {
       this.mintime = tomorrow.toISOString();
       this.title = "";
       if (this.firstTimeLoad) {
-        this.content = "Write your request here... ";
+        this.content = this.campaignForm;
         this.firstTimeLoad = !this.firstTimeLoad;
       } else {
-        this.$refs.ckeditor.editorData = "Write your request here... ";
+        this.$refs.ckeditor.editorData = this.campaignForm;
       }
       this.endtime = "";
       this.tags = "";

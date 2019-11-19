@@ -142,6 +142,7 @@
               </v-col>
               <v-col cols="12" sm="12">
                 <CKEditor
+                  style="color: black"
                   ref="ckeditor"
                   :content="content"
                   required
@@ -178,7 +179,8 @@ export default {
       title: "",
       firstTimeLoad: true,
       check: false,
-      loadingCreate: false
+      loadingCreate: false,
+      taskForm:'<figure class="table"><table><tbody><tr><th>Number of words</th><td>&nbsp;</td></tr><tr><th>Meaning</th><td>&nbsp;</td></tr><tr><th>&nbsp;</th><td>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</td></tr></tbody></table></figure>'
     };
   },
   validations: {
@@ -234,10 +236,10 @@ export default {
       this.endtime = "";
       this.publishTime = "";
       if (this.firstTimeLoad) {
-        this.content = "";
+        this.content = this.taskForm;
         this.firstTimeLoad = !this.firstTimeLoad;
       } else {
-        this.$refs.ckeditor.editorData = "";
+        this.$refs.ckeditor.editorData = this.taskForm;
       }
       this.writer = [];
       this.title = "";

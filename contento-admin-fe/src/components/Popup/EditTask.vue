@@ -145,6 +145,7 @@
               </v-col>
               <v-col cols="12" sm="12">
                 <CKEditor
+                  style="color: black"
                   ref="ckeditor"
                   :content="content"
                   required
