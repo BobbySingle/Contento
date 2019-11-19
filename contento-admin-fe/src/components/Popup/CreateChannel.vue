@@ -32,7 +32,7 @@
                   required
                   :error-messages="channelErrors"
                   @change="changeChannel"
-                  @blur="$v.channel.$touch()"
+                  @blur="$v.channel.$touch(),setLink()"
                 ></v-select>
               </v-col>
             </v-row>

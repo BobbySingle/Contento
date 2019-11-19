@@ -19,10 +19,10 @@ export default {
     profile() {
       this.$router.push("/Profile");
     },
-    logout() {
-      localStorage.clear();
-      this.$store.state.authentication.loggedUser = false;
-      this.$router.push("/");
+    async logout() {
+      await localStorage.clear();
+       this.$store.state.authentication.loggedUser = false;
+      await window.open("http://contento-admin.s3-website-ap-southeast-1.amazonaws.com/","_self");
     },
     ...mapActions({ refreshFullName: "authentication/refreshFullName" }),
     async fetchData() {

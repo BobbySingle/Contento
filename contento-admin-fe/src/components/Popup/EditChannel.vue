@@ -102,7 +102,7 @@
                   prepend-inner-icon="vpn_key"
                   required
                   :error-messages="tokenErrors"
-                  @blur="$v.token.$touch()"
+                  @blur="$v.token.$touch(),setLink()"
                 ></v-text-field>
               </v-col>
             </v-row>
