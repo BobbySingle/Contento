@@ -20,7 +20,6 @@
               :value="firstname"
               :error-messages="firstnameErrors"
               @blur="$v.firstname.$touch()"
-              @input="$v.firstname.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
@@ -32,7 +31,6 @@
               :value="lastname"
               :error-messages="lastnameErrors"
               @blur="$v.lastname.$touch()"
-              @input="$v.lastname.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
@@ -44,7 +42,6 @@
               :value="phone"
               :error-messages="phoneErrors"
               @blur="$v.phone.$touch()"
-              @input="$v.phone.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
@@ -56,7 +53,6 @@
               :value="email"
               :error-messages="emailErrors"
               @blur="$v.email.$touch()"
-              @input="$v.email.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
@@ -68,7 +64,6 @@
               :value="company"
               :error-messages="companyErrors"
               @blur="$v.company.$touch()"
-              @input="$v.company.$touch()"
             ></v-text-field>
           </v-row>
         </v-col>

@@ -27,7 +27,6 @@
                   prepend-inner-icon="title"
                   required
                   @blur="$v.title.$touch()"
-                  @input="$v.title.$touch()"
                 ></v-text-field>
                 <div style="color:red" v-if="!$v.title.required && check">The title cannot be empty.</div>
                 <div

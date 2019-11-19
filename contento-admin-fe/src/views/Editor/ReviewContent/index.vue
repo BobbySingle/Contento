@@ -83,7 +83,6 @@
                       readonly
                       required
                       @blur="$v.name.$touch()"
-                      @input="$v.name.$touch()"
                     ></v-text-field>
                     <div style="color:red" v-if="!$v.name.required && check">The title of content cannot be empty.</div>
                     <div

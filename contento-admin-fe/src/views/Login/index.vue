@@ -18,7 +18,6 @@
             required
             :error-messages="emailErrors"
             @blur="$v.email.$touch()"
-            @input="$v.email.$touch()"
           ></v-text-field>
           <v-text-field
             v-model="password"
@@ -36,7 +35,6 @@
             required
             :error-messages="passwordErrors"
             @blur="$v.password.$touch()"
-            @input="$v.password.$touch()"
           ></v-text-field>
           <v-row justify="end" class="px-3">
             <v-btn block color="primary" height="56" @click="submit" :loading="loading">Login</v-btn>

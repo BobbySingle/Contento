@@ -33,7 +33,6 @@
                   :error-messages="channelErrors"
                   @change="changeChannel"
                   @blur="$v.channel.$touch()"
-                  @input="$v.channel.$touch()"
                 ></v-select>
               </v-col>
             </v-row>
@@ -66,7 +65,6 @@
                   required
                   :error-messages="tagsErrors"
                   @blur="$v.tags.$touch()"
-                  @input="$v.tags.$touch()"
                 >
                   <template v-slot:prepend-item>
                     <v-list-item ripple @click="toggle">
@@ -93,7 +91,6 @@
                   required
                   :error-messages="nameErrors"
                   @blur="$v.name.$touch()"
-                  @input="$v.name.$touch()"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -107,7 +104,6 @@
                   required
                   :error-messages="tokenErrors"
                   @blur="$v.token.$touch(),setLink()"
-                  @input="$v.token.$touch()"
                 ></v-text-field>
               </v-col>
             </v-row>

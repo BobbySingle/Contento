@@ -38,7 +38,6 @@
                   :value="email"
                   :error-messages="emailErrors"
                   @blur="$v.email.$touch()"
-                  @input="$v.email.$touch()"
                 ></v-text-field>
               </v-col>
               <v-col cols="6">
@@ -52,7 +51,6 @@
                   required
                   :error-messages="firstnameErrors"
                   @blur="$v.firstname.$touch()"
-                  @input="$v.firstname.$touch()"
                 ></v-text-field>
               </v-col>
               <v-col cols="6">
@@ -66,7 +64,6 @@
                   :value="lastname"
                   :error-messages="lastnameErrors"
                   @blur="$v.lastname.$touch()"
-                  @input="$v.lastname.$touch()"
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
@@ -83,7 +80,6 @@
                   @change="listEmployees"
                   :error-messages="roleErrors"
                   @blur="$v.role.$touch()"
-                  @input="$v.role.$touch()"
                 ></v-select>
               </v-col>
             </v-row>

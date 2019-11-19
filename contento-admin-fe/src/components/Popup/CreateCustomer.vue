@@ -27,7 +27,6 @@
               class="text__14"
               :error-messages="firstnameErrors"
               @blur="$v.firstname.$touch()"
-              @input="$v.firstname.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
@@ -38,7 +37,6 @@
               class="text__14"
               :error-messages="lastnameErrors"
               @blur="$v.lastname.$touch()"
-              @input="$v.lastname.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
@@ -50,7 +48,6 @@
               class="text__14"
               :error-messages="phoneErrors"
               @blur="$v.phone.$touch()"
-              @input="$v.phone.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
@@ -61,7 +58,6 @@
               class="text__14"
               :error-messages="emailErrors"
               @blur="$v.email.$touch()"
-              @input="$v.email.$touch()"
             ></v-text-field>
           </v-row>
           <v-row>
@@ -72,7 +68,6 @@
               class="text__14"
               :error-messages="companyErrors"
               @blur="$v.company.$touch()"
-              @input="$v.company.$touch()"
             ></v-text-field>
           </v-row>
         </v-col>

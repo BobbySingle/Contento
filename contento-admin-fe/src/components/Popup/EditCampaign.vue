@@ -30,7 +30,6 @@
                   class="text__14"
                   prepend-inner-icon="title"
                   @blur="$v.title.$touch()"
-                  @input="$v.title.$touch()"
                 ></v-text-field>
                 <div style="color:red" v-if="!$v.title.required && check">Please enter title.</div>
                 <div

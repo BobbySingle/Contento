@@ -28,7 +28,6 @@
                 required
                 :error-messages="editorErrors"
                 @blur="$v.editor.$touch()"
-                @input="$v.editor.$touch()"
               ></v-select>
             </v-col>
           </v-row>
@@ -48,7 +47,6 @@
                 required
                 :error-messages="writerErrors"
                 @blur="$v.writer.$touch()"
-                @input="$v.writer.$touch()"
               ></v-select>
             </v-col>
           </v-row>
@@ -67,7 +65,6 @@
                 required
                 :error-messages="marketerErrors"
                 @blur="$v.marketer.$touch()"
-                @input="$v.marketer.$touch()"
               ></v-select>
             </v-col>
           </v-row>

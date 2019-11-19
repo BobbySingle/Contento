@@ -17,7 +17,6 @@
               required
               :error-messages="firstnameErrors"
               @blur="$v.firstname.$touch()"
-              @input="$v.firstname.$touch()"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -29,7 +28,6 @@
               :value="lastname"
               :error-messages="lastnameErrors"
               @blur="$v.lastname.$touch()"
-              @input="$v.lastname.$touch()"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -66,7 +64,6 @@
               :value="age"
               :error-messages="ageErrors"
               @blur="$v.age.$touch()"
-              @input="$v.age.$touch()"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -81,7 +78,6 @@
               required
               :error-messages="phoneErrors"
               @blur="$v.phone.$touch()"
-              @input="$v.phone.$touch()"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -123,7 +119,7 @@
                       :type="showOldPassword ? 'password' : 'text'"
                       required
                       :error-messages="oldPasswordErrors"
-                      @input="$v.oldPassword.$touch(),checkOldPassword()"
+                      @blur="$v.oldPassword.$touch(),checkOldPassword()"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12">
@@ -138,7 +134,6 @@
                       required
                       :error-messages="newPasswordErrors"
                       @blur="$v.newPassword.$touch()"
-                      @input="$v.newPassword.$touch()"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12">
@@ -153,7 +148,6 @@
                       required
                       :error-messages="confirmPasswordErrors"
                       @blur="$v.confirmPassword.$touch()"
-                      @input="$v.confirmPassword.$touch()"
                     ></v-text-field>
                   </v-col>
                 </v-row>

@@ -85,7 +85,6 @@
                         :value="name"
                         class="mr-2"
                         @blur="$v.name.$touch()"
-                        @input="$v.name.$touch()"
                       ></v-text-field>
                       <v-btn v-on:click="changeWidth()" icon class="mt-3" color="black">
                         <v-icon>{{btnChange}}</v-icon>
