@@ -251,8 +251,6 @@ export default {
     ...mapGetters(["getUser", "listViewerAccounts"])
   },
   created() {
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + this.$store.getters.getAccessToken;
     let role = this.getUser.role;
     if (role !== "Admin" && role != null) {
       this.$router.push("/403");

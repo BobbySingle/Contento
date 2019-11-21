@@ -251,6 +251,15 @@ export default {
   },
   mounted() {
     this.fetchData();
+  },
+  created() {
+    let role = this.getUser.role;
+    if (role !== "Admin" && role != null) {
+      this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
+    }
   }
 };
 </script>

@@ -342,10 +342,19 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["listCustomer", "fanpages", "linkFanpage"])
+    ...mapGetters(["listCustomer", "fanpages", "linkFanpage","getUser"])
   },
   mounted() {
     this.fetchData();
+  },
+   created() {
+    let role = this.getUser.role;
+    if (role !== "Marketer" && role != null) {
+      this.$router.push("/403");
+    } else if (role == null) {
+      this.$store.state.authentication.loggedUser = false;
+      this.$router.push("/");
+    }
   }
 };
 </script>

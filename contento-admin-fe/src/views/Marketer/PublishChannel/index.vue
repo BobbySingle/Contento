@@ -266,7 +266,8 @@ export default {
       localISOTime: "",
       tzoffset: new Date().getTimezoneOffset() * 60000, //offset in milliseconds
 
-      loading: false
+      loading: false,
+      isChangePublishTime: false
     };
   },
   validations: {
@@ -301,6 +302,7 @@ export default {
         .toISOString()
         .slice(0, -1);
       this.publishTime = newDateUTC7;
+      // this.publishTime = this.taskDetail.publishTime;
       this.writer = this.taskDetail.writer.name;
       this.editor = this.taskDetail.editor.name;
       this.content = this.taskDetail.content.content;
@@ -348,22 +350,47 @@ export default {
         this.fanpages != "" &&
         this.$v.publishTime.$model >= this.localISOTime
       ) {
-        if (this.isAds) {
-          await this.publishContent({
-            listFanpage: this.fanpages,
-            listTag: this.tags,
-            contentId: this.taskDetail.content.id,
-            time: this.publishTime,
-            adsTime: this.endAds,
-            isAds: true
-          });
+        if (this.isChangePublishTime) {
+          if (this.isAds) {
+            await this.publishContent({
+              listFanpage: this.fanpages,
+              listTag: this.tags,
+              contentId: this.taskDetail.content.id,
+              time: this.publishTime,
+              adsTime: this.endAds,
+              isAds: true
+            });
+          } else {
+            await this.publishContent({
+              listFanpage: this.fanpages,
+              listTag: this.tags,
+              contentId: this.taskDetail.content.id,
+              time: this.publishTime
+            });
+          }
         } else {
-          await this.publishContent({
-            listFanpage: this.fanpages,
-            listTag: this.tags,
-            contentId: this.taskDetail.content.id,
-            time: this.publishTime
-          });
+          var millisecondsTime = Date.parse(this.publishTime + "Z");
+          var newDateUTC7 = new Date(millisecondsTime + this.tzoffset)
+            .toISOString()
+            .slice(0, -1);
+          var publishTimeNoChange = newDateUTC7;
+          if (this.isAds) {
+            await this.publishContent({
+              listFanpage: this.fanpages,
+              listTag: this.tags,
+              contentId: this.taskDetail.content.id,
+              time: publishTimeNoChange,
+              adsTime: this.endAds,
+              isAds: true
+            });
+          } else {
+            await this.publishContent({
+              listFanpage: this.fanpages,
+              listTag: this.tags,
+              contentId: this.taskDetail.content.id,
+              time: publishTimeNoChange
+            });
+          }
         }
         console.log(this.publishTime);
         this.loading = false;
@@ -401,6 +428,7 @@ export default {
         .add(5, "days")
         .startOf("day")
         .toISOString();
+      this.isChangePublishTime = true;
     }
   },
   created() {
@@ -464,6 +492,34 @@ export default {
   max-width: 100%;
   max-height: 100%;
 }
+
+::v-deep .content table {
+  border-collapse: collapse;
+}
+::v-deep .table table {
+  width: 100%;
+}
+::v-deep .image {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 400;
+}
+::v-deep .image img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+::v-deep .content table th {
+  border: 1px solid black;
+}
+::v-deep .content table td {
+  padding-left: 10px;
+  border: 1px solid black;
+}
 .datetime {
   width: 100%;
   padding-left: 10px;
@@ -472,7 +528,7 @@ export default {
 ::v-deep p {
   text-align: justify;
 }
-::v-deep .table {
+/* ::v-deep .table {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -492,5 +548,5 @@ export default {
   text-align: center;
   font-style: italic;
   font-weight: bold;
-}
+} */
 </style>

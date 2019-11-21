@@ -16,3 +16,26 @@ export function APIlogin(email, password) {
 export function APIregister(data) {
   return axios.post(`${API_URL}/api/authentication/register`, data);
 }
+
+export function APIgetProfileInfo(userid) {
+  return axios.get(
+    `${API_URL}/api/authentication/profile/${userid}`
+  );
+}
+
+export function APIeditProfileInfo(data) {
+  return axios.put(
+    `${API_URL}/api/authentication/profile`, data
+  );
+}
+export function APIcheckPassword(data) {
+  return axios.post(
+    `${API_URL}/api/authentication/check-password`, data
+  );
+}
+
+export function APIchangePassword(data) {
+  return axios.put(
+    `${API_URL}/api/authentication/change-password`, data
+  );
+}

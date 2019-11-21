@@ -18,11 +18,14 @@ import {
   APIgetListTaskByEditorID,
   APIgetListStatusTask,
   APIgetListStatusCampaign,
-  APIgetListStatusPublish
+  APIgetListStatusPublish,
+  APIgetStatisticalOneWeek,
+  APIgetStatisticalOneMonth
 } from "../../services/contentprocess";
 
 import router from "@/router/index";
 import Vue from "vue";
+import { get } from "http";
 
 const state = {
   listCampaignTask: [],
@@ -37,6 +40,10 @@ const state = {
   listStatusTask: [],
   listStatusCampaign: [],
   listStatusPublish: [],
+  dataStatisticalOneWeek: [],
+  dataStatisticalOneMonth: [],
+  dataStatisticalAllOneWeek: [],
+  dataStatisticalAllOneMonth: []
 };
 
 const mutations = {
@@ -89,6 +96,18 @@ const mutations = {
   SET_LIST_STATUS_PUBLISH(state, data) {
     state.listStatusPublish = data;
   },
+  SET_DATA_STATISTICAL_WEEK(state, data) {
+    state.dataStatisticalOneWeek = data;
+  },
+  SET_DATA_STATISTICAL_MONTH(state, data) {
+    state.dataStatisticalOneMonth = data;
+  },
+  SET_DATA_STATISTICAL_ALL_WEEK(state, data) {
+    state.dataStatisticalAllOneWeek = data;
+  },
+  SET_DATA_STATISTICAL_ALL_MONTH(state, data) {
+    state.dataStatisticalAllOneMonth = data;
+  }
 };
 
 const actions = {
@@ -389,6 +408,54 @@ const actions = {
       console.log(error);
     }
   },
+  async getStatisticalOneWeek({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticalOneWeek(payload);
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICAL_WEEK", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - STATISTICAL WEEK");
+      console.log(error);
+    }
+  },
+  async getStatisticalOneMonth({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticalOneMonth(payload);
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICAL_MONTH", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - STATISTICAL MONTH");
+      console.log(error);
+    }
+  },
+  async getStatisticalAllOneWeek({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticalOneWeek(payload);
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICAL_ALL_WEEK", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - STATISTICAL ALL WEEK");
+      console.log(error);
+    }
+  },
+  async getStatisticalAllOneMonth({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticalOneMonth(payload);
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICAL_ALL_MONTH", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - STATISTICAL ALL MONTH");
+      console.log(error);
+    }
+  }
 };
 
 export default {

@@ -102,6 +102,9 @@ export default {
     reset() {
       this.$refs.form.reset();
     },
+    profile(){
+      this.$router.push("/Profile");
+    },
     async logout() {
       localStorage.removeItem("ProfileUser");
       this.$store.state.authentication.loggedUser = false;

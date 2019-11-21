@@ -18,7 +18,7 @@
       </v-toolbar>
       <v-card-text style="padding:0px;">
         <v-row no-gutters class="mx-10">
-          <v-col cols="12" sm="12" v-if="!overdue">
+          <v-col cols="12" sm="12">
             <v-row>
               <v-col cols="12" sm="12">
                 <v-text-field
@@ -153,57 +153,6 @@
               </v-col>
             </v-row>
           </v-col>
-          <!-- Over due -->
-          <v-row v-if="overdue">
-            <v-col cols="12" align-self="center">
-              <v-row class="out-endtime flex-nowrap" align="center">
-                <v-col sm="1" class="d-none d-sm-block">
-                  <v-icon>mdi-calendar-range</v-icon>
-                </v-col>
-                <v-col cols="12" sm="11">
-                  <datetime
-                    title="End Time"
-                    placeholder="Select End Time"
-                    type="datetime"
-                    v-model="endtime"
-                    :value="endtime"
-                    class="text__14"
-                    input-class="datetime"
-                    input-style="cursor:pointer;"
-                    :min-datetime="mintime"
-                    :max-datetime="publishDate"
-                    required
-                  ></datetime>
-                </v-col>
-              </v-row>
-              <div style="color:red" v-if="!$v.endtime.required && check">Please select endtime.</div>
-            </v-col>
-            <v-col cols="12" align-self="center">
-              <v-row class="out-endtime flex-nowrap" align="center">
-                <v-col sm="1" class="d-none d-sm-block">
-                  <v-icon>publish</v-icon>
-                </v-col>
-                <v-col cols="12" sm="11">
-                  <datetime
-                    title="Publish Time"
-                    placeholder="Select Publish Time"
-                    type="datetime"
-                    v-model="publishDate"
-                    :value="publishDate"
-                    class="text__14"
-                    input-class="datetime"
-                    input-style="cursor:pointer;"
-                    :min-datetime="endtime"
-                    required
-                  ></datetime>
-                </v-col>
-              </v-row>
-              <div
-                style="color:red"
-                v-if="!$v.publishDate.required && check"
-              >Please select publish time.</div>
-            </v-col>
-          </v-row>
         </v-row>
       </v-card-text>
     </v-card>
@@ -235,7 +184,6 @@ export default {
       id: "",
       check: false,
       loadingSave: false,
-      overdue: false,
       //Local TimeZone
       localISOTime: "",
       tzoffset: new Date().getTimezoneOffset() * 60000 //offset in milliseconds
@@ -255,8 +203,7 @@ export default {
       "endtime",
       "publishDate",
       "selectedTag"
-    ],
-    overdue: ["publishDate", "endtime"]
+    ]
   },
   computed: {
     ...mapGetters(["listWriter", "listTagByCampaignID", "taskDetailUpdate"])
@@ -294,16 +241,6 @@ export default {
       this.writer = this.taskDetailUpdate.writer;
       this.title = this.taskDetailUpdate.title;
       this.id = this.taskDetailUpdate.id;
-      if (
-        this.taskDetailUpdate.status.id == 4 ||
-        this.taskDetailUpdate.status.id == 2
-      ) {
-        this.overdue = true;
-        this.widthDialog = "300px";
-      } else {
-        this.overdue = false;
-        this.widthDialog = "800px";
-      }
     },
 
     async update() {
@@ -311,50 +248,26 @@ export default {
       let campaignID = sessionStorage.getItem("CampaignID");
       this.check = true;
       this.$v.form.$touch();
-      this.$v.overdue.$touch();
-      if (!this.overdue) {
-        if (!this.$v.form.$invalid) {
-          let status = await this.editTaskByID({
-            idTask: this.id,
-            idWriter: this.writer.id,
-            title: this.title,
-            description: this.$refs.ckeditor.editorData,
-            deadline: this.endtime,
-            publishTime: this.publishDate,
-            tags: this.selectedTag
-          });
-          if (status == 202) {
-            await Promise.all([
-              this.getListCampaignTask(campaignID),
-              this.getListTaskByEditorID(this.$store.getters.getUser.id)
-            ]);
-            this.loadingSave = false;
-            this.dialog = false;
-          }
+      if (!this.$v.form.$invalid) {
+        let status = await this.editTaskByID({
+          idTask: this.id,
+          idWriter: this.writer.id,
+          title: this.title,
+          description: this.$refs.ckeditor.editorData,
+          deadline: this.endtime,
+          publishTime: this.publishDate,
+          tags: this.selectedTag
+        });
+        if (status == 202) {
+          await Promise.all([
+            this.getListCampaignTask(campaignID),
+            this.getListTaskByEditorID(this.$store.getters.getUser.id)
+          ]);
+          this.loadingSave = false;
+          this.dialog = false;
         }
-        this.loadingSave = false;
-      } else {
-        if (!this.$v.overdue.$invalid) {
-          let status = await this.editTaskByID({
-            idTask: this.id,
-            idWriter: this.writer.id,
-            title: this.title,
-            description: this.content,
-            deadline: this.endtime,
-            publishTime: this.publishDate,
-            tags: this.selectedTag
-          });
-          if (status == 202) {
-            await Promise.all([
-              this.getListCampaignTask(campaignID),
-              this.getListTaskByEditorID(this.$store.getters.getUser.id)
-            ]);
-            this.loadingSave = false;
-            this.dialog = false;
-          }
-        }
-        this.loadingSave = false;
       }
+      this.loadingSave = false;
     }
   }
 };

@@ -72,6 +72,13 @@ export default {
           // role: "Marketer"
         },
         {
+          title: "Statistical",
+          icon: "mdi-poll-box",
+          link: "/Statistical",
+          role: "Marketer"
+          // role: "Marketer"
+        },
+        {
           title: "Campaign Request",
           icon: "flag",
           link: "/CampaignRequest",

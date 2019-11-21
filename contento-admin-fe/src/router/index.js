@@ -23,6 +23,7 @@ import ManageSystemAccount from "../views/Admin/ManageSystemAccount/index.vue";
 import ManageContentFanpage from "../views/Marketer/ManageContentFanpage/index.vue";
 import ManageFreelanceAccount from "../views/Admin/ManageFreelanceAccount/index.vue";
 import ManageViewerAccount from "../views/Admin/ManageViewerAccount/index.vue";
+import Statistical from "../views/Marketer/Statistical/index.vue";
 
 Vue.use(Router);
 
@@ -96,6 +97,11 @@ export default new Router({
       path: "/ContentPublishDetail",
       name: "ContentPublishDetail",
       component: ContentPublishDetail
+    },
+    {
+      path: "/Statistical",
+      name: "Statistical",
+      component: Statistical
     },
     /**Editor */
     {

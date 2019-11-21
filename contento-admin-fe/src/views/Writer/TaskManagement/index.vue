@@ -388,16 +388,16 @@ export default {
   display: -webkit-box;
   -webkit-box-orient: vertical;
 }
-.content_details:hover {
+/* .content_details:hover {
   cursor: pointer;
-}
-.title_fontbold {
+} */
+/* .title_fontbold {
   font-size: 14px;
-}
-.title_fontbold:hover {
+} */
+/* .title_fontbold:hover {
   font-size: 14px;
   font-weight: 650;
-}
+} */
 .tr-table-content:hover {
   background-color: rgba(100, 100, 100, 0.1);
 }

@@ -138,7 +138,11 @@
             </template>
             <template v-slot:item.action="{ item }">
               <v-row class="flex-nowrap" justify="center">
-                <edit-task v-if="item.status.id < 5 && item.status.id != 3" :taskID="item.id" />
+                <edit-task v-if="item.status.id == 1" :taskID="item.id" />
+                <edit-task-over-due
+                  v-if="item.status.id == 2 || item.status.id == 4"
+                  :taskID="item.id"
+                />
                 <v-btn
                   text
                   icon
@@ -151,9 +155,10 @@
 
                 <v-btn
                   color="primary"
+                  icon fab 
                   v-if="item.status.id == 3"
                   @click="changeToReview(item.id)"
-                >Review</v-btn>
+                > <v-icon>gavel</v-icon></v-btn>
               </v-row>
             </template>
           </v-data-table>
@@ -172,9 +177,10 @@
 import moment from "moment";
 import axios from "axios";
 import EditTask from "../../../components/Popup/EditTask.vue";
+import EditTaskOverDue from "../../../components/Popup/EditTaskOverDue.vue";
 import { mapGetters, mapActions } from "vuex";
 export default {
-  components: { EditTask },
+  components: { EditTask, EditTaskOverDue },
   data() {
     return {
       /**Begin Pagination */
@@ -245,7 +251,7 @@ export default {
           align: "center",
           width: "10%"
         }
-      ],
+      ]
     };
   },
   filters: {

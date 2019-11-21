@@ -1,12 +1,13 @@
 
 import Swal from 'sweetalert2';
 import Vue from 'vue'
-import { APIlogin, APIregister } from '../../services/authentication';
+import { APIlogin, APIregister, APIgetProfileInfo, APIeditProfileInfo, APIchangePassword, APIcheckPassword } from '../../services/authentication';
 const state = {
     access_token: "",
     user: [],
     fullName: "",
     loggedUser: false,
+    profileUser: [],
 };
 
 const mutations = {
@@ -22,6 +23,9 @@ const mutations = {
     SET_LOGGEDUSER(state, data) {
         state.loggedUser = data;
     },
+    SET_PROFILE_USER(state, data) {
+        state.profileUser = data;
+    }
 };
 
 const actions = {
@@ -108,74 +112,77 @@ const actions = {
             console.log("ERROR");
             console.log(error);
         }
-    }
-    // async getProfileInfo({ commit }, payload) {
-    //     try {
-    //       let rs = await APIgetProfileInfo(payload);
-    //       commit("SET_PROFILE", rs.data);
-    //     } catch (error) {
-    //       console.log("ERROR -  PROFILE");
-    //       console.log(error);
-    //     }
-    //   },
-    // async checkPassword({ commit }, payload) {
-    //     try {
-    //       let rs = await APIcheckPassword(payload);
-    //       if (rs.status == 202) {
-    //         return 202;
-    //       }
-    //     } catch (error) {
-    //     }
-    //   },
-    //   async changePassword({ commit }, payload) {
-    //     try {
-    //       let rs = await APIchangePassword(payload);
-    //       if (rs.status == 202) {
-    //         Vue.notify({
-    //           group: 'notice',
-    //           title: 'Change password successful!',
-    //           text: 'Password has been changed successfully!',
-    //           type: 'suc'
-    //         })
-    //         return 202;
-    //       }
-    //     } catch (error) {
-    //       Vue.notify({
-    //         group: 'notice',
-    //         title: 'Change password failed!',
-    //         text: 'Password has been changed failed!',
-    //         type: 'warn'
-    //       })
-    //       console.log("ERROR -  CHANGE PASSWORD");
-    //       console.log(error);
-    //     }
-    //   },
-    //   async editProfileInfo({ commit }, payload) {
-    //     try {
-    //       let rs = await APIeditProfileInfo(payload);
-    //       commit("SET_PROFILE", rs.data);
-    //       commit("SET_FULLNAME", rs.data.fullName);
-    //       let profile = JSON.parse(localStorage.getItem("ProfileUser").toString());
-    //       profile.fullName = rs.data.fullName;
-    //       localStorage.setItem("ProfileUser", JSON.stringify(profile));
-    //       Vue.notify({
-    //         group: 'notice',
-    //         title: 'Edit successful!',
-    //         text: 'Profile has been edited successfully!',
-    //         type: 'suc'
-    //       })
-    //       return 202;
-    //     } catch (error) {
-    //       console.log("ERROR -  PROFILE");
-    //       console.log(error);
-    //       Vue.notify({
-    //         group: 'notice',
-    //         title: 'Edit failed!',
-    //         text: 'Profile has been edited failed!',
-    //         type: 'warn'
-    //       })
-    //     }
-    //   },
+    },
+    async getProfileInfo({ commit }, payload) {
+        try {
+            let rs = await APIgetProfileInfo(payload);
+            if (rs.status == 200) {
+                commit("SET_PROFILE_USER", rs.data);
+                return 200
+            }
+        } catch (error) {
+            console.log("ERROR -  PROFILE");
+            console.log(error);
+        }
+    },
+    async checkPassword({ commit }, payload) {
+        try {
+            let rs = await APIcheckPassword(payload);
+            if (rs.status == 202) {
+                return 202;
+            }
+        } catch (error) {
+        }
+    },
+    async changePassword({ commit }, payload) {
+        try {
+            let rs = await APIchangePassword(payload);
+            if (rs.status == 202) {
+                Vue.notify({
+                    group: 'notice',
+                    title: 'Change password successful!',
+                    text: 'Password has been changed successfully!',
+                    type: 'suc'
+                })
+                return 202;
+            }
+        } catch (error) {
+            Vue.notify({
+                group: 'notice',
+                title: 'Change password failed!',
+                text: 'Password has been changed failed!',
+                type: 'warn'
+            })
+            console.log("ERROR -  CHANGE PASSWORD");
+            console.log(error);
+        }
+    },
+    async editProfileInfo({ commit }, payload) {
+        try {
+            let rs = await APIeditProfileInfo(payload);
+            commit("SET_PROFILE_USER", rs.data);
+            commit("SET_FULLNAME", rs.data.fullName);
+            let profile = JSON.parse(localStorage.getItem("ProfileUser").toString());
+            profile.fullName = rs.data.fullName;
+            localStorage.setItem("ProfileUser", JSON.stringify(profile));
+            Vue.notify({
+                group: 'notice',
+                title: 'Edit successful!',
+                text: 'Profile has been edited successfully!',
+                type: 'suc'
+            })
+            return 202;
+        } catch (error) {
+            console.log("ERROR -  PROFILE");
+            console.log(error);
+            Vue.notify({
+                group: 'notice',
+                title: 'Edit failed!',
+                text: 'Profile has been edited failed!',
+                type: 'warn'
+            })
+        }
+    },
 }
 
 export default {

@@ -255,4 +255,31 @@ export default {
   max-width: 100%;
   max-height: 100%;
 }
+::v-deep .content table {
+  border-collapse: collapse;
+}
+::v-deep .table table{
+  width: 100%;
+}
+::v-deep .image {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 400;
+}
+::v-deep .image img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+::v-deep .content table th {
+  border: 1px solid black;
+}
+::v-deep .content table td {
+  padding-left: 10px;
+  border: 1px solid black;
+}
 </style>

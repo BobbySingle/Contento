@@ -138,9 +138,13 @@
             <template v-slot:item.action="{ item }">
               <v-btn
                 color="primary"
+                icon
+                fab
                 v-if="item.status.id === 3"
                 @click="changeToReview(item.id)"
-              >Review</v-btn>
+              >
+                <v-icon>gavel</v-icon>
+              </v-btn>
             </template>
           </v-data-table>
           <v-row justify="center">

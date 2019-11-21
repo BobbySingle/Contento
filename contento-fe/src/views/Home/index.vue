@@ -67,7 +67,7 @@
       <v-row>
         <v-col cols="12">
           <h2 class="topic-title">
-            <v-icon color="black" class="mb-2 ml-2">mdi-newspaper-variant-multiple-outline</v-icon> Recommend for you
+            <v-icon color="black" class="mb-2 ml-2">mdi-newspaper-variant-multiple-outline</v-icon>Recommend for you
           </h2>
         </v-col>
         <v-col cols="12" sm="4" md="3" v-for="item in getPaginationRecommend" :key="item.id">
@@ -185,15 +185,17 @@ export default {
       let guest = JSON.parse(localStorage.getItem("guest"));
       if (this.$store.state.authentication.loggedUser) {
         await this.getRecommendNews(this.getUser.id);
-      }
-      if (guest == undefined) {
-        await this.getContent({ tags: [0] });
-        this.dialog = true;
+        this.getContent({ id: this.getUser.id, tags: [0] });
       } else {
-        if (guest == "") {
+        if (guest == undefined) {
           await this.getContent({ tags: [0] });
+          this.dialog = true;
         } else {
-          await this.getContent({ tags: guest });
+          if (guest == "") {
+            await this.getContent({ tags: [0] });
+          } else {
+            await this.getContent({ tags: guest });
+          }
         }
       }
     }

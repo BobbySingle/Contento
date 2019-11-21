@@ -25,7 +25,7 @@ const getters = {
 
 
     //authentication
-    profile: state => state.authentication.profile,
+    profile: state => state.authentication.profileUser,
     fullname: state => state.authentication.fullName,
     getAccessToken: state => state.authentication.access_token,
     getUser: state => state.authentication.user,
