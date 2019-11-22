@@ -1,0 +1,6 @@
+npm install --save  postcss-loader@3     raw-loader@3     style-loader@1     webpack@4     webpack-cli@3
+    
+npm install --save     @ckeditor/ckeditor5-editor-classic     @ckeditor/ckeditor5-essentials     @ckeditor/ckeditor5-basic-styles     @ckeditor/ckeditor5-link     @ckeditor/ckeditor5-paragraph     @ckeditor/ckeditor5-theme-lark
+npm install --save @ckeditor/ckeditor5-adapter-ckfinder @ckeditor/ckeditor5-alignment @ckeditor/ckeditor5-autoformat @ckeditor/ckeditor5-block-quote @ckeditor/ckeditor5-ckfinder @ckeditor/ckeditor5-easy-image @ckeditor/ckeditor5-font  @ckeditor/ckeditor5-heading @ckeditor/ckeditor5-highlight @ckeditor/ckeditor5-indent @ckeditor/ckeditor5-list @ckeditor/ckeditor5-media-embed @ckeditor/ckeditor5-paste-from-office  @ckeditor/ckeditor5-table @ckeditor/ckeditor5-word-count @ckeditor/ckeditor5-horizontal-line @ckeditor/ckeditor5-remove-format
+
+
