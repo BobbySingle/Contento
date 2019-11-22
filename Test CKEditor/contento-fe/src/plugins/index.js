@@ -1,0 +1,6 @@
+import '@/plugins/vuecookies.js'
+import '@/plugins/notification.js'
+import '@/plugins/swal2.js'
+import '@/plugins/vuelidate.js'
+import '@/plugins/firebase.js'
+import '@/plugins/ckeditorvue.js'
