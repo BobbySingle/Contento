@@ -43,7 +43,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .line-clamp {
   /**line-clamp */
   overflow: hidden;

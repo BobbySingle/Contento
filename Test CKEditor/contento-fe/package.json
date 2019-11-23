@@ -49,6 +49,7 @@
     "vue": "^2.6.10",
     "vue-ckeditor2": "^2.1.5",
     "vue-cookies": "^1.5.13",
+    "vue-froala-wysiwyg": "^3.0.6",
     "vue-moment": "^4.0.0",
     "vue-notification": "^1.3.20",
     "vue-router": "^3.0.3",

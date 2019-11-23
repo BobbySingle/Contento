@@ -4,7 +4,11 @@
       <ckeditor :editor="editor" v-model="editorData" :config="editorConfig"></ckeditor>
     </div>
     <div>Words: {{words}} - Characters: {{characters}}</div>
-    <div v-html="editorData" />
+    <div
+      class="editor"
+      v-html="editorData"
+      style="width:1000px; background-color:#c9c9dc; min-height:500px"
+    />
   </div>
 </template>
 
