@@ -70,7 +70,11 @@
               v-if="selectedEvent"
             >
               <!-- /**Begin Event endDate */ -->
-              <v-row class="flex-nowrap pa-2" :style="{backgroundColor: selectedEvent.status.color}" no-gutters>
+              <v-row
+                class="flex-nowrap pa-2"
+                :style="{backgroundColor: selectedEvent.status.color}"
+                no-gutters
+              >
                 <v-col cols="6">
                   <span class="pl-1" style="color:white">Deadline</span>
                 </v-col>
@@ -91,7 +95,7 @@
               <!-- /**Begin Event Writer & Status  */ -->
               <v-row class="pa-2" align="center" no-gutters>
                 <v-col cols="6">
-                  <v-row class="px-2">
+                  <v-row class="px-2 flex-nowrap">
                     <v-icon color="#1976d2">edit</v-icon>
                     <span class="px-2 event__writer">{{selectedEvent.writer.name}}</span>
                   </v-row>
@@ -217,7 +221,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getListCampaignTask: "contentprocess/getListCampaignTask"
+      getListCampaignTask: "contentprocess/getListCampaignTask",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     publish(event) {
       sessionStorage.setItem("ContentID", JSON.stringify(event));
@@ -228,7 +233,18 @@ export default {
     },
     async fetchData() {
       let campaignID = JSON.parse(sessionStorage["CampaignID"].toString());
-      await this.getListCampaignTask(campaignID);
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
+      await Promise.all([timeOut(500), this.getListCampaignTask(campaignID)]);
+
+      await this.spinnerLoading(false);
     },
     viewDay({ date }) {
       this.focus = date;

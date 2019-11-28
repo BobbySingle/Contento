@@ -164,7 +164,7 @@ import CKEditor from "../CKEditor/Ckeditor5";
 import { mapGetters, mapActions } from "vuex";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
-  props: ["taskID"],
+  props: ["taskID", "campID", "fromManageTask"],
   components: {
     CKEditor
   },
@@ -217,11 +217,21 @@ export default {
       getTaskDetailUpdate: "contentprocess/getTaskDetailUpdate",
       editTaskByID: "contentprocess/editTaskByID",
       getListTaskByEditorID: "contentprocess/getListTaskByEditorID",
-      getListCampaignTask: "contentprocess/getListCampaignTask"
+      getListCampaignTask: "contentprocess/getListCampaignTask",
+      getListTagByCampaignID: "contentprocess/getListTagByCampaignID"
     }),
     async clickEdit(taskID) {
       this.check = false;
-      await this.getTaskDetailUpdate(taskID);
+      let campaignID = "";
+      if (this.fromManageTask) {
+        campaignID = this.campID;
+      } else {
+        campaignID = sessionStorage.getItem("CampaignID");
+      }
+      await Promise.all([
+        this.getTaskDetailUpdate(taskID),
+        this.getListTagByCampaignID(campaignID)
+      ]);
       this.selectedTag = this.taskDetailUpdate.tags;
       // Convert Time to LocalTime
       var endtimeMilisTime = Date.parse(this.taskDetailUpdate.deadline + "Z");
@@ -245,7 +255,12 @@ export default {
 
     async update() {
       this.loadingSave = true;
-      let campaignID = sessionStorage.getItem("CampaignID");
+      let campaignID = "";
+      if (this.fromManageTask) {
+        campaignID = this.campID;
+      } else {
+        campaignID = sessionStorage.getItem("CampaignID");
+      }
       this.check = true;
       this.$v.form.$touch();
       if (!this.$v.form.$invalid) {
@@ -261,7 +276,8 @@ export default {
         if (status == 202) {
           await Promise.all([
             this.getListCampaignTask(campaignID),
-            this.getListTaskByEditorID(this.$store.getters.getUser.id)
+            this.getListTaskByEditorID(this.$store.getters.getUser.id),
+            this.getListTagByCampaignID(campaignID)
           ]);
           this.loadingSave = false;
           this.dialog = false;

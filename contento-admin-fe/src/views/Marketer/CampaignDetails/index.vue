@@ -163,7 +163,7 @@
                 </v-data-table>
                 <v-row justify="center">
                   <div class="text-center pt-2">
-                    <v-pagination v-model="page" :length="pageCount" :total-visible="7"></v-pagination>
+                    <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
                   </div>
                 </v-row>
               </v-row>
@@ -279,12 +279,23 @@ export default {
     ...mapActions({
       getDetailCampaign: "campaign/getDetailCampaign",
       getListCampaignTask: "contentprocess/getListCampaignTask",
-      getListStatusTask: "contentprocess/getListStatusTask"
+      getListStatusTask: "contentprocess/getListStatusTask",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     async fetchData() {
       this.loading = true;
       let campaignID = JSON.parse(sessionStorage["CampaignID"].toString());
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
       await Promise.all([
+        timeOut(500),
         this.getDetailCampaign(campaignID),
         this.getListStatusTask(),
         this.getListCampaignTask(campaignID)
@@ -294,6 +305,7 @@ export default {
       this.editor = this.detailCampaign.editor;
       this.endDate = this.detailCampaign.endDate;
       this.listTag = this.detailCampaign.tagFull;
+      await this.spinnerLoading(false);
       this.loading = false;
     },
     publish(event) {

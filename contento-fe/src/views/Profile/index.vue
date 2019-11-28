@@ -338,14 +338,28 @@ export default {
       editProfileInfo: "authentication/editProfileInfo",
       checkPassword: "authentication/checkPassword",
       changePassword: "authentication/changePassword",
-      getTags: "viewer/getTags"
+      getTags: "viewer/getTags",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     async fetchData() {
+      await this.spinnerLoading(true);
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
       if (!this.$store.getters.getUser.id) {
         let user = JSON.parse(localStorage.getItem("ProfileUser"));
-        await Promise.all([this.getTags(), this.getProfileInfo(user.id)]);
+        await Promise.all([
+          timeOut(700),
+          this.getTags(),
+          this.getProfileInfo(user.id)
+        ]);
       } else {
         await Promise.all([
+          timeOut(700),
           this.getTags(),
           this.getProfileInfo(this.$store.getters.getUser.id)
         ]);
@@ -358,6 +372,7 @@ export default {
       this.phone = this.profile.phone;
       this.company = this.profile.companyName;
       this.tags = this.profile.idTags;
+      await this.spinnerLoading(false);
     },
     async update() {
       this.loading = true;

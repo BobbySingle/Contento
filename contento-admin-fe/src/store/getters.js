@@ -50,10 +50,10 @@ const getters = {
   listStatusTask: state => state.contentprocess.listStatusTask,
   listStatusCampaign: state => state.contentprocess.listStatusCampaign,
   listStatusPublish: state => state.contentprocess.listStatusPublish,
-  statisticalWeek: state => state.contentprocess.dataStatisticalOneWeek,
-  statisticalMonth: state => state.contentprocess.dataStatisticalOneMonth,
-  statisticalAllWeek: state => state.contentprocess.dataStatisticalAllOneWeek,
-  statisticalAllMonth: state => state.contentprocess.dataStatisticalAllOneMonth,
+  StatisticsWeek: state => state.contentprocess.dataStatisticsOneWeek,
+  StatisticsMonth: state => state.contentprocess.dataStatisticsOneMonth,
+  StatisticsAllWeek: state => state.contentprocess.dataStatisticsAllOneWeek,
+  StatisticsAllMonth: state => state.contentprocess.dataStatisticsAllOneMonth,
 
   //Batchjob
   fanpage: state => state.batchjob.fanpage,

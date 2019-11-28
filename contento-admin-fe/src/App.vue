@@ -9,15 +9,19 @@
     />
     <login v-if="!this.$store.state.authentication.loggedUser" />
     <v-content class="mt-4" v-if="this.$store.state.authentication.loggedUser">
+      <v-overlay absolute opacity="1" :value="this.$store.state.spinner.isLoading" z-index="999" color="white">
+        <atom-spinner :animation-duration="1000" :size="80" color="#3396FF" />
+      </v-overlay>
       <Header />
       <Drawer />
       <router-view />
     </v-content>
-    <Footer v-if="this.$store.state.authentication.loggedUser" class="mt-12"/>
+    <Footer v-if="this.$store.state.authentication.loggedUser" class="mt-12" />
   </v-app>
 </template>
 
 <script>
+import { AtomSpinner } from "epic-spinners";
 import Header from "@/components/Header/index";
 import Drawer from "@/components/Drawer/index";
 import Footer from "@/components/Footer/index";
@@ -29,7 +33,8 @@ export default {
     Header,
     Drawer,
     Footer,
-    Login
+    Login,
+    AtomSpinner
   },
   data: () => ({}),
   methods: {
@@ -48,7 +53,7 @@ export default {
         this.loadAccessToken(user.token);
       }
     }
-  },
+  }
   // created() {
   //   //Yeu cau quyen thong bao tren trinh duyet
   //   Notification.requestPermission()

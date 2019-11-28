@@ -7,19 +7,23 @@
           {{this.$store.state.viewer.categoryName}}
         </h2>
       </v-col>
-      <v-col cols="12" v-for="item in getPaginationCate" :key="item.id">
-        <medium-news :news="item" />
-      </v-col>
     </v-row>
-    <div class="text-xs-center" style="margin-bottom: 50px">
-      <v-pagination
-        v-model="$store.state.viewer.currentCatePage"
-        :length="this.$store.state.viewer.totalCatePages"
-        :total-visible="7"
-        @input="onClickPage"
-        next=":disabled='isInLastPage'"
-        previous=":disabled='isInFirstPage'"
-      ></v-pagination>
+    <div v-if="getPaginationCate.length > 0">
+      <v-row>
+        <v-col cols="12" md="4" v-for="item in getPaginationCate" :key="item.id">
+          <medium-news :news="item" />
+        </v-col>
+      </v-row>
+      <div class="text-xs-center" style="margin-bottom: 50px">
+        <v-pagination
+          v-model="$store.state.viewer.currentCatePage"
+          :length="this.$store.state.viewer.totalCatePages"
+          :total-visible="7"
+          @input="onClickPage"
+          next=":disabled='isInLastPage'"
+          previous=":disabled='isInFirstPage'"
+        ></v-pagination>
+      </div>
     </div>
   </v-container>
 </template>
@@ -46,16 +50,19 @@ export default {
       setCurrentCateSelectedPage: "viewer/setCurrentCateSelectedPage",
       getNewsTags: "viewer/getNewsTags",
       setCategoryName: "viewer/setCategoryName",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     onClickPage(selectedPage) {
       this.setCurrentSelectedPage(selectedPage);
     },
     async setData() {
+      await this.spinnerLoading(true);
       let category = JSON.parse(sessionStorage.getItem("category"));
       await Promise.all([
         this.getNewsTags(category.id),
         this.setCategoryName(category.name)
       ]);
+      await this.spinnerLoading(false);
     }
   },
   mounted() {

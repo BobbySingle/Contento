@@ -73,6 +73,7 @@
                       label="Customer"
                       v-model="customer.id"
                       :value="customer"
+                      :readonly="!isOpen"
                       class="text__14"
                       prepend-inner-icon="account_circle"
                       required
@@ -121,11 +122,11 @@
                   :value="selectedTag"
                   :items="listTag"
                   chips
-                  clearable
                   label="Category"
                   prepend-inner-icon="category"
                   multiple
                   required
+                  :readonly="!isOpen"
                   @blur="$v.selectedTag.$touch()"
                 >
                   <template v-slot:selection="{ attrs, item, select, selected }">

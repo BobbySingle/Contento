@@ -1,14 +1,5 @@
 <template>
   <v-container>
-    <v-overlay :value="overlay" opacity="1" color="white" absolute>
-      <v-progress-circular
-        :indeterminate="indeterminate"
-        rotate="0"
-        size="80"
-        width="8"
-        color="black"
-      >Loading</v-progress-circular>
-    </v-overlay>
     <v-row>
       <v-btn text @click="$router.go(-1)">Back</v-btn>
     </v-row>
@@ -79,8 +70,6 @@ export default {
   data() {
     return {
       /**Loading Overlay */
-      overlay: false,
-      indeterminate: false,
       panel: [0, 1],
       content: "",
       dialog: false,
@@ -142,13 +131,24 @@ export default {
       getFanPageFacebook: "batchjob/getFanPageFacebook",
       getFanPageWordpress: "batchjob/getFanPageWordpress",
       // getFanPagesByContentID: "batchjob/getFanPagesByContentID",
-      getFanPagesByTagsID: "batchjob/getFanPagesByTagsID"
+      getFanPagesByTagsID: "batchjob/getFanPagesByTagsID",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     async fetchData() {
       this.overlay = true;
       this.indeterminate = true;
       let contentID = JSON.parse(sessionStorage.getItem("ContentID"));
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
       await Promise.all([
+        timeOut(500),
         this.getListTag(),
         this.getFanPageFacebook(this.getUser.id),
         this.getFanPageWordpress(this.getUser.id),
@@ -182,8 +182,7 @@ export default {
         .add(5, "days")
         .startOf("day")
         .toISOString();
-      this.overlay = false;
-      this.indeterminate = false;
+      await this.spinnerLoading(false);
     },
     async publish() {
       this.loading = true;
@@ -328,7 +327,7 @@ export default {
 ::v-deep .content table {
   border-collapse: collapse;
 }
-::v-deep .table table{
+::v-deep .table table {
   width: 100%;
 }
 ::v-deep .image {

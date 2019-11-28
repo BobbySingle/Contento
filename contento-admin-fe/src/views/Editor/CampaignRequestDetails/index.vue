@@ -63,7 +63,7 @@
               <v-expansion-panel-content class="py-2">
                 <div class="work">
                   <v-row class="my-2" justify="center">
-                    <create-task />
+                    <create-task :disableStatus="disableStatus" />
                   </v-row>
                   <v-data-table
                     :headers="headers"
@@ -83,8 +83,8 @@
                       <span v-if="item.writer">{{item.writer.name}}</span>
                     </template>
                     <template v-slot:item.action="{ item }">
-                      <v-row class="flex-nowrap" justify="center" v-if="item.status">
-                        <edit-task v-if="item.status.id <= 4" :taskID="item.id" />
+                      <!-- <v-row class="flex-nowrap" justify="center" v-if="item.status">
+                        <edit-task v-if="item.status.id <= 4" :taskID="item.id" :fromManageTask="false" />
                         <v-btn
                           text
                           icon
@@ -94,12 +94,43 @@
                         >
                           <v-icon>delete</v-icon>
                         </v-btn>
+                      </v-row>-->
+                      <v-row class="flex-nowrap" justify="center" v-if="item.status">
+                        <edit-task
+                          v-if="item.status.id == 1"
+                          :taskID="item.id"
+                          :fromManageTask="false"
+                        />
+                        <edit-task-over-due
+                          v-if="item.status.id == 2 || item.status.id == 4"
+                          :taskID="item.id"
+                          :fromManageTask="false"
+                        />
+                        <v-btn
+                          text
+                          icon
+                          color="error"
+                          v-if="item.status.id == 1"
+                          @click="clickDelete(item.id)"
+                        >
+                          <v-icon>delete</v-icon>
+                        </v-btn>
+
+                        <v-btn
+                          color="primary"
+                          icon
+                          fab
+                          v-if="item.status.id == 3"
+                          @click="changeToReview(item.id)"
+                        >
+                          <v-icon>gavel</v-icon>
+                        </v-btn>
                       </v-row>
                     </template>
                   </v-data-table>
                   <v-row justify="center">
                     <div class="text-center pt-2">
-                      <v-pagination v-model="page" :length="pageCount" :total-visible="7"></v-pagination>
+                      <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
                     </div>
                   </v-row>
                 </div>
@@ -116,9 +147,10 @@
 import moment from "moment";
 import CreateTask from "../../../components/Popup/CreateTask.vue";
 import EditTask from "../../../components/Popup/EditTask.vue";
+import EditTaskOverDue from "../../../components/Popup/EditTaskOverDue.vue";
 import { mapGetters, mapActions } from "vuex";
 export default {
-  components: { CreateTask, EditTask },
+  components: { CreateTask, EditTask, EditTaskOverDue },
   data() {
     return {
       panel: [0, 1, 2],
@@ -137,6 +169,7 @@ export default {
       campaign_enddate: "",
       tags: [],
       campaign_content: undefined,
+      disableStatus: false,
       headers: [
         { text: "Title", value: "title", sortable: false, width: "40%" },
         {
@@ -173,16 +206,31 @@ export default {
       getListCampaignTask: "contentprocess/getListCampaignTask",
       deleteTaskByID: "contentprocess/deleteTaskByID",
       getListTagByCampaignID: "contentprocess/getListTagByCampaignID",
-      getListWriter: "authentication/getListWriter"
+      getListWriter: "authentication/getListWriter",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
-    clickDelete(id) {
-      this.deleteTaskByID(id);
+    changeToReview(event) {
+      sessionStorage.setItem("ApproveRequestID", event);
+      this.$router.push("/ReviewContent");
+    },
+    async clickDelete(id) {
+      await this.deleteTaskByID(id);
     },
     async fetchData() {
       /**Load list task */
       this.loading = true;
       let campaignID = sessionStorage.getItem("CampaignID");
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
       await Promise.all([
+        timeOut(500),
         this.getListCampaignTask(campaignID),
         this.getListTagByCampaignID(campaignID),
         this.getListWriter(this.$store.getters.getUser.id),
@@ -192,8 +240,13 @@ export default {
       this.campaign_tags = this.detailCampaign.tagFull;
       this.campaign_customer = this.detailCampaign.customer;
       this.campaign_enddate = this.detailCampaign.endDate;
+      let now = new Date();
+      if (this.detailCampaign.endDate < now.toISOString()) {
+        this.disableStatus = true;
+      }
       sessionStorage.setItem("Task-MaxTime", this.detailCampaign.endDate);
       this.campaign_content = this.detailCampaign.description;
+      await this.spinnerLoading(false);
       this.loading = false;
     }
   }
@@ -216,7 +269,7 @@ export default {
 ::v-deep .content table {
   border-collapse: collapse;
 }
-::v-deep .table table{
+::v-deep .table table {
   width: 100%;
 }
 ::v-deep .image {

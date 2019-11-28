@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" scrollable width="800px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" v-on="on" @click="clickCreate()">Create Task</v-btn>
+      <v-btn color="primary" v-on="on" @click="clickCreate()" :disabled="disableStatus">Create Task</v-btn>
     </template>
     <v-card>
       <v-toolbar dark color="primary">
@@ -59,7 +59,6 @@
                       title="End Time"
                       type="datetime"
                       v-model="endtime"
-                      :value="endtime"
                       class="text__14"
                       placeholder="Select End Time"
                       input-class="datetime"
@@ -161,6 +160,7 @@ import CKEditor from "../CKEditor/Ckeditor5";
 import { mapGetters, mapActions } from "vuex";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
+  props: ["disableStatus"],
   components: {
     CKEditor
   },

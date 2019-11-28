@@ -17,8 +17,10 @@
           />
         </div>
       </v-col>
-      <v-col sm="4" md="3" style="display:flex; justify-content: center;">
-        <popup-create-campaign />
+      <v-col sm="4" md="3" align-self="center">
+        <v-row class="ml-1 mb-5" justify="center">
+          <popup-create-campaign />
+        </v-row>
       </v-col>
     </v-row>
     <v-row no-gutters class="mx-6 mb-2">
@@ -197,8 +199,8 @@
               >{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.action="{item}">
-              <v-row class="flex-nowrap">
-                <popup-edit-campaign :campaignID="item.id" />
+              <v-row class="flex-nowrap" justify="center">
+                <popup-edit-campaign :campaignID="item.id" v-if="item.status.id != 3" />
                 <v-btn color="primary" icon fab small @click="clickCalendar(item.id)">
                   <v-icon>event</v-icon>
                 </v-btn>
@@ -207,7 +209,7 @@
           </v-data-table>
           <v-row justify="center">
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount" :total-visible="7"></v-pagination>
+              <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
             </div>
           </v-row>
         </v-row>
@@ -389,18 +391,30 @@ export default {
       getListEditor: "authentication/getListEditorByMarketerID",
       getListTag: "contentprocess/getListTag",
       loadUser: "authentication/setUser",
-      getListStatusCampaign: "contentprocess/getListStatusCampaign"
+      getListStatusCampaign: "contentprocess/getListStatusCampaign",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
 
     async fetchData() {
       this.loading = true;
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
       await Promise.all([
+        timeOut(500),
         this.getCampaigns(this.getUser.id),
         this.getListStatusCampaign(),
         this.getListCustomer(this.$store.getters.getUser.id),
         this.getListEditor(this.$store.getters.getUser.id),
         this.getListTag()
       ]);
+      await this.spinnerLoading(false);
       this.loading = false;
     }
   },

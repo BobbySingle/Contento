@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1 class="text__h1">Approve request</h1>
+      <h1 class="text__h1">Campaign request</h1>
     </v-row>
     <!-- /**Begin Search  */ -->
     <v-row no-gutters class="mx-6 mb-2">
@@ -196,7 +196,7 @@
           </v-data-table>
           <v-row justify="center">
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount" :total-visible="7"></v-pagination>
+              <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
             </div>
           </v-row>
         </v-row>
@@ -378,16 +378,27 @@ export default {
       loadUser: "authentication/setUser",
       getListTag: "contentprocess/getListTag",
       getListStatusCampaign: "contentprocess/getListStatusCampaign",
-      getListCustomerByEditorID: "authentication/getListCustomerByEditorID"
+      getListCustomerByEditorID: "authentication/getListCustomerByEditorID",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     async fetchData() {
       this.loading = true;
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
       await Promise.all([
+        timeOut(500),
         this.getListCampaign(this.$store.getters.getUser.id),
         this.getListCustomerByEditorID(this.$store.getters.getUser.id),
         this.getListStatusCampaign(),
         this.getListTag()
       ]);
+      await this.spinnerLoading(false);
       this.loading = false;
     }
   },

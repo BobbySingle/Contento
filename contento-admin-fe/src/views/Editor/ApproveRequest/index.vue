@@ -149,7 +149,7 @@
           </v-data-table>
           <v-row justify="center">
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount" :total-visible="7"></v-pagination>
+              <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
             </div>
           </v-row>
         </v-row>
@@ -283,13 +283,27 @@ export default {
       getContentRequest: "contentprocess/getContentRequest",
       getListStatusTask: "contentprocess/getListStatusTask",
       getListFilterCampaignByEditorID:
-        "campaign/getListFilterCampaignByEditorID"
+        "campaign/getListFilterCampaignByEditorID",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     async fetchData() {
       this.loading = true;
-      await this.getContentRequest(this.$store.getters.getUser.id);
-      this.getListFilterCampaignByEditorID(this.$store.getters.getUser.id);
-      this.getListStatusTask();
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
+      await Promise.all([
+        timeOut(500),
+        this.getContentRequest(this.$store.getters.getUser.id),
+        this.getListFilterCampaignByEditorID(this.$store.getters.getUser.id),
+        this.getListStatusTask()
+      ]);
+      await this.spinnerLoading(false);
       this.loading = false;
     }
   },
@@ -363,11 +377,7 @@ export default {
   display: flex;
 }
 
-.content-inner-table:hover {
-  color: rgb(83, 138, 255);
-  transition: 0.5s;
-  cursor: pointer;
-}
+
 .content_details span {
   /**line-clamp */
   overflow: hidden;

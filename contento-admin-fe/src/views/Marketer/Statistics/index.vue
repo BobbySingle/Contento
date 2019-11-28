@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center" class="mb-5">
-      <h1 class="text__h1">Statistical</h1>
+      <h1 class="text__h1">Statistics</h1>
     </v-row>
     <v-row justify="center" no-gutters style="background-color: white;">
       <v-col cols="12" md="6">
@@ -10,7 +10,7 @@
           :items="weeks"
           item-text="name"
           item-value="id"
-          label="Statistical Week"
+          label="Statistics Week"
           prepend-inner-icon="mdi-chart-donut"
           @change="changeTopWeek"
           class="mx-10"
@@ -28,7 +28,7 @@
           :items="months"
           item-text="name"
           item-value="id"
-          label="Statistical Month"
+          label="Statistics Month"
           prepend-inner-icon="mdi-chart-donut"
           @change="changeTopMonth"
           class="mx-10"
@@ -117,63 +117,66 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "statisticalWeek",
-      "statisticalMonth",
-      "statisticalAllWeek",
-      "statisticalAllMonth",
+      "StatisticsWeek",
+      "StatisticsMonth",
+      "StatisticsAllWeek",
+      "StatisticsAllMonth",
       "getUser"
     ])
   },
   methods: {
     ...mapActions({
-      getStatisticalOneWeek: "contentprocess/getStatisticalOneWeek",
-      getStatisticalOneMonth: "contentprocess/getStatisticalOneMonth",
-      getStatisticalAllOneWeek: "contentprocess/getStatisticalAllOneWeek",
-      getStatisticalAllOneMonth: "contentprocess/getStatisticalAllOneMonth"
+      getStatisticsOneWeek: "contentprocess/getStatisticsOneWeek",
+      getStatisticsOneMonth: "contentprocess/getStatisticsOneMonth",
+      getStatisticsAllOneWeek: "contentprocess/getStatisticsAllOneWeek",
+      getStatisticsAllOneMonth: "contentprocess/getStatisticsAllOneMonth",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     async fetchData() {
       //WEEK
+      this.spinnerLoading(true);
       let dataWeek = [["Category", "Interaction"]];
-      let statusWeek = await this.getStatisticalOneWeek(3);
+      let statusWeek = await this.getStatisticsOneWeek(3);
       if (statusWeek == 200) {
-        this.statisticalWeek.forEach(element => {
+        this.StatisticsWeek.forEach(element => {
           dataWeek.push([element.tags, element.timeInTeraction]);
         });
       }
       this.chartWeekData = dataWeek;
       //MONTH
       let dataMonth = [["Category", "Interaction"]];
-      let statusMonth = await this.getStatisticalOneMonth(3);
+      let statusMonth = await this.getStatisticsOneMonth(3);
       if (statusMonth == 200) {
-        this.statisticalMonth.forEach(element => {
+        this.StatisticsMonth.forEach(element => {
           dataMonth.push([element.tags, element.timeInTeraction]);
         });
       }
       this.chartMonthData = dataMonth;
       //WEEK ALL
       let dataWeekAll = [["Category", "Interaction"]];
-      let statusWeekAll = await this.getStatisticalAllOneWeek(0);
+      let statusWeekAll = await this.getStatisticsAllOneWeek(0);
       if (statusWeekAll == 200) {
-        this.statisticalAllWeek.forEach(element => {
+        this.StatisticsAllWeek.forEach(element => {
           dataWeekAll.push([element.tags, element.timeInTeraction]);
         });
       }
       this.chartWeekAllData = dataWeekAll;
       //MONTH ALL
       let dataMonthAll = [["Category", "Interaction"]];
-      let statusMonthAll = await this.getStatisticalAllOneMonth(0);
+      let statusMonthAll = await this.getStatisticsAllOneMonth(0);
       if (statusMonthAll == 200) {
-        this.statisticalAllMonth.forEach(element => {
+        this.StatisticsAllMonth.forEach(element => {
           dataMonthAll.push([element.tags, element.timeInTeraction]);
         });
       }
       this.chartMonthAllData = dataMonthAll;
+      this.spinnerLoading(false);
     },
     async changeTopWeek(event) {
       let dataWeek = [["Category", "Interaction"]];
-      let statusWeek = await this.getStatisticalOneWeek(event);
+      let statusWeek = await this.getStatisticsOneWeek(event);
       if (statusWeek == 200) {
-        this.statisticalWeek.forEach(element => {
+        this.StatisticsWeek.forEach(element => {
           dataWeek.push([element.tags, element.timeInTeraction]);
         });
       }
@@ -181,9 +184,9 @@ export default {
     },
     async changeTopMonth(event) {
       let dataMonth = [["Category", "Interaction"]];
-      let statusMonth = await this.getStatisticalOneMonth(event);
+      let statusMonth = await this.getStatisticsOneMonth(event);
       if (statusMonth == 200) {
-        this.statisticalMonth.forEach(element => {
+        this.StatisticsMonth.forEach(element => {
           dataMonth.push([element.tags, element.timeInTeraction]);
         });
       }

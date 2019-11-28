@@ -136,7 +136,7 @@
                 icon
                 fab
                 v-if="item.status.id === 6"
-                @click="publish(item.id)"
+                @click="changePublish(item.id)"
               >
                 <v-icon>mdi-autorenew</v-icon>
               </v-btn>
@@ -153,7 +153,7 @@
           </v-data-table>
           <v-row justify="center">
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount" :total-visible="7"></v-pagination>
+              <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
             </div>
           </v-row>
         </v-row>
@@ -284,6 +284,12 @@ export default {
     },
     publish(event) {
       sessionStorage.setItem("ContentID", JSON.stringify(event));
+      sessionStorage.setItem("isPublish", true);
+      this.$router.push("/PublishChannel");
+    },
+    changePublish(event) {
+      sessionStorage.setItem("ContentID", JSON.stringify(event));
+      sessionStorage.setItem("isPublish", false);
       this.$router.push("/PublishChannel");
     },
     clickDetail(event) {
@@ -293,15 +299,27 @@ export default {
     ...mapActions({
       getListTaskByMarketerID: "contentprocess/getListTaskByMarketerID",
       getListStatusPublish: "contentprocess/getListStatusPublish",
-      getListWriterByMarketerID: "authentication/getListWriterByMarketerID"
+      getListWriterByMarketerID: "authentication/getListWriterByMarketerID",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     async fetchData() {
       this.loading = true;
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
       await Promise.all([
+        timeOut(500),
         this.getListTaskByMarketerID(this.$store.getters.getUser.id),
         this.getListWriterByMarketerID(this.$store.getters.getUser.id),
         this.getListStatusPublish()
       ]);
+      await this.spinnerLoading(false);
       this.loading = false;
     }
   },

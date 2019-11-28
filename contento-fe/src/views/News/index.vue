@@ -1,6 +1,11 @@
 <template>
   <v-container v-if="newsDetails">
-    <v-btn fab color="warning" @click="$router.go(-1)" style="position: fixed; bottom: 20px; left: 20px; z-index:9">Back</v-btn>
+    <v-btn
+      fab
+      color="warning"
+      @click="$router.go(-1)"
+      style="position: fixed; bottom: 20px; left: 20px; z-index:9"
+    >Back</v-btn>
     <v-btn
       fab
       color="primary"
@@ -33,8 +38,12 @@ export default {
     ...mapGetters(["newsDetails"])
   },
   methods: {
-    ...mapActions({ getNewsDetails: "viewer/getNewsDetails" }),
+    ...mapActions({
+      getNewsDetails: "viewer/getNewsDetails",
+      spinnerLoading: "spinner/spinnerLoading"
+    }),
     async fetchData() {
+      await this.spinnerLoading(true);
       let newsID = sessionStorage.getItem("NewsID");
       let status = await this.getNewsDetails(newsID);
       if (status == 200) {
@@ -42,6 +51,7 @@ export default {
         this.content = this.newsDetails.contents.content;
         this.writer = this.newsDetails.writer.name;
       }
+      await this.spinnerLoading(false);
     }
   },
   mounted() {

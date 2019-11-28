@@ -84,7 +84,10 @@
                       required
                       @blur="$v.name.$touch()"
                     ></v-text-field>
-                    <div style="color:red" v-if="!$v.name.required && check">The title of content cannot be empty.</div>
+                    <div
+                      style="color:red"
+                      v-if="!$v.name.required && check"
+                    >The title of content cannot be empty.</div>
                     <div
                       style="color:red"
                       v-if="!$v.name.maxLength && check"
@@ -203,12 +206,22 @@ export default {
     },
     ...mapActions({
       getTaskDetail: "contentprocess/getTaskDetail",
-      setApprovalContentRequest: "contentprocess/setApprovalContentRequest"
+      setApprovalContentRequest: "contentprocess/setApprovalContentRequest",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
 
     async fetchData() {
       let ApproveRequestID = sessionStorage.getItem("ApproveRequestID");
-      await this.getTaskDetail(ApproveRequestID);
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
+      await Promise.all([timeOut(500), this.getTaskDetail(ApproveRequestID)]);
       this.requestDetails = this.taskDetail.description;
       this.content =
         this.taskDetail.content.content == null
@@ -222,6 +235,7 @@ export default {
       this.deadline = this.taskDetail.deadline;
       this.publishTime = this.taskDetail.publishTime;
       this.comment = this.taskDetail.comment.comment;
+      await this.spinnerLoading(false);
     }
   },
   computed: {
@@ -258,7 +272,7 @@ export default {
 ::v-deep .content table {
   border-collapse: collapse;
 }
-::v-deep .table table{
+::v-deep .table table {
   width: 100%;
 }
 ::v-deep .image {

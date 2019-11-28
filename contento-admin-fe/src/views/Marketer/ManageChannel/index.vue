@@ -16,8 +16,10 @@
           />
         </div>
       </v-col>
-      <v-col sm="4" md="3" style="display:flex; justify-content:flex-end;">
-        <create-channel />
+      <v-col sm="4" md="3" align-self="center">
+        <v-row class="ml-1 mb-5" justify="center">
+          <create-channel />
+        </v-row>
       </v-col>
     </v-row>
     <v-row no-gutters class="mx-6 mb-2">
@@ -175,7 +177,7 @@
           </v-data-table>
           <v-row justify="center">
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount" :total-visible="7"></v-pagination>
+              <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
             </div>
           </v-row>
         </v-row>
@@ -301,7 +303,9 @@ export default {
     },
     async gotoURL(event) {
       if (event.id == 1) {
-        window.open("http://contento-view.s3-website-ap-southeast-1.amazonaws.com/");
+        window.open(
+          "http://contento-view.s3-website-ap-southeast-1.amazonaws.com/"
+        );
       } else {
         let status = await this.checkTokenGetLink({
           channelId: event.channel.id,
@@ -321,33 +325,55 @@ export default {
       getFanPages: "batchjob/getFanPages",
       deleteFanPage: "batchjob/deleteFanPage",
       getListTag: "contentprocess/getListTag",
-      checkTokenGetLink: "batchjob/checkTokenGetLink"
+      checkTokenGetLink: "batchjob/checkTokenGetLink",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     async deleteFP(id) {
       this.loading = true;
-      let status = await this.deleteFanPage(id);
-      if (status == 200) {
-        this.loading = false;
-      }
+      this.$swal({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then(async result => {
+        let status = await this.deleteFanPage(id);
+        if (status == 200) {
+          this.loading = false;
+        }
+      });
       this.loading = false;
     },
     async fetchData() {
       this.loading = true;
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
       await Promise.all([
+        timeOut(500),
         this.getListCustomer(this.$store.getters.getUser.id),
         this.getFanPages(this.$store.getters.getUser.id),
         this.getListTag()
       ]);
+      await this.spinnerLoading(false);
       this.loading = false;
     }
   },
   computed: {
-    ...mapGetters(["listCustomer", "fanpages", "linkFanpage","getUser"])
+    ...mapGetters(["listCustomer", "fanpages", "linkFanpage", "getUser"])
   },
   mounted() {
     this.fetchData();
   },
-   created() {
+  created() {
     let role = this.getUser.role;
     if (role !== "Marketer" && role != null) {
       this.$router.push("/403");

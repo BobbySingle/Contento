@@ -36,6 +36,7 @@
           <v-row>
             <v-text-field
               v-model="phone"
+              type="number"
               label="Phone:"
               required
               class="text__14"
@@ -52,6 +53,7 @@
               class="text__14"
               :value="email"
               :error-messages="emailErrors"
+              readonly
               @blur="$v.email.$touch()"
             ></v-text-field>
           </v-row>
@@ -78,7 +80,12 @@
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { required, maxLength, email } from "vuelidate/lib/validators";
+import {
+  required,
+  maxLength,
+  email,
+  minLength
+} from "vuelidate/lib/validators";
 export default {
   props: ["customerID"],
   data() {
@@ -95,7 +102,7 @@ export default {
   validations: {
     firstname: { required, maxLength: maxLength(50) },
     lastname: { required, maxLength: maxLength(50) },
-    phone: { required, maxLength: maxLength(10) },
+    phone: { required, minLength: minLength(10), maxLength: maxLength(10) },
     email: { required, email },
     company: { required, maxLength: maxLength(50) },
     form: ["firstname", "lastname", "phone", "email", "company"]
@@ -129,6 +136,7 @@ export default {
       const errors = [];
       if (!this.$v.phone.$dirty) return errors;
       !this.$v.phone.maxLength && errors.push("Phone up to 10 numbers");
+      !this.$v.phone.minLength && errors.push("Phone up to 10 numbers");
       !this.$v.phone.required && errors.push("Please enter your phone");
       return errors;
     },

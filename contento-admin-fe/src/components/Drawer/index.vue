@@ -72,9 +72,9 @@ export default {
           // role: "Marketer"
         },
         {
-          title: "Statistical",
+          title: "Statistics",
           icon: "mdi-poll-box",
-          link: "/Statistical",
+          link: "/Statistics",
           role: "Marketer"
           // role: "Marketer"
         },

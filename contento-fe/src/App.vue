@@ -8,6 +8,15 @@
       :max="4"
     />
     <v-content>
+      <v-overlay
+        absolute
+        opacity="1"
+        :value="this.$store.state.spinner.isLoading"
+        z-index="999"
+        color="white"
+      >
+        <looping-rhombuses-spinner :animation-duration="1000" :size="80" color="#3396FF" />
+      </v-overlay>
       <Header />
       <router-view />
     </v-content>
@@ -16,14 +25,16 @@
 </template>
 
 <script>
+import { LoopingRhombusesSpinner } from "epic-spinners";
 import Header from "@/components/Header/index";
 import Footer from "@/components/Footer/index";
-import {mapActions} from 'vuex';
+import { mapActions } from "vuex";
 export default {
   name: "App",
   components: {
     Header,
-    Footer
+    Footer,
+    LoopingRhombusesSpinner
   },
   data: () => ({}),
   methods: {

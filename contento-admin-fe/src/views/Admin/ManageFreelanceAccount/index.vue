@@ -96,7 +96,7 @@
           </v-data-table>
           <v-row justify="center">
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount" :total-visible="7"></v-pagination>
+              <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
             </div>
           </v-row>
         </v-row>
@@ -216,7 +216,8 @@ export default {
   methods: {
     ...mapActions({
       isActiveAccount: "authentication/isActiveAccount",
-      getFreelanceAccount: "authentication/getFreelanceAccount"
+      getFreelanceAccount: "authentication/getFreelanceAccount",
+      spinnerLoading : "spinner/spinnerLoading"
     }),
     Clear() {
       this.startFromDate = "";
@@ -242,7 +243,18 @@ export default {
     assign() {},
     async fetchData() {
       this.loading = true;
-      await Promise.all([this.getFreelanceAccount()]);
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
+      await Promise.all([timeOut(500), this.getFreelanceAccount()]);
+
+      await this.spinnerLoading(false);
       this.loading = false;
     }
   },
@@ -309,11 +321,6 @@ export default {
   display: flex;
 }
 
-.customer-inner-table:hover {
-  color: rgb(83, 138, 255);
-  transition: 0.5s;
-  cursor: pointer;
-}
 .campaign-details span {
   font-weight: bold;
   /**line-clamp */

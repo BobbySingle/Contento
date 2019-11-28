@@ -124,9 +124,7 @@
                     class="mx-1"
                     @click="submit()"
                     :loading="loadingSubmit"
-                  >
-                    Review
-                  </v-btn>
+                  >Review</v-btn>
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -277,11 +275,21 @@ export default {
       setApprovalContentRequest: "contentprocess/setApprovalContentRequest",
       saveContent: "contentprocess/saveContent",
       autoSaveContent: "contentprocess/autoSaveContent",
-      submitContent: "contentprocess/submitContent"
+      submitContent: "contentprocess/submitContent",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     async fetchData() {
       let TaskID = sessionStorage.getItem("TaskID");
-      await this.getTaskDetail(TaskID);
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
+      await Promise.all([timeOut(500), this.getTaskDetail(TaskID)]);
       this.requestData = this.taskDetail.description;
       this.content =
         this.taskDetail.content.content == null
@@ -299,6 +307,7 @@ export default {
       if (!this.commentData == "" || !this.commentData == null) {
         this.panel = [0, 2, 3];
       }
+      await this.spinnerLoading(false);
     }
   }
 };

@@ -102,9 +102,9 @@ export function APIgetListStatusCampaign() {
 export function APIgetListStatusPublish() {
   return axios.get(`${API_URL}/api/contentprocess/status-publish/task`);
 }
-export function APIgetStatisticalOneWeek(number) {
+export function APIgetStatisticsOneWeek(number) {
   return axios.get(`${API_URL}/api/contentprocess/statistics-one-week?quantity=${number}`);
 }
-export function APIgetStatisticalOneMonth(number) {
+export function APIgetStatisticsOneMonth(number) {
   return axios.get(`${API_URL}/api/contentprocess/statistics-one-month?quantity=${number}`);
 }

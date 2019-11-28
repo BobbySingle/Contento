@@ -36,6 +36,7 @@
                   class="text__14"
                   flat
                   outlined
+                  readonly
                   required
                   :value="email"
                   :error-messages="emailErrors"

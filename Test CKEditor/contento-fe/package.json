@@ -61,6 +61,7 @@
     "webpack-cli": "^3.3.10"
   },
   "devDependencies": {
+    "@ckeditor/ckeditor5-comments": "^15.0.1",
     "@mdi/font": "^4.4.95",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",

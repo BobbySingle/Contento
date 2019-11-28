@@ -19,8 +19,8 @@ import {
   APIgetListStatusTask,
   APIgetListStatusCampaign,
   APIgetListStatusPublish,
-  APIgetStatisticalOneWeek,
-  APIgetStatisticalOneMonth
+  APIgetStatisticsOneWeek,
+  APIgetStatisticsOneMonth
 } from "../../services/contentprocess";
 
 import router from "@/router/index";
@@ -40,10 +40,10 @@ const state = {
   listStatusTask: [],
   listStatusCampaign: [],
   listStatusPublish: [],
-  dataStatisticalOneWeek: [],
-  dataStatisticalOneMonth: [],
-  dataStatisticalAllOneWeek: [],
-  dataStatisticalAllOneMonth: []
+  dataStatisticsOneWeek: [],
+  dataStatisticsOneMonth: [],
+  dataStatisticsAllOneWeek: [],
+  dataStatisticsAllOneMonth: []
 };
 
 const mutations = {
@@ -96,17 +96,17 @@ const mutations = {
   SET_LIST_STATUS_PUBLISH(state, data) {
     state.listStatusPublish = data;
   },
-  SET_DATA_STATISTICAL_WEEK(state, data) {
-    state.dataStatisticalOneWeek = data;
+  SET_DATA_Statistics_WEEK(state, data) {
+    state.dataStatisticsOneWeek = data;
   },
-  SET_DATA_STATISTICAL_MONTH(state, data) {
-    state.dataStatisticalOneMonth = data;
+  SET_DATA_Statistics_MONTH(state, data) {
+    state.dataStatisticsOneMonth = data;
   },
-  SET_DATA_STATISTICAL_ALL_WEEK(state, data) {
-    state.dataStatisticalAllOneWeek = data;
+  SET_DATA_Statistics_ALL_WEEK(state, data) {
+    state.dataStatisticsAllOneWeek = data;
   },
-  SET_DATA_STATISTICAL_ALL_MONTH(state, data) {
-    state.dataStatisticalAllOneMonth = data;
+  SET_DATA_Statistics_ALL_MONTH(state, data) {
+    state.dataStatisticsAllOneMonth = data;
   }
 };
 
@@ -408,51 +408,51 @@ const actions = {
       console.log(error);
     }
   },
-  async getStatisticalOneWeek({ commit }, payload) {
+  async getStatisticsOneWeek({ commit }, payload) {
     try {
-      let rs = await APIgetStatisticalOneWeek(payload);
+      let rs = await APIgetStatisticsOneWeek(payload);
       if (rs.status == 200) {
-        commit("SET_DATA_STATISTICAL_WEEK", rs.data);
+        commit("SET_DATA_Statistics_WEEK", rs.data);
         return 200;
       }
     } catch (error) {
-      console.log("ERROR - STATISTICAL WEEK");
+      console.log("ERROR - Statistics WEEK");
       console.log(error);
     }
   },
-  async getStatisticalOneMonth({ commit }, payload) {
+  async getStatisticsOneMonth({ commit }, payload) {
     try {
-      let rs = await APIgetStatisticalOneMonth(payload);
+      let rs = await APIgetStatisticsOneMonth(payload);
       if (rs.status == 200) {
-        commit("SET_DATA_STATISTICAL_MONTH", rs.data);
+        commit("SET_DATA_Statistics_MONTH", rs.data);
         return 200;
       }
     } catch (error) {
-      console.log("ERROR - STATISTICAL MONTH");
+      console.log("ERROR - Statistics MONTH");
       console.log(error);
     }
   },
-  async getStatisticalAllOneWeek({ commit }, payload) {
+  async getStatisticsAllOneWeek({ commit }, payload) {
     try {
-      let rs = await APIgetStatisticalOneWeek(payload);
+      let rs = await APIgetStatisticsOneWeek(payload);
       if (rs.status == 200) {
-        commit("SET_DATA_STATISTICAL_ALL_WEEK", rs.data);
+        commit("SET_DATA_Statistics_ALL_WEEK", rs.data);
         return 200;
       }
     } catch (error) {
-      console.log("ERROR - STATISTICAL ALL WEEK");
+      console.log("ERROR - Statistics ALL WEEK");
       console.log(error);
     }
   },
-  async getStatisticalAllOneMonth({ commit }, payload) {
+  async getStatisticsAllOneMonth({ commit }, payload) {
     try {
-      let rs = await APIgetStatisticalOneMonth(payload);
+      let rs = await APIgetStatisticsOneMonth(payload);
       if (rs.status == 200) {
-        commit("SET_DATA_STATISTICAL_ALL_MONTH", rs.data);
+        commit("SET_DATA_Statistics_ALL_MONTH", rs.data);
         return 200;
       }
     } catch (error) {
-      console.log("ERROR - STATISTICAL ALL MONTH");
+      console.log("ERROR - Statistics ALL MONTH");
       console.log(error);
     }
   }

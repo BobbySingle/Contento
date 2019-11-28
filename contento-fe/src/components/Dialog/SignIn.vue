@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-btn text v-on="on" @click="clickSignIn()">Sign In</v-btn>
     </template>
-    <v-card min-height="250px">
+    <v-card min-height="300px">
       <v-toolbar dark color="primary">
         <v-spacer></v-spacer>
         <v-toolbar-title>Sign In</v-toolbar-title>
@@ -12,10 +12,11 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
-      <v-card-text>
+      <v-card-text class="mt-8">
         <v-text-field
           v-model="email"
           label="Email"
+          outlined
           clearable
           required
           :error-messages="emailErrors"
@@ -26,6 +27,7 @@
           v-model="password"
           @keyup.enter="signIn"
           label="Password"
+          outlined
           clearable
           :append-icon="showPassword ? 'visibility' : 'visibility_off'"
           @click:append="() => (showPassword = !showPassword)"

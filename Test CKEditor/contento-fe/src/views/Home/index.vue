@@ -54,6 +54,8 @@ import WordCount from "@ckeditor/ckeditor5-word-count/src/wordcount";
 import HorizontalLine from "@ckeditor/ckeditor5-horizontal-line/src/horizontalline";
 import RemoveFormat from "@ckeditor/ckeditor5-remove-format/src/removeformat";
 
+import Comments from '@ckeditor/ckeditor5-comments/src/comments';
+
 import UploadImagePlugin from "../../mixins/UploadImagePlugin";
 function CustomUploadAdapterPlugin(editor) {
   editor.plugins.get("FileRepository").createUploadAdapter = loader => {
@@ -71,7 +73,9 @@ export default {
       words: "",
       characters: "",
       editor: ClassicEditor,
-      editorData: "",
+      editorData: "Test 123 123123 123123123",
+      licenseKey: "DXUmiLjt1WZzsG1uxPDwmfadkrGOLtIwxhKOGX27rA/MXnciyicHGWk=",
+      commentsOnly: true,
       editorConfig: {
         extraPlugins: [CustomUploadAdapterPlugin],
         plugins: [
@@ -112,7 +116,8 @@ export default {
           TableToolbar,
           WordCount,
           HorizontalLine,
-          RemoveFormat
+          RemoveFormat,
+          Comments
         ],
         image: {
           resizeUnit: "px"
@@ -153,7 +158,8 @@ export default {
             "mediaEmbed",
             "|",
             "undo",
-            "redo"
+            "redo",
+            "comment"
           ]
         },
         image: {

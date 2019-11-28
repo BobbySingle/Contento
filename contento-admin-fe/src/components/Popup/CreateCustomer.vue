@@ -10,12 +10,12 @@
           v-if="!isSmallBtn"
           class="text__14"
           @click="clickCreate()"
-        >Create New Customer</v-btn>
+        >Create Customer</v-btn>
       </div>
     </template>
     <v-card>
       <v-row class="mx-4 mb-4" justify="center">
-        <v-card-title class="text__17">Add New Customer</v-card-title>
+        <v-card-title class="text__17">Add Customer</v-card-title>
       </v-row>
       <v-row no-gutters class="mx-10 mb-4" justify="center">
         <v-col md="10">
@@ -82,7 +82,12 @@
 </template>
 <script>
 import { mapActions } from "vuex";
-import { required, maxLength, email } from "vuelidate/lib/validators";
+import {
+  required,
+  maxLength,
+  email,
+  minLength
+} from "vuelidate/lib/validators";
 export default {
   props: {
     isSmallBtn: Boolean
@@ -100,7 +105,7 @@ export default {
   validations: {
     firstname: { required, maxLength: maxLength(50) },
     lastname: { required, maxLength: maxLength(50) },
-    phone: { required, maxLength: maxLength(10) },
+    phone: { required, maxLength: maxLength(10), minLength: minLength(10) },
     email: { required, email },
     company: { required, maxLength: maxLength(50) },
     form: ["firstname", "lastname", "phone", "email", "company"]
@@ -133,6 +138,7 @@ export default {
       const errors = [];
       if (!this.$v.phone.$dirty) return errors;
       !this.$v.phone.maxLength && errors.push("Phone up to 10 numbers");
+      !this.$v.phone.minLength && errors.push("Phone up to 10 numbers");
       !this.$v.phone.required && errors.push("Please enter your phone");
       return errors;
     },

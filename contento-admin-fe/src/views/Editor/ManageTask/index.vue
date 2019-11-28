@@ -138,10 +138,17 @@
             </template>
             <template v-slot:item.action="{ item }">
               <v-row class="flex-nowrap" justify="center">
-                <edit-task v-if="item.status.id == 1" :taskID="item.id" />
+                <edit-task
+                  v-if="item.status.id == 1"
+                  :taskID="item.id"
+                  :campID="item.campaign.id"
+                  :fromManageTask="true"
+                />
                 <edit-task-over-due
                   v-if="item.status.id == 2 || item.status.id == 4"
                   :taskID="item.id"
+                  :campID="item.campaign.id"
+                  :fromManageTask="true"
                 />
                 <v-btn
                   text
@@ -155,16 +162,19 @@
 
                 <v-btn
                   color="primary"
-                  icon fab 
+                  icon
+                  fab
                   v-if="item.status.id == 3"
                   @click="changeToReview(item.id)"
-                > <v-icon>gavel</v-icon></v-btn>
+                >
+                  <v-icon>gavel</v-icon>
+                </v-btn>
               </v-row>
             </template>
           </v-data-table>
           <v-row justify="center">
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount" :total-visible="7"></v-pagination>
+              <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
             </div>
           </v-row>
         </v-row>
@@ -279,32 +289,54 @@ export default {
     clearEndToDate() {
       this.endToDate = "";
     },
-    changeToReview(event) {
-      sessionStorage.setItem("ApproveRequestID", event);
-      this.$router.push("/ReviewContent");
-    },
     ...mapActions({
       getListTaskByEditorID: "contentprocess/getListTaskByEditorID",
       deleteTaskByID: "contentprocess/deleteTaskByID",
       getListWriter: "authentication/getListWriter",
       getListStatusTask: "contentprocess/getListStatusTask",
       getListFilterCampaignByEditorID:
-        "campaign/getListFilterCampaignByEditorID"
+        "campaign/getListFilterCampaignByEditorID",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
+    changeToReview(event) {
+      sessionStorage.setItem("ApproveRequestID", event);
+      this.$router.push("/ReviewContent");
+    },
     async clickDelete(id) {
-      await Promise.all([
-        this.deleteTaskByID(id),
-        this.getListTaskByEditorID(this.$store.getters.getUser.id)
-      ]);
+      this.$swal({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then(async result => {
+        if (result.value) {
+          await this.deleteTaskByID(id);
+        }
+        await this.getListTaskByEditorID(this.$store.getters.getUser.id);
+      });
     },
     async fetchData() {
       this.loading = true;
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
       await Promise.all([
+        timeOut(500),
         this.getListTaskByEditorID(this.$store.getters.getUser.id),
-        this.getListWriter(this.$store.getters.getUser.id)
+        this.getListWriter(this.$store.getters.getUser.id),
+        this.getListFilterCampaignByEditorID(this.$store.getters.getUser.id),
+        this.getListStatusTask()
       ]);
-      this.getListFilterCampaignByEditorID(this.$store.getters.getUser.id);
-      this.getListStatusTask();
+      await this.spinnerLoading(false);
       this.loading = false;
     }
   },
@@ -376,11 +408,7 @@ export default {
   display: flex;
 }
 
-.content-inner-table:hover {
-  color: rgb(83, 138, 255);
-  transition: 0.5s;
-  cursor: pointer;
-}
+
 .content_details span {
   /**line-clamp */
   overflow: hidden;

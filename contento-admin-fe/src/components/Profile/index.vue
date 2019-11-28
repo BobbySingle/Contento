@@ -1,9 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center" class="mt-3">
-      <v-avatar color="grey" size="100">
-        <span class="white--text headline">{{avaterName}}</span>
-      </v-avatar>
+      <h1 class="text__h1">Profile</h1>
     </v-row>
     <v-row justify="center">
       <v-col cols="12" md="6">
@@ -112,7 +110,6 @@
                     <v-text-field
                       v-model="oldPassword"
                       label="Old Password"
-                      placeholder="Input Old Password"
                       clearable
                       :append-icon="showOldPassword ? 'visibility' : 'visibility_off'"
                       @click:append="() => (showOldPassword = !showOldPassword)"
@@ -126,7 +123,6 @@
                     <v-text-field
                       v-model="newPassword"
                       label="New Password"
-                      placeholder="Input New Password"
                       clearable
                       :append-icon="showNewPassword ? 'visibility' : 'visibility_off'"
                       @click:append="() => (showNewPassword = !showNewPassword)"
@@ -140,7 +136,6 @@
                     <v-text-field
                       v-model="confirmPassword"
                       label="Confirm Password"
-                      placeholder="Input Confirm Password"
                       clearable
                       :append-icon="showConfirmPassword ? 'visibility' : 'visibility_off'"
                       @click:append="() => (showConfirmPassword = !showConfirmPassword)"
@@ -184,7 +179,7 @@ export default {
       dialog: false,
       loading: false,
       loadingUpdate: false,
-      avaterName: "",
+      // avaterName: "",
       firstname: "",
       lastname: "",
       email: "",
@@ -220,6 +215,7 @@ export default {
     lastname: { required, maxLength: maxLength(50) },
     phone: {
       required,
+      minLength: minLength(10),
       maxLength: maxLength(10),
       between: between(0, 9999999999)
     },
@@ -265,6 +261,7 @@ export default {
       const errors = [];
       if (!this.$v.phone.$dirty) return errors;
       !this.$v.phone.maxLength && errors.push("Phone up to 10 numbers");
+      !this.$v.phone.minLength && errors.push("Phone up to 10 numbers");
       !this.$v.phone.between && errors.push("Phone must be type number");
       !this.$v.phone.required && errors.push("Please enter your phone");
       return errors;
@@ -278,8 +275,7 @@ export default {
     oldPasswordErrors() {
       const errors = [];
       if (!this.$v.oldPassword.$dirty) return errors;
-      !this.isOldPassword &&
-        errors.push("The old password you have entered is incorrect");
+      !this.isOldPassword && errors.push("Please enter your old password");
       return errors;
     },
     newPasswordErrors() {
@@ -290,7 +286,7 @@ export default {
       !this.$v.newPassword.maxLength &&
         errors.push("Password up to 32 characters");
       !this.$v.newPassword.required &&
-        errors.push("Please enter your password");
+        errors.push("Please enter your new password");
       !this.$v.newPassword.passwordRegex &&
         errors.push(
           "Password at least one lowercase letters, one uppercase letters, one digits, and one special characters (@,#,$)."
@@ -305,7 +301,7 @@ export default {
       !this.$v.confirmPassword.maxLength &&
         errors.push("Password up to 32 characters");
       !this.$v.confirmPassword.required &&
-        errors.push("Please enter your password");
+        errors.push("Please confirm your new password");
       !this.$v.confirmPassword.passwordRegex &&
         errors.push(
           "Password at least one lowercase letters, one uppercase letters, one digits, and one special characters (!,@,#)."
@@ -320,12 +316,25 @@ export default {
       getProfileInfo: "authentication/getProfileInfo",
       editProfileInfo: "authentication/editProfileInfo",
       checkPassword: "authentication/checkPassword",
-      changePassword: "authentication/changePassword"
+      changePassword: "authentication/changePassword",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     async fetchData() {
-      await this.getProfileInfo(this.$store.getters.getUser.id);
-      this.avaterName =
-        this.profile.firstName.slice(0, 1) + this.profile.lastName.slice(0, 1);
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await this.spinnerLoading(true);
+
+      await Promise.all([
+        timeOut(500),
+        this.getProfileInfo(this.$store.getters.getUser.id)
+      ]);
+      // this.avaterName =
+      //   this.profile.firstName.slice(0, 1) + this.profile.lastName.slice(0, 1);
       this.firstname = this.profile.firstName;
       this.lastname = this.profile.lastName;
       this.email = this.profile.email;
@@ -333,6 +342,7 @@ export default {
       this.age = this.profile.age;
       this.phone = this.profile.phone;
       this.company = this.profile.companyName;
+      await this.spinnerLoading(false);
     },
     async update() {
       this.loading = true;

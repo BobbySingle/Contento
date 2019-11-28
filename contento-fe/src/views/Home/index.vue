@@ -43,27 +43,29 @@
         </div>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12">
-        <h2 class="topic-title">
-          <v-icon color="black" class="mb-2">grade</v-icon>For you
-        </h2>
-      </v-col>
-      <v-col cols="12" sm="4" md="3" v-for="item in getPaginationNews" :key="item.id">
-        <card-news :news="item" />
-      </v-col>
-    </v-row>
-    <div class="text-xs-center" style="margin-bottom: 50px">
-      <v-pagination
-        v-model="$store.state.viewer.currentPage"
-        :length="this.$store.state.viewer.totalPages"
-        :total-visible="7"
-        @input="onClickPage"
-        next=":disabled='isInLastPage'"
-        previous=":disabled='isInFirstPage'"
-      ></v-pagination>
+    <div v-if="getPaginationNews.length > 0">
+      <v-row>
+        <v-col cols="12">
+          <h2 class="topic-title">
+            <v-icon color="black" class="mb-2">grade</v-icon>For you
+          </h2>
+        </v-col>
+        <v-col cols="12" sm="4" md="3" v-for="item in getPaginationNews" :key="item.id">
+          <card-news :news="item" />
+        </v-col>
+      </v-row>
+      <div class="text-xs-center" style="margin-bottom: 50px">
+        <v-pagination
+          v-model="$store.state.viewer.currentPage"
+          :length="this.$store.state.viewer.totalPages"
+          :total-visible="7"
+          @input="onClickPage"
+          next=":disabled='isInLastPage'"
+          previous=":disabled='isInFirstPage'"
+        ></v-pagination>
+      </div>
     </div>
-    <div v-if="this.$store.state.authentication.loggedUser">
+    <div v-if="this.$store.state.authentication.loggedUser && getPaginationRecommend.length > 0">
       <v-row>
         <v-col cols="12">
           <h2 class="topic-title">
@@ -163,7 +165,8 @@ export default {
       getTrends: "viewer/getTrends",
       getAds: "viewer/getAds",
       countContent: "viewer/countContent",
-      getRecommendNews: "viewer/getRecommendNews"
+      getRecommendNews: "viewer/getRecommendNews",
+      spinnerLoading: "spinner/spinnerLoading"
     }),
     onClickPage(page) {
       this.setCurrentSelectedPage(page);
@@ -181,7 +184,20 @@ export default {
       this.dialog = false;
     },
     async setData() {
-      await Promise.all([this.getTags(), this.getTrends(), this.getAds()]);
+      await this.spinnerLoading(true);
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await Promise.all([
+        timeOut(700),
+        this.getTags(),
+        this.getTrends(),
+        this.getAds()
+      ]);
       let guest = JSON.parse(localStorage.getItem("guest"));
       if (this.$store.state.authentication.loggedUser) {
         await this.getRecommendNews(this.getUser.id);
@@ -198,6 +214,7 @@ export default {
           }
         }
       }
+      await this.spinnerLoading(false);
     }
   },
   mounted() {
