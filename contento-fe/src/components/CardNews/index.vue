@@ -1,8 +1,20 @@
 <template>
-  <v-card class="mx-auto" height="300px" @click="clickNews(news)">
-    <v-img :src="news.image[0]" height="200px"></v-img>
-
-    <v-card-text class="black--text">
+  <v-card class="mx-auto" height="320px" @click="clickNews(news)">
+    <v-img
+      ref="refImg"
+      :src="news.image[0]"
+      max-height="200px"
+      aspect-ratio="1"
+      lazy-src="https://picsum.photos/1920/1080"
+      @error="imgError"
+    >
+      <template v-slot:placeholder>
+        <v-row class="fill-height ma-0" align="center" justify="center">
+          <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+        </v-row>
+      </template>
+    </v-img>
+    <v-card-text class="black--text" style="height:70px">
       <span style="font-size:17px;" class="line-clamp">{{news.contents.name}}</span>
     </v-card-text>
     <v-row justify="end" class="mr-4">
@@ -38,6 +50,12 @@ export default {
         });
       }
       this.$router.push("/News");
+    },
+    imgError() {
+      // this.$refs.refImg.image.src =
+      //   "https://picsum.photos/id/403/3997/2665?blur=5";
+      this.$refs.refImg.isLoading = true;
+
     }
   }
 };

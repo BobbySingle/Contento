@@ -95,7 +95,7 @@
                           <v-icon>delete</v-icon>
                         </v-btn>
                       </v-row>-->
-                      <v-row class="flex-nowrap" justify="center" v-if="item.status">
+                      <v-row class="flex-nowrap" justify="space-around" v-if="item.status">
                         <edit-task
                           v-if="item.status.id == 1"
                           :taskID="item.id"

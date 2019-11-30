@@ -19,15 +19,20 @@
                   <span class="text__14">{{title}}</span>
                   <!-- <v-text-field label="Title:" required v-model="title" readonly class="text__14"></v-text-field> -->
                 </v-col>
-                <v-col cols="6" md="6">
+                <v-col cols="4" md="4">
                   <span style="color:grey; font-weight:300; font-size:12px;">Writer</span>
                   <br />
                   <span class="text__14">{{writer}}</span>
                 </v-col>
-                <v-col cols="6" md="6">
+                <v-col cols="4" md="4">
                   <span style="color:grey; font-weight:300; font-size:12px;">Editor</span>
                   <br />
                   <span class="text__14">{{editor}}</span>
+                </v-col>
+                <v-col cols="4" md="4">
+                  <span style="color:grey; font-weight:300; font-size:12px;">Customer</span>
+                  <br />
+                  <span class="text__14">{{customer}}</span>
                 </v-col>
                 <v-col cols="12" md="12">
                   <span style="color:grey; font-weight:300; font-size:12px;">Content Title</span>
@@ -241,6 +246,7 @@ export default {
       writer: "",
       editor: "",
       customerID: "",
+      customer: "",
       website: [
         {
           id: 1,
@@ -307,9 +313,13 @@ export default {
       this.content = this.taskDetail.content.content;
       this.tags = this.taskDetail.tag;
       this.name = this.taskDetail.content.name;
-      this.customerID = this.taskDetail.customer;
+      this.customerID = this.taskDetail.customer.id;
+      this.customer = this.taskDetail.customer.name;
       if (isPublish) {
-        await this.getFanPagesByTagsID(this.tags);
+        await this.getFanPagesByTagsID({
+          lstTags: this.tags,
+          idCustomer: this.taskDetail.customer.id
+        });
         this.fanpageFB = this.fanpagesTag.Facebook;
         this.fanpageWP = this.fanpagesTag.Wordpress;
         this.websiteCTT = this.fanpagesTag.Contento;
@@ -400,7 +410,10 @@ export default {
       this.loading = false;
     },
     async changeCategory() {
-      await this.getFanPagesByTagsID(this.tags);
+      await this.getFanPagesByTagsID({
+        lstTags: this.tags,
+        idCustomer: this.taskDetail.customer.id
+      });
       this.fanpageFB = this.fanpagesTag.Facebook;
       this.fanpageWP = this.fanpagesTag.Wordpress;
       this.websiteCTT = this.fanpagesTag.Contento;

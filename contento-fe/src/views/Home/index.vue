@@ -13,7 +13,7 @@
           <v-icon color="black" class="mb-2">grade</v-icon>Hot News
         </h2>
         <v-carousel cycle hide-delimiter-background show-arrows-on-hover class="slide">
-          <v-carousel-item v-for="(item,i) in trends" :key="i" :src="item.image[0]">
+          <v-carousel-item v-for="(item,i) in trends" :key="i" :src="item.image[0]" ref="carousel">
             <div class="slide-title">
               <v-row class="line-clamp">
                 <h2 class="news_title" @click="clickNews(item)">{{item.contents.name}}</h2>
@@ -43,7 +43,8 @@
         </div>
       </v-col>
     </v-row>
-    <div v-if="getPaginationNews.length > 0">
+    <div class="my-12" v-if="getPaginationNews.length > 0">
+      <v-divider />
       <v-row>
         <v-col cols="12">
           <h2 class="topic-title">
@@ -54,7 +55,7 @@
           <card-news :news="item" />
         </v-col>
       </v-row>
-      <div class="text-xs-center" style="margin-bottom: 50px">
+      <div class="text-xs-center my-8">
         <v-pagination
           v-model="$store.state.viewer.currentPage"
           :length="this.$store.state.viewer.totalPages"
@@ -66,6 +67,7 @@
       </div>
     </div>
     <div v-if="this.$store.state.authentication.loggedUser && getPaginationRecommend.length > 0">
+      <v-divider />
       <v-row>
         <v-col cols="12">
           <h2 class="topic-title">
@@ -76,7 +78,7 @@
           <card-news :news="item" />
         </v-col>
       </v-row>
-      <div class="text-xs-center" style="margin-bottom: 50px">
+      <div class="text-xs-center my-8">
         <v-pagination
           v-model="$store.state.viewer.currentRecommendPage"
           :length="this.$store.state.viewer.totalRecommendPages"

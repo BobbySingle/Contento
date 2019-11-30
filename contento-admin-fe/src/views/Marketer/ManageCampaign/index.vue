@@ -199,7 +199,7 @@
               >{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.action="{item}">
-              <v-row class="flex-nowrap" justify="center">
+              <v-row class="flex-nowrap" justify="end">
                 <popup-edit-campaign :campaignID="item.id" v-if="item.status.id != 3" />
                 <v-btn color="primary" icon fab small @click="clickCalendar(item.id)">
                   <v-icon>event</v-icon>

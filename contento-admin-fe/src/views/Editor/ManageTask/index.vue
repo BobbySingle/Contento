@@ -137,7 +137,7 @@
               >{{item.status.name}}</v-chip>
             </template>
             <template v-slot:item.action="{ item }">
-              <v-row class="flex-nowrap" justify="center">
+              <v-row class="flex-nowrap" justify="space-around">
                 <edit-task
                   v-if="item.status.id == 1"
                   :taskID="item.id"

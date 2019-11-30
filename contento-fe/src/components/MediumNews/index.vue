@@ -4,7 +4,19 @@
     <v-list-item three-line>
       <v-list-item-avatar color="white" tile size="80" style="border-radius:5px;">
         <!-- /**Medium image */ -->
-        <v-img :src="news.image[0]"></v-img>
+        <v-img
+          :src="news.image[0]"
+          aspect-ratio="1"
+          lazy-src="https://picsum.photos/1920/1080"
+          @error="imgError"
+          ref="refImg"
+        >
+          <template v-slot:placeholder>
+            <v-row class="fill-height ma-0" align="center" justify="center">
+              <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+            </v-row>
+          </template>
+        </v-img>
       </v-list-item-avatar>
       <v-list-item-content>
         <!-- /**Title */ -->
@@ -42,6 +54,12 @@ export default {
         });
       }
       this.$router.push("/News");
+    },
+    imgError() {
+      console.log(this.$refs.refImg);
+      // this.$refs.refImg.image.src =
+      //   "https://picsum.photos/id/403/3997/2665?blur=5";
+      this.$refs.refImg.isLoading = true;
     }
   }
 };
