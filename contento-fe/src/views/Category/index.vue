@@ -1,8 +1,16 @@
-<template>
-  <v-container>
+<template >
+  <v-container @scroll="handleScroll">
+    <v-btn
+      fab
+      color="primary"
+      @click="$vuetify.goTo(0)"
+      v-if="isShowScroll"
+      class="scroll"
+      id="scrollTopBtn"
+    >Top</v-btn>
     <v-row>
       <v-col cols="12">
-        <h2 class="topic-title">
+        <h2 class="topic-title" ref="cate">
           <v-icon color="black" class="mb-2">grade</v-icon>
           {{this.$store.state.viewer.categoryName}}
         </h2>
@@ -32,6 +40,11 @@
 import { mapActions, mapGetters } from "vuex";
 import MediumNews from "../../components/MediumNews/index.vue";
 export default {
+  data() {
+    return {
+      isShowScroll: false
+    };
+  },
   components: { MediumNews },
   computed: {
     ...mapGetters(["getPaginationCate", "getUser"]),
@@ -53,7 +66,8 @@ export default {
       spinnerLoading: "spinner/spinnerLoading"
     }),
     onClickPage(selectedPage) {
-      this.setCurrentSelectedPage(selectedPage);
+      this.setCurrentCateSelectedPage(selectedPage);
+      this.$vuetify.goTo(this.$refs.cate);
     },
     async setData() {
       await this.spinnerLoading(true);
@@ -63,13 +77,41 @@ export default {
         this.setCategoryName(category.name)
       ]);
       await this.spinnerLoading(false);
+    },
+    handleScroll() {
+      if (window.scrollY > 100) {
+        this.isShowScroll = true;
+      } else {
+        this.isShowScroll = false;
+      }
     }
   },
   mounted() {
     this.setData();
+  },
+  created() {
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
   }
 };
 </script>
 
 <style>
+.scroll {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9;
+  animation: line 0.5s linear;
+}
+@keyframes line {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 </style>

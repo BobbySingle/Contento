@@ -1,17 +1,7 @@
 <template>
-  <v-container v-if="newsDetails">
-    <v-btn
-      fab
-      color="warning"
-      @click="$router.go(-1)"
-      style="position: fixed; bottom: 20px; left: 20px; z-index:9"
-    >Back</v-btn>
-    <v-btn
-      fab
-      color="primary"
-      @click="$vuetify.goTo(0)"
-      style="position: fixed; bottom: 20px; right: 20px; z-index:9"
-    >Top</v-btn>
+  <v-container v-if="newsDetails" @scroll="handleScroll">
+    <v-btn fab color="warning" @click="$router.go(-1)" class="scroll-back">Back</v-btn>
+    <v-btn fab color="primary" @click="$vuetify.goTo(0)" v-if="isShowScroll" class="scroll">Top</v-btn>
     <v-row justify="center">
       <v-col cols="12" sm="8">
         <h1 class="my-4">{{newsDetails.contents.name}}</h1>
@@ -31,7 +21,8 @@ export default {
     return {
       title: "",
       content: "",
-      writer: ""
+      writer: "",
+      isShowScroll: false
     };
   },
   computed: {
@@ -52,14 +43,50 @@ export default {
         this.writer = this.newsDetails.writer.name;
       }
       await this.spinnerLoading(false);
+    },
+    handleScroll() {
+      if (window.scrollY > 100) {
+        this.isShowScroll = true;
+      } else {
+        this.isShowScroll = false;
+      }
     }
   },
   mounted() {
     this.fetchData();
+    this.$vuetify.goTo(0);
+  },
+  created() {
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
   }
 };
 </script>
 <style scoped>
+.scroll {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9;
+  animation: line 0.5s linear;
+}
+.scroll-back {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9;
+  animation: line 0.5s linear;
+}
+@keyframes line {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 ::v-deep p {
   text-align: justify;
 }

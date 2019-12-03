@@ -1,12 +1,24 @@
 <template>
   <!-- <v-app-bar app dense elevate-on-scroll> -->
   <v-app-bar flat>
+    <v-toolbar-items class="d-flex d-sm-none">
+      <v-toolbar-title
+        class="headline text-uppercase logo"
+        style="display: flex;
+    justify-content: center;
+    align-items: center;"
+        @click="goHome()"
+      >
+        <img src="@/assets/Logo.png" style="display:block; margin-top:3px; max-height:50px; width:auto;" />
+      </v-toolbar-title>
+    </v-toolbar-items>
     <v-menu
       bottom
-      max-height="200"
-      min-width="400"
+      max-height="300"
+      min-width="360"
       max-width="400"
-      :open-on-hover="true"
+      :open-on-click="true"
+      :close-on-click="true"
       :offset-y="true"
       origin="center center"
       transition="scale-transition"
@@ -26,7 +38,7 @@
       </v-list>
     </v-menu>
     <v-spacer></v-spacer>
-    <v-toolbar-items>
+    <v-toolbar-items class="d-none d-sm-block">
       <v-toolbar-title
         class="headline text-uppercase logo"
         style="display: flex;
@@ -34,7 +46,10 @@
     align-items: center;"
         @click="goHome()"
       >
-        <img src="@/assets/Logo.png" style="display:block; height:90%; width:auto;" />
+        <img
+          src="@/assets/Logo.png"
+          style="display:block; margin-top:3px; max-height:50px; width:auto;"
+        />
         <span>ontento</span>
       </v-toolbar-title>
     </v-toolbar-items>
@@ -50,16 +65,20 @@
       ></v-text-field>
     </v-toolbar-items>-->
     <div v-if="!this.$store.state.authentication.loggedUser">
-      <sign-in />
-      <sign-up />
+      <v-row class="flex-nowrap">
+        <sign-in />
+        <sign-up />
+      </v-row>
     </div>
     <div v-if="this.$store.state.authentication.loggedUser">
-      <v-divider vertical inset dark></v-divider>
-      <v-btn text style="text-transform: capitalize; color:black;" @click="profile()">{{fullname}}</v-btn>
-      <v-divider vertical inset dark></v-divider>
-      <v-btn icon @click="logout()" style=" color:black;">
-        <v-icon>mdi-export</v-icon>
-      </v-btn>
+      <v-row class="flex-nowrap">
+        <v-divider vertical inset dark></v-divider>
+        <v-btn text style="align-self:center" @click="profile()">{{fullname}}</v-btn>
+        <v-divider vertical inset dark></v-divider>
+        <v-btn icon @click="logout()" style=" color:black;">
+          <v-icon>mdi-export</v-icon>
+        </v-btn>
+      </v-row>
     </div>
   </v-app-bar>
 </template>
@@ -102,7 +121,7 @@ export default {
     reset() {
       this.$refs.form.reset();
     },
-    profile(){
+    profile() {
       this.$router.push("/Profile");
     },
     async logout() {

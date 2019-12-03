@@ -1,11 +1,6 @@
 <template>
-  <v-container>
-    <v-btn
-      fab
-      color="primary"
-      @click="$vuetify.goTo(0)"
-      style="position: fixed; bottom: 20px; right: 20px; z-index:9"
-    >Top</v-btn>
+  <v-container @scroll="handleScroll">
+    <v-btn fab color="primary" @click="$vuetify.goTo(0)" v-if="isShowScroll" class="scroll">Top</v-btn>
     <!-- /** Slide post */ -->
     <v-row no-gutters>
       <v-col cols="12" md="8">
@@ -47,7 +42,7 @@
       <v-divider />
       <v-row>
         <v-col cols="12">
-          <h2 class="topic-title">
+          <h2 class="topic-title" ref="forYou">
             <v-icon color="black" class="mb-2">grade</v-icon>For you
           </h2>
         </v-col>
@@ -70,7 +65,7 @@
       <v-divider />
       <v-row>
         <v-col cols="12">
-          <h2 class="topic-title">
+          <h2 class="topic-title" ref="recommend">
             <v-icon color="black" class="mb-2 ml-2">mdi-newspaper-variant-multiple-outline</v-icon>Recommend for you
           </h2>
         </v-col>
@@ -115,7 +110,8 @@ export default {
   data() {
     return {
       dialog: false,
-      userSelectedTopics: []
+      userSelectedTopics: [],
+      isShowScroll: false
     };
   },
   computed: {
@@ -172,9 +168,11 @@ export default {
     }),
     onClickPage(page) {
       this.setCurrentSelectedPage(page);
+      this.$vuetify.goTo(this.$refs.forYou);
     },
     onClickRecommendPage(page) {
       this.setCurrentRecommendSelectedPage(page);
+      this.$vuetify.goTo(this.$refs.recommend);
     },
     async clickOK() {
       localStorage.setItem("guest", JSON.stringify(this.userSelectedTopics));
@@ -217,14 +215,42 @@ export default {
         }
       }
       await this.spinnerLoading(false);
+    },
+    handleScroll() {
+      if (window.scrollY > 100) {
+        this.isShowScroll = true;
+      } else {
+        this.isShowScroll = false;
+      }
     }
   },
   mounted() {
     this.setData();
+  },
+  created() {
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
   }
 };
 </script>
 <style scoped>
+.scroll {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9;
+  animation: line 0.5s linear;
+}
+@keyframes line {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .news_title:hover {
   cursor: pointer;
 }

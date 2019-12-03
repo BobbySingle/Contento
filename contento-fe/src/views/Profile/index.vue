@@ -128,7 +128,6 @@
                     <v-text-field
                       v-model="oldPassword"
                       label="Old Password"
-                      placeholder="Input Old Password"
                       clearable
                       :append-icon="showOldPassword ? 'visibility' : 'visibility_off'"
                       @click:append="() => (showOldPassword = !showOldPassword)"
@@ -142,7 +141,6 @@
                     <v-text-field
                       v-model="newPassword"
                       label="New Password"
-                      placeholder="Input New Password"
                       clearable
                       :append-icon="showNewPassword ? 'visibility' : 'visibility_off'"
                       @click:append="() => (showNewPassword = !showNewPassword)"
@@ -156,7 +154,6 @@
                     <v-text-field
                       v-model="confirmPassword"
                       label="Confirm Password"
-                      placeholder="Input Confirm Password"
                       clearable
                       :append-icon="showConfirmPassword ? 'visibility' : 'visibility_off'"
                       @click:append="() => (showConfirmPassword = !showConfirmPassword)"
@@ -246,13 +243,13 @@ export default {
     oldPassword: {},
     newPassword: {
       required,
-      minLength: minLength(6),
+      minLength: minLength(8),
       maxLength: maxLength(32),
       passwordRegex
     },
     confirmPassword: {
       required,
-      minLength: minLength(6),
+      minLength: minLength(8),
       maxLength: maxLength(32),
       passwordRegex,
       sameAsPassword: sameAs("newPassword")
@@ -303,7 +300,7 @@ export default {
       const errors = [];
       if (!this.$v.newPassword.$dirty) return errors;
       !this.$v.newPassword.minLength &&
-        errors.push("Password at least 6 characters");
+        errors.push("Password at least 8 characters");
       !this.$v.newPassword.maxLength &&
         errors.push("Password up to 32 characters");
       !this.$v.newPassword.required &&
@@ -318,7 +315,7 @@ export default {
       const errors = [];
       if (!this.$v.confirmPassword.$dirty) return errors;
       !this.$v.confirmPassword.minLength &&
-        errors.push("Password at least 6 characters");
+        errors.push("Password at least 8 characters");
       !this.$v.confirmPassword.maxLength &&
         errors.push("Password up to 32 characters");
       !this.$v.confirmPassword.required &&
