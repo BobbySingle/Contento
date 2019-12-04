@@ -153,6 +153,15 @@ export default {
           tags: event.listIntTags
         });
       }
+      event.listTags.forEach(el => {
+        this.$ga.event({
+          eventCategory: el.name,
+          eventAction: "View",
+          eventLabel: event.contents.name,
+          eventValue: 1
+        });
+      });
+      this.$ga.page("/News");
       this.$router.push("/News");
     },
     ...mapActions({
@@ -226,6 +235,7 @@ export default {
   },
   mounted() {
     this.setData();
+    this.$ga.page("/");
   },
   created() {
     window.addEventListener("scroll", this.handleScroll);

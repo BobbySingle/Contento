@@ -49,13 +49,21 @@ export default {
           tags: event.listIntTags
         });
       }
+      event.listTags.forEach(el => {
+        this.$ga.event({
+          eventCategory: el.name,
+          eventAction: "View",
+          eventLabel: event.contents.name,
+          eventValue: 1
+        });
+      });
+      this.$ga.page("/News");
       this.$router.push("/News");
     },
     imgError() {
       // this.$refs.refImg.image.src =
       //   "https://picsum.photos/id/403/3997/2665?blur=5";
       this.$refs.refImg.isLoading = true;
-
     }
   }
 };
