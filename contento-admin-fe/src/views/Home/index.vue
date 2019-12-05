@@ -14,8 +14,10 @@ export default {
       this.$router.push("/ApproveRequest");
     } else if (role === "Writer") {
       this.$router.push("/TaskManagement");
-    }else if (role === "Admin") {
+    } else if (role === "Admin") {
       this.$router.push("/ManageSystemAccount");
+    } else if (role === "Customer") {
+      this.$router.push("/Customer");
     } else {
       localStorage.clear();
       this.$store.state.authentication.loggedUser = false;

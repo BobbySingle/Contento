@@ -124,6 +124,12 @@ export default {
           link: "/ManageViewerAccount",
           role: "Admin"
         },
+        {
+          title: "Statistics",
+          icon: "mdi-poll-box",
+          link: "/Customer",
+          role: "Customer"
+        }
       ],
       mini: true
     };

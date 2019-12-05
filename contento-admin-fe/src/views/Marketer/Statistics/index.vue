@@ -1,64 +1,90 @@
 <template>
   <v-container>
-    <v-row justify="center" class="mb-5">
+    <v-row justify="center" class="mb-2">
       <h1 class="text__h1">Statistics</h1>
     </v-row>
-    <v-row justify="center" no-gutters style="background-color: white;">
-      <v-col cols="12" md="6">
-        <v-select
-          v-model="week"
-          :items="weeks"
-          item-text="name"
-          item-value="id"
-          label="Statistics Week"
-          prepend-inner-icon="mdi-chart-donut"
-          @change="changeTopWeek"
-          class="mx-10"
-        ></v-select>
-        <GChart
-          type="PieChart"
-          :data="chartWeekData"
-          :options="chartWeekOptions"
-          style="height:500px"
-        />
-      </v-col>
-      <v-col cols="12" md="6">
-        <v-select
-          v-model="month"
-          :items="months"
-          item-text="name"
-          item-value="id"
-          label="Statistics Month"
-          prepend-inner-icon="mdi-chart-donut"
-          @change="changeTopMonth"
-          class="mx-10"
-        ></v-select>
-        <GChart
-          type="PieChart"
-          :data="chartMonthData"
-          :options="chartMonthOptions"
-          style="height:500px"
-        />
-      </v-col>
-    </v-row>
-    <v-row justify="center" no-gutters>
-      <v-col cols="12" md="6">
-        <GChart
-          type="ColumnChart"
-          :data="chartWeekAllData"
-          :options="chartWeekAllOptions"
-          style="height:500px"
-        />
-      </v-col>
-      <v-col cols="12" md="6">
-        <GChart
-          type="ColumnChart"
-          :data="chartMonthAllData"
-          :options="chartMonthAllOptions"
-          style="height:500px"
-        />
-      </v-col>
-    </v-row>
+    <v-card>
+      <v-tabs background-color="white" color="deep-purple accent-4">
+        <v-tab>Week</v-tab>
+        <v-tab>Month</v-tab>
+        <v-tab>Facebook</v-tab>
+        <div class="ma-2" style="width:100%;">
+          <v-btn
+            style="float:right"
+            color="primary"
+            href="https://analytics.google.com/analytics/web/#/report-home/a153845471w217205691p207366696"
+          >Google Analytics</v-btn>
+        </div>
+        <v-tab-item>
+          <v-container>
+            <v-row justify="center" no-gutters style="background-color: white;">
+              <v-col cols="12" md="6">
+                <v-select
+                  v-model="week"
+                  :items="weeks"
+                  item-text="name"
+                  item-value="id"
+                  label="Statistics Week"
+                  prepend-inner-icon="mdi-chart-donut"
+                  @change="changeTopWeek"
+                  class="mx-10"
+                ></v-select>
+                <GChart
+                  type="PieChart"
+                  :data="chartWeekData"
+                  :options="chartWeekOptions"
+                  style="height:500px"
+                  :events="chartWeekEvents"
+                  ref="chartWeek"
+                />
+              </v-col>
+              <v-col cols="12" md="6">
+                <GChart
+                  type="ColumnChart"
+                  :data="chartWeekAllData"
+                  :options="chartWeekAllOptions"
+                  style="height:500px"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-tab-item>
+        <v-tab-item>
+          <v-container>
+            <v-row justify="center" no-gutters>
+              <v-col cols="12" md="6">
+                <v-select
+                  v-model="month"
+                  :items="months"
+                  item-text="name"
+                  item-value="id"
+                  label="Statistics Month"
+                  prepend-inner-icon="mdi-chart-donut"
+                  @change="changeTopMonth"
+                  class="mx-10"
+                ></v-select>
+                <GChart
+                  type="PieChart"
+                  :data="chartMonthData"
+                  :options="chartMonthOptions"
+                  style="height:500px"
+                  :events="chartMonthEvents"
+                  ref="chartMonth"
+                />
+              </v-col>
+              <v-col cols="12" md="6">
+                <GChart
+                  type="ColumnChart"
+                  :data="chartMonthAllData"
+                  :options="chartMonthAllOptions"
+                  style="height:500px"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-tab-item>
+      </v-tabs>
+    </v-card>
   </v-container>
 </template>
 
@@ -72,6 +98,37 @@ export default {
   },
   data() {
     return {
+      //    eventName: handlerFunction,
+      //    eventName: handlerFunction,
+      // }
+      chartWeekEvents: {
+        select: () => {
+          const chartSelected = this.$refs.chartWeek.chartObject;
+          const selection = chartSelected.getSelection()[0];
+          console.log(selection);
+          if (selection) {
+            for (const i in this.chartWeekData) {
+              if (i == parseInt(selection.row + 1)) {
+                console.log(this.chartWeekData[i]);
+              }
+            }
+          }
+        }
+      },
+      chartMonthEvents: {
+        select: () => {
+          const chartSelected = this.$refs.chartMonth.chartObject;
+          const selection = chartSelected.getSelection()[0];
+          console.log(selection);
+          if (selection) {
+            for (const i in this.chartMonthData) {
+              if (i == parseInt(selection.row + 1)) {
+                console.log(this.chartMonthData[i]);
+              }
+            }
+          }
+        }
+      },
       // Array will be automatically processed with visualization.arrayToDataTable function
       week: 3,
       weeks: [

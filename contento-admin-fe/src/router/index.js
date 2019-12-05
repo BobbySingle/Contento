@@ -24,6 +24,7 @@ import ManageContentFanpage from "../views/Marketer/ManageContentFanpage/index.v
 import ManageFreelanceAccount from "../views/Admin/ManageFreelanceAccount/index.vue";
 import ManageViewerAccount from "../views/Admin/ManageViewerAccount/index.vue";
 import Statistics from "../views/Marketer/Statistics/index.vue";
+import Customer from "../views/Customer/Statistics/index.vue";
 
 Vue.use(Router);
 
@@ -156,5 +157,11 @@ export default new Router({
       name: "ManageViewerAccount",
       component: ManageViewerAccount
     },
+    /**Customer */
+    {
+      path: "/Customer",
+      name: "Customer",
+      component: Customer
+    }
   ]
 });
