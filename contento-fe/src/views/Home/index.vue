@@ -1,22 +1,41 @@
 <template>
   <v-container @scroll="handleScroll">
-    <v-btn fab color="primary" @click="$vuetify.goTo(0)" v-if="isShowScroll" class="scroll">Top</v-btn>
+    <v-btn
+      fab
+      color="primary"
+      @click="$vuetify.goTo(0)"
+      v-if="isShowScroll"
+      class="scroll"
+      >Top</v-btn
+    >
     <!-- /** Slide post */ -->
     <v-row no-gutters>
       <v-col cols="12" md="8">
         <h2 class="topic-title">
           <v-icon color="black" class="mb-2">grade</v-icon>Hot News
         </h2>
-        <v-carousel cycle hide-delimiter-background show-arrows-on-hover class="slide">
-          <v-carousel-item v-for="(item,i) in trends" :key="i" :src="item.image[0]" ref="carousel">
+        <v-carousel
+          cycle
+          hide-delimiter-background
+          show-arrows-on-hover
+          class="slide"
+        >
+          <v-carousel-item
+            v-for="(item, i) in trends"
+            :key="i"
+            :src="item.image[0]"
+            ref="carousel"
+          >
             <div class="slide-title">
               <v-row class="line-clamp">
-                <h2 class="news_title" @click="clickNews(item)">{{item.contents.name}}</h2>
+                <h2 class="news_title" @click="clickNews(item)">
+                  {{ item.contents.name }}
+                </h2>
               </v-row>
               <v-row justify="start">
                 <v-icon small class="mr-1">today</v-icon>
                 <h4>
-                  {{item.publishTime | moment("DD/MM/YYYY")}}
+                  {{ item.publishTime | moment("DD/MM/YYYY") }}
                   <!-- <v-icon>bar_chart</v-icon>2.4k -->
                 </h4>
               </v-row>
@@ -46,7 +65,13 @@
             <v-icon color="black" class="mb-2">grade</v-icon>For you
           </h2>
         </v-col>
-        <v-col cols="12" sm="4" md="3" v-for="item in getPaginationNews" :key="item.id">
+        <v-col
+          cols="12"
+          sm="4"
+          md="3"
+          v-for="item in getPaginationNews"
+          :key="item.id"
+        >
           <card-news :news="item" />
         </v-col>
       </v-row>
@@ -61,15 +86,28 @@
         ></v-pagination>
       </div>
     </div>
-    <div v-if="this.$store.state.authentication.loggedUser && getPaginationRecommend.length > 0">
+    <div
+      v-if="
+        this.$store.state.authentication.loggedUser &&
+          getPaginationRecommend.length > 0
+      "
+    >
       <v-divider />
       <v-row>
         <v-col cols="12">
           <h2 class="topic-title" ref="recommend">
-            <v-icon color="black" class="mb-2 ml-2">mdi-newspaper-variant-multiple-outline</v-icon>Recommend for you
+            <v-icon color="black" class="mb-2 ml-2"
+              >mdi-newspaper-variant-multiple-outline</v-icon
+            >Recommend for you
           </h2>
         </v-col>
-        <v-col cols="12" sm="4" md="3" v-for="item in getPaginationRecommend" :key="item.id">
+        <v-col
+          cols="12"
+          sm="4"
+          md="3"
+          v-for="item in getPaginationRecommend"
+          :key="item.id"
+        >
           <card-news :news="item" />
         </v-col>
       </v-row>
@@ -86,10 +124,16 @@
     </div>
     <v-dialog v-model="dialog" persistent width="500">
       <v-card>
-        <v-card-title class="headline">You are interested in the topic:</v-card-title>
+        <v-card-title class="headline"
+          >You are interested in the topic:</v-card-title
+        >
         <v-row no-gutters class="mx-4">
           <v-col cols="4" v-for="item in listCategory" :key="item.id">
-            <v-checkbox v-model="userSelectedTopics" :label="item.name" :value="item.id"></v-checkbox>
+            <v-checkbox
+              v-model="userSelectedTopics"
+              :label="item.name"
+              :value="item.id"
+            ></v-checkbox>
           </v-col>
         </v-row>
         <v-card-actions>
@@ -149,6 +193,12 @@ export default {
       if (this.$store.state.authentication.loggedUser) {
         await this.countContent({
           idUser: this.getUser.id,
+          idTask: event.idTask,
+          tags: event.listIntTags
+        });
+      } else {
+        await this.countContent({
+          idUser: 0,
           idTask: event.idTask,
           tags: event.listIntTags
         });

@@ -1,10 +1,9 @@
 import axios from "axios";
 
-const API_URL ="http://35.247.168.237:8760/contentproccessservice";
+const API_URL = "http://35.247.168.237:8760/contentproccessservice";
 
 // test
 // const API_URL = "http://34.87.31.23:5002";
-
 
 if (localStorage.getItem("Profile") != null) {
   let user = JSON.parse(localStorage.getItem("Profile").toString());
@@ -16,9 +15,7 @@ export function APIgetListTag() {
 }
 
 export function APIgetListCampaignTask(campaignID) {
-  return axios.get(
-    `${API_URL}/api/contentprocess/task/campaign/${campaignID}`
-  );
+  return axios.get(`${API_URL}/api/contentprocess/task/campaign/${campaignID}`);
 }
 
 export function APIgetTaskDetail(contentID) {
@@ -28,9 +25,7 @@ export function APIgetTaskDetail(contentID) {
 }
 
 export function APIgetListTaskByMarketerID(userID) {
-  return axios.get(
-    `${API_URL}/api/contentprocess/task/marketer/${userID}`
-  );
+  return axios.get(`${API_URL}/api/contentprocess/task/marketer/${userID}`);
 }
 
 export function APIcreateTask(task) {
@@ -38,9 +33,7 @@ export function APIcreateTask(task) {
 }
 
 export function APIdeleteTaskByID(taskID) {
-  return axios.delete(
-    `${API_URL}/api/contentprocess/task/campaign/${taskID}`
-  );
+  return axios.delete(`${API_URL}/api/contentprocess/task/campaign/${taskID}`);
 }
 
 export function APIeditTaskByID(task) {
@@ -48,9 +41,7 @@ export function APIeditTaskByID(task) {
 }
 
 export function APIgetListTagByCampaignID(campaignID) {
-  return axios.get(
-    `${API_URL}/api/contentprocess/tags/campaign/${campaignID}`
-  );
+  return axios.get(`${API_URL}/api/contentprocess/tags/campaign/${campaignID}`);
 }
 export function APIgetTaskDetailUpdate(taskID) {
   return axios.get(
@@ -58,33 +49,36 @@ export function APIgetTaskDetailUpdate(taskID) {
   );
 }
 export function APIgetContentRequest(userId) {
-  return axios.get(
-    `${API_URL}/api/contentprocess/task/editor/${userId}`
-  );
+  return axios.get(`${API_URL}/api/contentprocess/task/editor/${userId}`);
 }
 
 export function APIsetApprovalContentRequest(content) {
-  return axios.post(`${API_URL}/api/contentprocess/approvals`, content)
+  return axios.post(`${API_URL}/api/contentprocess/approvals`, content);
 }
 
 export function APIgetTaskByWriterId(userId) {
-  return axios.get(
-    `${API_URL}/api/contentprocess/task/writer/${userId}`
-  );
+  return axios.get(`${API_URL}/api/contentprocess/task/writer/${userId}`);
 }
 
 export function APIstartTask(taskID) {
   return axios.put(
-    `${API_URL}/api/contentprocess/content/task/campaign/start`, taskID
+    `${API_URL}/api/contentprocess/content/task/campaign/start`,
+    taskID
   );
 }
 
 export function APIsaveContent(content) {
-  return axios.put(`${API_URL}/api/contentprocess/content/task/campaign`, content);
+  return axios.put(
+    `${API_URL}/api/contentprocess/content/task/campaign`,
+    content
+  );
 }
 
 export function APIsubmitContent(content) {
-  return axios.put(`${API_URL}/api/contentprocess/content/task/campaign/submit`, content);
+  return axios.put(
+    `${API_URL}/api/contentprocess/content/task/campaign/submit`,
+    content
+  );
 }
 
 export function APIgetListTaskByEditorID(editorID) {
@@ -103,8 +97,28 @@ export function APIgetListStatusPublish() {
   return axios.get(`${API_URL}/api/contentprocess/status-publish/task`);
 }
 export function APIgetStatisticsOneWeek(number) {
-  return axios.get(`${API_URL}/api/contentprocess/statistics-one-week?quantity=${number}`);
+  return axios.get(
+    `${API_URL}/api/contentprocess/statistics-one-week?quantity=${number}`
+  );
 }
 export function APIgetStatisticsOneMonth(number) {
-  return axios.get(`${API_URL}/api/contentprocess/statistics-one-month?quantity=${number}`);
+  return axios.get(
+    `${API_URL}/api/contentprocess/statistics-one-month?quantity=${number}`
+  );
+}
+export function APIgetStatisticsByTag(tagNumber) {
+  return axios.get(
+    `${API_URL}/api/contentprocess/statistics-by-tag/${tagNumber}`
+  );
+}
+export function APIgetStatisticsByTagMonth(tagNumber) {
+  return axios.get(
+    `${API_URL}/api/contentprocess/statistics-by-tag-month/${tagNumber}`
+  );
+}
+export function APIgetStatisticsTrend() {
+  return axios.get(`${API_URL}/api/contentprocess/statistics-task-trend`);
+}
+export function APIgetStatisticsTrendMonth() {
+  return axios.get(`${API_URL}/api/contentprocess/statistics-task-trend-month`);
 }

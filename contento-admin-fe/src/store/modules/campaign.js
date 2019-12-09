@@ -9,7 +9,7 @@ import {
   APIgetListFilterCampaignByEditorID,
   APIgetListFilterCampaignByWriterID
 } from "../../services/campaign";
-import Vue from 'vue'
+import Vue from "vue";
 const state = {
   listCampaign: [],
   detailCampaign: "",
@@ -68,19 +68,19 @@ const actions = {
         console.log("CREATE CAMPAIGN ACTION");
         console.log(rs.data);
         Vue.notify({
-          group: 'notice',
-          title: 'Create successful!',
-          text: 'Campaign has been created successfully!',
-          type: 'suc'
+          group: "notice",
+          title: "Create successful!",
+          text: "Campaign has been created successfully!",
+          type: "suc"
         });
         return 202;
       }
     } catch (error) {
       Vue.notify({
-        group: 'notice',
-        title: 'Create Failed!',
-        text: 'Campaign has been created failed!',
-        type: 'err'
+        group: "notice",
+        title: "Create Failed!",
+        text: "Campaign has been created failed!",
+        type: "err"
       });
       console.log("ERROR - CREATE CAMPAIGN ACTION");
       console.log(error);
@@ -94,19 +94,19 @@ const actions = {
         console.log("UPDATE CAMPAIGN ACTION");
         console.log(rs.data);
         Vue.notify({
-          group: 'notice',
-          title: 'Edit successful!',
-          text: 'Campaign has been edited successfully!',
-          type: 'suc'
+          group: "notice",
+          title: "Edit successful!",
+          text: "Campaign has been edited successfully!",
+          type: "suc"
         });
         return 202;
       }
     } catch (error) {
       Vue.notify({
-        group: 'notice',
-        title: 'Edit failed!',
-        text: 'Campaign has been edited failed!',
-        type: 'err'
+        group: "notice",
+        title: "Edit failed!",
+        text: "Campaign has been edited failed!",
+        type: "err"
       });
       console.log("ERROR - UPDATE CAMPAIGN ACTION");
       console.log(error);
@@ -126,12 +126,17 @@ const actions = {
   async getListCampaignByCustomerID({ commit }, payload) {
     try {
       let rs = await APIgetListCampaignByCustomerID(payload);
-      console.log("LIST CAMPAIGN BY CUSTOMER ID - ACTION");
-      console.log(rs.data);
-      commit("SET_LISTCAMPAIGNBYCUSTOMERID", rs.data);
+      if (rs.status == 200) {
+        console.log("LIST CAMPAIGN BY CUSTOMER ID - ACTION");
+        console.log(rs.data);
+        commit("SET_LISTCAMPAIGNBYCUSTOMERID", rs.data);
+      }
     } catch (error) {
       console.log("ERROR - LIST CAMPAIGN BY CUSTOMER ID");
       console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_LISTCAMPAIGNBYCUSTOMERID", []);
+      }
     }
   },
   async getListCampaignByEditorID({ commit }, payload) {

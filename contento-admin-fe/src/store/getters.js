@@ -26,8 +26,10 @@ const getters = {
   detailCampaign: state => state.campaign.detailCampaign,
   listCampaignByCustomerID: state => state.campaign.listCampaignByCustomerID,
   listCampaignByEditorID: state => state.campaign.listCampaignByEditorID,
-  listFilterCampaignByEditorID: state => state.campaign.listFilterCampaignByEditorID,
-  listFilterCampaignByWriterID: state => state.campaign.listFilterCampaignByWriterID,
+  listFilterCampaignByEditorID: state =>
+    state.campaign.listFilterCampaignByEditorID,
+  listFilterCampaignByWriterID: state =>
+    state.campaign.listFilterCampaignByWriterID,
 
   //ContentProcess
   listCampaignTaskNotFormated: state => state.contentprocess.listCampaignTask,
@@ -52,8 +54,10 @@ const getters = {
   listStatusPublish: state => state.contentprocess.listStatusPublish,
   StatisticsWeek: state => state.contentprocess.dataStatisticsOneWeek,
   StatisticsMonth: state => state.contentprocess.dataStatisticsOneMonth,
-  StatisticsAllWeek: state => state.contentprocess.dataStatisticsAllOneWeek,
-  StatisticsAllMonth: state => state.contentprocess.dataStatisticsAllOneMonth,
+  StatisticsByTag: state => state.contentprocess.dataStatisticsByTag,
+  StatisticsByTagMonth: state => state.contentprocess.dataStatisticsByTagMonth,
+  StatisticsWeekTrend: state => state.contentprocess.dataStatisticsWeekTrend,
+  StatisticsMonthTrend: state => state.contentprocess.dataStatisticsMonthTrend,
 
   //Batchjob
   fanpage: state => state.batchjob.fanpage,
@@ -64,5 +68,7 @@ const getters = {
   fanpagesTag: state => state.batchjob.fanpagesTag,
   linkFanpage: state => state.batchjob.link,
   listContentOfFanpage: state => state.batchjob.listContentOfFanpage,
+  listInteractionFanpageByCampaign: state =>
+    state.batchjob.listInteractionFanpageByCampaign
 };
 export default getters;

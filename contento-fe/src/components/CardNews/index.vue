@@ -10,17 +10,22 @@
     >
       <template v-slot:placeholder>
         <v-row class="fill-height ma-0" align="center" justify="center">
-          <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+          <v-progress-circular
+            indeterminate
+            color="grey lighten-5"
+          ></v-progress-circular>
         </v-row>
       </template>
     </v-img>
     <v-card-text class="black--text" style="height:70px">
-      <span style="font-size:17px;" class="line-clamp">{{news.contents.name}}</span>
+      <span style="font-size:17px;" class="line-clamp">{{
+        news.contents.name
+      }}</span>
     </v-card-text>
     <v-row justify="end" class="mr-4">
       <span style="font-size:14px;">
         <v-icon small class="mr-1">today</v-icon>
-        {{news.publishTime | moment("DD/MM/YYYY")}}
+        {{ news.publishTime | moment("DD/MM/YYYY") }}
       </span>
     </v-row>
   </v-card>
@@ -45,6 +50,12 @@ export default {
       if (this.$store.state.authentication.loggedUser) {
         await this.countContent({
           idUser: this.getUser.id,
+          idTask: event.idTask,
+          tags: event.listIntTags
+        });
+      } else {
+        await this.countContent({
+          idUser: 0,
           idTask: event.idTask,
           tags: event.listIntTags
         });

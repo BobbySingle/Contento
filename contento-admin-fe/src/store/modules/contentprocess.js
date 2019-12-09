@@ -20,7 +20,11 @@ import {
   APIgetListStatusCampaign,
   APIgetListStatusPublish,
   APIgetStatisticsOneWeek,
-  APIgetStatisticsOneMonth
+  APIgetStatisticsOneMonth,
+  APIgetStatisticsByTag,
+  APIgetStatisticsTrend,
+  APIgetStatisticsTrendMonth,
+  APIgetStatisticsByTagMonth
 } from "../../services/contentprocess";
 
 import router from "@/router/index";
@@ -42,8 +46,10 @@ const state = {
   listStatusPublish: [],
   dataStatisticsOneWeek: [],
   dataStatisticsOneMonth: [],
-  dataStatisticsAllOneWeek: [],
-  dataStatisticsAllOneMonth: []
+  dataStatisticsByTag: [],
+  dataStatisticsByTagMonth: [],
+  dataStatisticsWeekTrend: [],
+  dataStatisticsMonthTrend: []
 };
 
 const mutations = {
@@ -96,17 +102,23 @@ const mutations = {
   SET_LIST_STATUS_PUBLISH(state, data) {
     state.listStatusPublish = data;
   },
-  SET_DATA_Statistics_WEEK(state, data) {
+  SET_DATA_STATISTICS_WEEK(state, data) {
     state.dataStatisticsOneWeek = data;
   },
-  SET_DATA_Statistics_MONTH(state, data) {
+  SET_DATA_STATISTICS_MONTH(state, data) {
     state.dataStatisticsOneMonth = data;
   },
-  SET_DATA_Statistics_ALL_WEEK(state, data) {
-    state.dataStatisticsAllOneWeek = data;
+  SET_DATA_STATISTICS_BY_TAG(state, data) {
+    state.dataStatisticsByTag = data;
   },
-  SET_DATA_Statistics_ALL_MONTH(state, data) {
-    state.dataStatisticsAllOneMonth = data;
+  SET_DATA_STATISTICS_BY_TAG_MONTH(state, data) {
+    state.dataStatisticsByTagMonth = data;
+  },
+  SET_DATA_STATISTICS_WEEK_TREND(state, data) {
+    state.dataStatisticsWeekTrend = data;
+  },
+  SET_DATA_STATISTICS_MONTH_TREND(state, data) {
+    state.dataStatisticsMonthTrend = data;
   }
 };
 
@@ -159,19 +171,19 @@ const actions = {
       if (rs.status == 202) {
         commit("SET_NEWTASK", rs.data);
         Vue.notify({
-          group: 'notice',
-          title: 'Create successful!',
-          text: 'Task has been created successfully!',
-          type: 'suc'
+          group: "notice",
+          title: "Create successful!",
+          text: "Task has been created successfully!",
+          type: "suc"
         });
         return 202;
       }
     } catch (error) {
       Vue.notify({
-        group: 'notice',
-        title: 'Create Failed!',
-        text: 'Task has been created failed!',
-        type: 'warn'
+        group: "notice",
+        title: "Create Failed!",
+        text: "Task has been created failed!",
+        type: "warn"
       });
       console.log("ERROR - CREATE TASK");
       console.log(error);
@@ -187,19 +199,19 @@ const actions = {
         console.log("EDIT LIST TASK - ACTION");
         console.log(rs.data);
         Vue.notify({
-          group: 'notice',
-          title: 'Edit successful!',
-          text: 'Task has been edited successfully!',
-          type: 'suc'
+          group: "notice",
+          title: "Edit successful!",
+          text: "Task has been edited successfully!",
+          type: "suc"
         });
         return rs.status;
       }
     } catch (error) {
       Vue.notify({
-        group: 'notice',
-        title: 'Edit failed!',
-        text: 'Task has been edited failed!',
-        type: 'warn'
+        group: "notice",
+        title: "Edit failed!",
+        text: "Task has been edited failed!",
+        type: "warn"
       });
       console.log("ERROR - EDIT TASK");
       console.log(error);
@@ -211,20 +223,20 @@ const actions = {
       if (rs.status == 200) {
         commit("DELETE_TASK", id);
         Vue.notify({
-          group: 'notice',
-          title: 'Delete successful!',
-          text: 'Task has been deleted successfully!',
-          type: 'suc'
+          group: "notice",
+          title: "Delete successful!",
+          text: "Task has been deleted successfully!",
+          type: "suc"
         });
       }
     } catch (error) {
       console.log("ERROR - DELETE TASK");
       console.log(error);
       Vue.notify({
-        group: 'notice',
-        title: 'Delete Failed!',
-        text: 'Task has been deleted failed!',
-        type: 'warn'
+        group: "notice",
+        title: "Delete Failed!",
+        text: "Task has been deleted failed!",
+        type: "warn"
       });
     }
   },
@@ -246,8 +258,7 @@ const actions = {
       console.log("ERROR - TASK DETAIL UPDATE");
       console.log(error);
     }
-  }
-  ,
+  },
   async getContentRequest({ commit }, payload) {
     try {
       let rs = await APIgetContentRequest(payload);
@@ -258,8 +269,7 @@ const actions = {
       console.log("ERROR - LIST CONTENT REQUEST");
       console.log(error);
     }
-  }
-  ,
+  },
   async setApprovalContentRequest({ commit }, payload) {
     try {
       await APIsetApprovalContentRequest(payload);
@@ -294,10 +304,10 @@ const actions = {
       let rs = await APIsaveContent(payload);
       if (rs.status == 200) {
         Vue.notify({
-          group: 'notice',
-          title: 'Save successful!',
-          text: 'Content has been save successfully!',
-          type: 'suc'
+          group: "notice",
+          title: "Save successful!",
+          text: "Content has been save successfully!",
+          type: "suc"
         });
         return 200;
       }
@@ -305,10 +315,10 @@ const actions = {
       console.log("ERROR - SAVE CONTENT");
       console.log(error);
       Vue.notify({
-        group: 'notice',
-        title: 'Save failed!',
-        text: 'Content has been save failed!',
-        type: 'warn'
+        group: "notice",
+        title: "Save failed!",
+        text: "Content has been save failed!",
+        type: "warn"
       });
     }
   },
@@ -317,10 +327,10 @@ const actions = {
       let rs = await APIsaveContent(payload);
       if (rs.status == 200) {
         Vue.notify({
-          group: 'notice',
-          title: 'Auto save successful!',
-          text: 'Content has been auto save successfully!',
-          type: 'suc'
+          group: "notice",
+          title: "Auto save successful!",
+          text: "Content has been auto save successfully!",
+          type: "suc"
         });
         return 200;
       }
@@ -328,10 +338,10 @@ const actions = {
       console.log("ERROR - SAVE CONTENT");
       console.log(error);
       Vue.notify({
-        group: 'notice',
-        title: 'Auto save failed!',
-        text: 'Content has been auto save failed!',
-        type: 'warn'
+        group: "notice",
+        title: "Auto save failed!",
+        text: "Content has been auto save failed!",
+        type: "warn"
       });
     }
   },
@@ -340,19 +350,19 @@ const actions = {
       let rs = await APIsubmitContent(payload);
       if (rs.status == 202) {
         Vue.notify({
-          group: 'notice',
-          title: 'Submit successful!',
-          text: 'Content has been submit successfully!',
-          type: 'suc'
+          group: "notice",
+          title: "Submit successful!",
+          text: "Content has been submit successfully!",
+          type: "suc"
         });
         return 202;
       }
     } catch (error) {
       Vue.notify({
-        group: 'notice',
-        title: 'Submit failed!',
-        text: 'Content has been submit failed!',
-        type: 'warn'
+        group: "notice",
+        title: "Submit failed!",
+        text: "Content has been submit failed!",
+        type: "warn"
       });
       console.log("ERROR - SUBMIT CONTENT");
       console.log(error);
@@ -412,48 +422,90 @@ const actions = {
     try {
       let rs = await APIgetStatisticsOneWeek(payload);
       if (rs.status == 200) {
-        commit("SET_DATA_Statistics_WEEK", rs.data);
+        commit("SET_DATA_STATISTICS_WEEK", rs.data);
         return 200;
       }
     } catch (error) {
       console.log("ERROR - Statistics WEEK");
       console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_WEEK", []);
+      }
     }
   },
   async getStatisticsOneMonth({ commit }, payload) {
     try {
       let rs = await APIgetStatisticsOneMonth(payload);
       if (rs.status == 200) {
-        commit("SET_DATA_Statistics_MONTH", rs.data);
+        commit("SET_DATA_STATISTICS_MONTH", rs.data);
         return 200;
       }
     } catch (error) {
       console.log("ERROR - Statistics MONTH");
       console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_MONTH", []);
+      }
     }
   },
-  async getStatisticsAllOneWeek({ commit }, payload) {
+  async getStatisticsByTag({ commit }, payload) {
     try {
-      let rs = await APIgetStatisticsOneWeek(payload);
+      let rs = await APIgetStatisticsByTag(payload);
       if (rs.status == 200) {
-        commit("SET_DATA_Statistics_ALL_WEEK", rs.data);
+        commit("SET_DATA_STATISTICS_BY_TAG", rs.data);
         return 200;
       }
     } catch (error) {
-      console.log("ERROR - Statistics ALL WEEK");
+      console.log("ERROR - Statistics By TAG");
       console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_BY_TAG", []);
+      }
     }
   },
-  async getStatisticsAllOneMonth({ commit }, payload) {
+  async getStatisticsByTagMonth({ commit }, payload) {
     try {
-      let rs = await APIgetStatisticsOneMonth(payload);
+      let rs = await APIgetStatisticsByTagMonth(payload);
       if (rs.status == 200) {
-        commit("SET_DATA_Statistics_ALL_MONTH", rs.data);
+        commit("SET_DATA_STATISTICS_BY_TAG_MONTH", rs.data);
         return 200;
       }
     } catch (error) {
-      console.log("ERROR - Statistics ALL MONTH");
+      console.log("ERROR - Statistics By TAG MONTH");
       console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_BY_TAG_MONTH", []);
+      }
+    }
+  },
+  async getStatisticsTrend({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticsTrend();
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICS_WEEK_TREND", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - Statistics Week Trend");
+      console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_WEEK_TREND", []);
+      }
+    }
+  },
+  async getStatisticsTrendMonth({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticsTrendMonth();
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICS_MONTH_TREND", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - Statistics Month Trend");
+      console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_MONTH_TREND", []);
+      }
     }
   }
 };

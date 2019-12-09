@@ -7,14 +7,17 @@
       <v-tabs background-color="white" color="deep-purple accent-4">
         <v-tab>Week</v-tab>
         <v-tab>Month</v-tab>
+        <v-tab>Contento</v-tab>
         <v-tab>Facebook</v-tab>
         <div class="ma-2" style="width:100%;">
           <v-btn
             style="float:right"
             color="primary"
             href="https://analytics.google.com/analytics/web/#/report-home/a153845471w217205691p207366696"
-          >Google Analytics</v-btn>
+            >Google Analytics</v-btn
+          >
         </div>
+        <!-- TAB WEEK -->
         <v-tab-item>
           <v-container>
             <v-row justify="center" no-gutters style="background-color: white;">
@@ -41,14 +44,15 @@
               <v-col cols="12" md="6">
                 <GChart
                   type="ColumnChart"
-                  :data="chartWeekAllData"
-                  :options="chartWeekAllOptions"
+                  :data="chartWeekTagsData"
+                  :options="chartWeekTagsOptions"
                   style="height:500px"
                 />
               </v-col>
             </v-row>
           </v-container>
         </v-tab-item>
+        <!-- TAB MONTH -->
         <v-tab-item>
           <v-container>
             <v-row justify="center" no-gutters>
@@ -75,10 +79,153 @@
               <v-col cols="12" md="6">
                 <GChart
                   type="ColumnChart"
+                  :data="chartMonthTagsData"
+                  :options="chartMonthTagsOptions"
+                  style="height:500px"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-tab-item>
+        <!-- TAB CONTENTO -->
+        <v-tab-item>
+          <v-container>
+            <v-row justify="center" no-gutters style="background-color: white;">
+              <v-col cols="12" md="6">
+                <v-select
+                  v-model="customer"
+                  :items="listCustomer"
+                  item-text="name"
+                  item-value="id"
+                  label="Customer"
+                  prepend-inner-icon="mdi-chart-donut"
+                  @change="changeCustomer"
+                  class="mx-10"
+                  clearable
+                ></v-select>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-select
+                  v-if="customer"
+                  v-model="campaign"
+                  :items="listCampaignByCustomerID"
+                  item-text="title"
+                  item-value="id"
+                  label="Campaign"
+                  prepend-inner-icon="mdi-chart-donut"
+                  class="mx-10"
+                  clearable
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-row justify="center" no-gutters style="background-color: white;">
+              <v-col cols="12" md="6">
+                <GChart
+                  type="PieChart"
+                  :data="chartMonthData"
+                  :options="chartMonthOptions"
+                  style="height:500px"
+                  :events="chartMonthEvents"
+                  ref="chartMonth"
+                />
+              </v-col>
+              <v-col cols="12" md="6">
+                <!-- <GChart
+                  type="ColumnChart"
                   :data="chartMonthAllData"
                   :options="chartMonthAllOptions"
                   style="height:500px"
-                />
+                /> -->
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-tab-item>
+        <!-- TAB FACEBOOK -->
+        <v-tab-item>
+          <v-container>
+            <v-row justify="center" no-gutters style="background-color: white;">
+              <v-col cols="12" md="6">
+                <v-select
+                  v-model="customer"
+                  :items="listCustomer"
+                  item-text="name"
+                  item-value="id"
+                  label="Customer"
+                  prepend-inner-icon="mdi-chart-donut"
+                  @change="changeCustomer"
+                  class="mx-10"
+                  clearable
+                ></v-select>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-select
+                  v-if="customer"
+                  v-model="campaign"
+                  :items="listCampaignByCustomerID"
+                  item-text="title"
+                  item-value="id"
+                  label="Campaign"
+                  prepend-inner-icon="mdi-chart-donut"
+                  class="mx-10"
+                  clearable
+                  @change="changeCampaign"
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-row justify="center" no-gutters style="background-color: white;">
+              <v-col
+                cols="12"
+                v-for="fanpage in listInteractionFanpageByCampaign"
+                :key="fanpage.index"
+              >
+                <h3 class="my-2" style="text-align: center;">
+                  {{ fanpage.name }}
+                </h3>
+                <v-data-table
+                  :headers="headersFanpage"
+                  :items="fanpage.data"
+                  :items-per-page="5"
+                  class="mb-4"
+                >
+                  <template v-slot:item.publicDate="{ item }">
+                    <span>{{
+                      item.publicDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                    }}</span>
+                  </template>
+                  <template v-slot:item.reactiontCount="{ item }">
+                    <span
+                      >{{ item.reactiontCount }}
+                      <v-icon small class="mb-1 ml-1"
+                        >mdi-thumb-up</v-icon
+                      ></span
+                    >
+                  </template>
+                  <template v-slot:item.shareCount="{ item }">
+                    <span
+                      >{{ item.shareCount }}
+                      <v-icon small class="mb-1 ml-1">mdi-share </v-icon></span
+                    >
+                  </template>
+                  <template v-slot:item.commentCount="{ item }">
+                    <span
+                      >{{ item.commentCount }}
+                      <v-icon small class="mb-1 ml-1"
+                        >mdi-comment-outline</v-icon
+                      ></span
+                    >
+                  </template>
+                  <template v-slot:item.possitiveCommentCount="{ item }">
+                    <span
+                      >{{ item.possitiveCommentCount }}
+                      <v-icon small class="mb-1 ml-1">mdi-comment</v-icon></span
+                    >
+                  </template>
+                  <template v-slot:item.action="{ item }">
+                    <v-btn icon color="primary" fab @click="linkTo(item.link)">
+                      <v-icon>mdi-link</v-icon>
+                    </v-btn>
+                  </template>
+                </v-data-table>
               </v-col>
             </v-row>
           </v-container>
@@ -98,9 +245,111 @@ export default {
   },
   data() {
     return {
-      //    eventName: handlerFunction,
-      //    eventName: handlerFunction,
-      // }
+      /**Begin Pagination */
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 5,
+      loading: false,
+      listCategory: [
+        { id: 1, name: "THỂ THAO" },
+        { id: 2, name: "DU LỊCH" },
+        { id: 3, name: "ẨM THỰC" },
+        { id: 4, name: "PHIM ẢNH" },
+        { id: 5, name: "ÂM NHẠC" },
+        { id: 6, name: "KINH DOANH" },
+        { id: 7, name: "CÔNG NGHỆ" },
+        { id: 8, name: "XE" },
+        { id: 9, name: "GIẢI TRÍ" },
+        { id: 10, name: "THỜI TRANG" }
+      ],
+      headers: [
+        {
+          text: "Campaign",
+          align: "center",
+          value: "name"
+        },
+        {
+          text: "End",
+          value: "deadline",
+          align: "center"
+        },
+        {
+          text: "Status",
+          value: "status",
+          align: "center"
+        },
+        {
+          text: "Action",
+          value: "action",
+          align: "center",
+          sortable: false
+        }
+      ],
+      headersFanpage: [
+        {
+          text: "Title",
+          align: "left",
+          value: "title",
+          width: "30%"
+        },
+        {
+          text: "Publish Date",
+          value: "publicDate",
+          align: "center",
+          width: "20%"
+        },
+        {
+          text: "Reaction",
+          value: "reactiontCount",
+          align: "center",
+          width: "10%"
+        },
+        {
+          text: "Comment",
+          value: "commentCount",
+          align: "center",
+          width: "10%"
+        },
+        {
+          text: "Possitive Comment",
+          value: "possitiveCommentCount",
+          align: "center",
+          width: "10%"
+        },
+        {
+          text: "Share",
+          value: "shareCount",
+          align: "center",
+          width: "10%"
+        },
+        {
+          text: "Action",
+          value: "action",
+          align: "center",
+          sortable: false,
+          width: "10%"
+        }
+      ],
+      customer: "",
+      campaign: "",
+
+      // Array will be automatically processed with visualization.arrayToDataTable function
+      week: 3,
+      weeks: [
+        { id: 3, name: "Top 3 category in the week" },
+        { id: 5, name: "Top 5 category in the week" },
+        { id: 10, name: "Top 10 category in the week" },
+        { id: 0, name: "All category in the week" }
+      ],
+
+      chartWeekData: [],
+      chartWeekOptions: {
+        // legend: 'none',
+        // pieSliceText: 'label',
+        // title: "Top 5 Category In Week",
+        pieStartAngle: 0
+      },
+      categoryWeekSelected: "",
       chartWeekEvents: {
         select: () => {
           const chartSelected = this.$refs.chartWeek.chartObject;
@@ -109,12 +358,30 @@ export default {
           if (selection) {
             for (const i in this.chartWeekData) {
               if (i == parseInt(selection.row + 1)) {
-                console.log(this.chartWeekData[i]);
+                this.categoryWeekSelected = this.chartWeekData[i][0];
               }
             }
+          } else {
+            this.categoryWeekSelected = "";
           }
         }
       },
+
+      month: 3,
+      months: [
+        { id: 3, name: "Top 3 category in the month" },
+        { id: 5, name: "Top 5 category in the month" },
+        { id: 10, name: "Top 10 category in the month" }
+      ],
+
+      chartMonthData: [],
+      chartMonthOptions: {
+        // legend: 'none',
+        // pieSliceText: 'label',
+        // title: "Top 5 Category In Week",
+        pieStartAngle: 0
+      },
+      categoryMonthSelected: "",
       chartMonthEvents: {
         select: () => {
           const chartSelected = this.$refs.chartMonth.chartObject;
@@ -123,75 +390,156 @@ export default {
           if (selection) {
             for (const i in this.chartMonthData) {
               if (i == parseInt(selection.row + 1)) {
-                console.log(this.chartMonthData[i]);
+                this.categoryMonthSelected = this.chartMonthData[i][0];
               }
             }
+          } else {
+            this.categoryMonthSelected = "";
           }
         }
       },
-      // Array will be automatically processed with visualization.arrayToDataTable function
-      week: 3,
-      weeks: [
-        { id: 3, name: "Top 3 category in the week" },
-        { id: 5, name: "Top 5 category in the week" },
-        { id: 10, name: "Top 10 category in the week" }
-      ],
-      month: 3,
-      months: [
-        { id: 3, name: "Top 3 category in the month" },
-        { id: 5, name: "Top 5 category in the month" },
-        { id: 10, name: "Top 10 category in the month" }
-      ],
-      chartWeekData: [],
-      chartWeekOptions: {
-        // legend: 'none',
-        // pieSliceText: 'label',
-        // title: "Top 5 Category In Week",
-        pieStartAngle: 0
-      },
-      chartMonthData: [],
-      chartMonthOptions: {
-        // legend: 'none',
-        // pieSliceText: 'label',
-        // title: "Top 5 Category In Week",
-        pieStartAngle: 0
-      },
-      chartWeekAllData: [],
-      chartWeekAllOptions: {
+
+      chartWeekTagsData: [],
+      chartWeekTagsOptions: {
         legend: "none",
         pieSliceText: "label",
         title: "Interaction in the week",
-        pieStartAngle: 0
+        colors: ["mediumseagreen"],
+        animation: {
+          duration: 1000,
+          easing: "linear"
+        }
       },
-      chartMonthAllData: [],
-      chartMonthAllOptions: {
+      chartMonthTagsData: [],
+      chartMonthTagsOptions: {
         legend: "none",
         pieSliceText: "label",
         title: "Interaction in the month",
-        pieStartAngle: 0
+        colors: ["mediumseagreen"],
+        animation: {
+          duration: 1000,
+          easing: "linear"
+        }
       }
     };
+  },
+  watch: {
+    categoryWeekSelected() {
+      var category;
+      if (this.categoryWeekSelected) {
+        this.listCategory.forEach(element => {
+          if (element.name == this.categoryWeekSelected) {
+            category = element;
+          }
+        });
+        this.statisticWeekByTag(category);
+      } else {
+        this.statisticWeekTrend();
+      }
+    },
+    categoryMonthSelected() {
+      var category;
+      if (this.categoryMonthSelected) {
+        this.listCategory.forEach(element => {
+          if (element.name == this.categoryMonthSelected) {
+            category = element;
+          }
+        });
+        this.statisticMonthByTag(category);
+      } else {
+        this.statisticMonthTrend();
+      }
+    }
+  },
+  filters: {
+    localTime: function(value) {
+      if (!value) return "";
+
+      //Local TimeZone
+      var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+      var millisecondsTime = Date.parse(value + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      return newDateUTC7;
+    }
   },
   computed: {
     ...mapGetters([
       "StatisticsWeek",
       "StatisticsMonth",
-      "StatisticsAllWeek",
-      "StatisticsAllMonth",
-      "getUser"
+      "getUser",
+      "listCustomer",
+      "listCampaignByCustomerID",
+      "StatisticsByTag",
+      "StatisticsByTagMonth",
+      "listInteractionFanpageByCampaign",
+      "StatisticsWeekTrend",
+      "StatisticsMonthTrend"
     ])
   },
   methods: {
     ...mapActions({
       getStatisticsOneWeek: "contentprocess/getStatisticsOneWeek",
       getStatisticsOneMonth: "contentprocess/getStatisticsOneMonth",
-      getStatisticsAllOneWeek: "contentprocess/getStatisticsAllOneWeek",
-      getStatisticsAllOneMonth: "contentprocess/getStatisticsAllOneMonth",
-      spinnerLoading: "spinner/spinnerLoading"
+      getStatisticsTrend: "contentprocess/getStatisticsTrend",
+      getStatisticsTrendMonth: "contentprocess/getStatisticsTrendMonth",
+      spinnerLoading: "spinner/spinnerLoading",
+      getListCustomerByMarketerID: "authentication/getListCustomerByMarketerID",
+      getListCampaignByCustomerID: "campaign/getListCampaignByCustomerID",
+      getStatisticsByTag: "contentprocess/getStatisticsByTag",
+      getStatisticsByTagMonth: "contentprocess/getStatisticsByTagMonth",
+      getInteractionFanpageByCampaignId:
+        "batchjob/getInteractionFanpageByCampaignId"
     }),
+    async statisticWeekByTag(tag) {
+      let status = await this.getStatisticsByTag(tag.id);
+      let weekTagsData = [["Content", "View"]];
+      if (status == 200) {
+        this.StatisticsByTag.forEach(element => {
+          weekTagsData.push([element.title, element.view]);
+        });
+        this.chartWeekTagsData = weekTagsData;
+        this.chartWeekTagsOptions.title = "TOP VIEW OF " + tag.name;
+      }
+    },
+    async statisticWeekTrend() {
+      let statusWeekTrend = await this.getStatisticsTrend();
+      let weekTrendData = [["Content", "View"]];
+      if (statusWeekTrend == 200) {
+        this.StatisticsWeekTrend.forEach(element => {
+          weekTrendData.push([element.title, element.view]);
+        });
+        this.chartWeekTagsData = weekTrendData;
+        this.chartWeekTagsOptions.title = "TOP CONTENT OF THE WEEK";
+      }
+    },
+    async statisticMonthByTag(tag) {
+      let status = await this.getStatisticsByTagMonth(tag.id);
+      let monthTagsData = [["Content", "View"]];
+      if (status == 200) {
+        this.StatisticsByTagMonth.forEach(element => {
+          monthTagsData.push([element.title, element.view]);
+        });
+        this.chartMonthTagsData = monthTagsData;
+        this.chartMonthTagsOptions.title = "TOP VIEW OF " + tag.name;
+      }
+    },
+    async statisticMonthTrend() {
+      let statusMonthTrend = await this.getStatisticsTrendMonth();
+      let monthTrendData = [["Content", "View"]];
+      if (statusMonthTrend == 200) {
+        this.StatisticsMonthTrend.forEach(element => {
+          monthTrendData.push([element.title, element.view]);
+        });
+        this.chartMonthTagsData = monthTrendData;
+        this.chartMonthTagsOptions.title = "TOP CONTENT OF THE MONTH";
+      }
+    },
     async fetchData() {
       //WEEK
       this.spinnerLoading(true);
+      this.getListCustomerByMarketerID(this.getUser.id);
       let dataWeek = [["Category", "Interaction"]];
       let statusWeek = await this.getStatisticsOneWeek(3);
       if (statusWeek == 200) {
@@ -209,24 +557,26 @@ export default {
         });
       }
       this.chartMonthData = dataMonth;
-      //WEEK ALL
-      let dataWeekAll = [["Category", "Interaction"]];
-      let statusWeekAll = await this.getStatisticsAllOneWeek(0);
-      if (statusWeekAll == 200) {
-        this.StatisticsAllWeek.forEach(element => {
-          dataWeekAll.push([element.tags, element.timeInTeraction]);
+      //WEEK TREND
+      let statusWeekTrend = await this.getStatisticsTrend();
+      let weekTrendData = [["Content", "View"]];
+      if (statusWeekTrend == 200) {
+        this.StatisticsWeekTrend.forEach(element => {
+          weekTrendData.push([element.title, element.view]);
         });
+        this.chartWeekTagsData = weekTrendData;
+        this.chartWeekTagsOptions.title = "TOP CONTENT OF THE WEEK";
       }
-      this.chartWeekAllData = dataWeekAll;
-      //MONTH ALL
-      let dataMonthAll = [["Category", "Interaction"]];
-      let statusMonthAll = await this.getStatisticsAllOneMonth(0);
-      if (statusMonthAll == 200) {
-        this.StatisticsAllMonth.forEach(element => {
-          dataMonthAll.push([element.tags, element.timeInTeraction]);
+      //MONTH TREND
+      let dataMonthTrend = [["Category", "Interaction"]];
+      let statusMonthTrend = await this.getStatisticsTrendMonth();
+      if (statusMonthTrend == 200) {
+        this.StatisticsMonthTrend.forEach(element => {
+          dataMonthTrend.push([element.title, element.view]);
         });
+        this.chartMonthTagsData = dataMonthTrend;
+        this.chartMonthTagsOptions.title = "TOP CONTENT OF THE WEEK";
       }
-      this.chartMonthAllData = dataMonthAll;
       this.spinnerLoading(false);
     },
     async changeTopWeek(event) {
@@ -248,6 +598,15 @@ export default {
         });
       }
       this.chartMonthData = dataMonth;
+    },
+    async changeCustomer(event) {
+      await this.getListCampaignByCustomerID(event);
+    },
+    async changeCampaign(event) {
+      await this.getInteractionFanpageByCampaignId(event);
+    },
+    async linkTo(event) {
+      window.open(event);
     }
   },
   mounted() {
@@ -265,5 +624,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
