@@ -96,15 +96,11 @@ export function APIgetListStatusCampaign() {
 export function APIgetListStatusPublish() {
   return axios.get(`${API_URL}/api/contentprocess/status-publish/task`);
 }
-export function APIgetStatisticsOneWeek(number) {
-  return axios.get(
-    `${API_URL}/api/contentprocess/statistics-one-week?quantity=${number}`
-  );
+export function APIgetStatisticsOneWeek() {
+  return axios.get(`${API_URL}/api/contentprocess/statistics-one-week`);
 }
 export function APIgetStatisticsOneMonth(number) {
-  return axios.get(
-    `${API_URL}/api/contentprocess/statistics-one-month?quantity=${number}`
-  );
+  return axios.get(`${API_URL}/api/contentprocess/statistics-one-month`);
 }
 export function APIgetStatisticsByTag(tagNumber) {
   return axios.get(

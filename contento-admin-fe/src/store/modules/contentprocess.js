@@ -420,7 +420,7 @@ const actions = {
   },
   async getStatisticsOneWeek({ commit }, payload) {
     try {
-      let rs = await APIgetStatisticsOneWeek(payload);
+      let rs = await APIgetStatisticsOneWeek();
       if (rs.status == 200) {
         commit("SET_DATA_STATISTICS_WEEK", rs.data);
         return 200;
@@ -435,7 +435,7 @@ const actions = {
   },
   async getStatisticsOneMonth({ commit }, payload) {
     try {
-      let rs = await APIgetStatisticsOneMonth(payload);
+      let rs = await APIgetStatisticsOneMonth();
       if (rs.status == 200) {
         commit("SET_DATA_STATISTICS_MONTH", rs.data);
         return 200;
