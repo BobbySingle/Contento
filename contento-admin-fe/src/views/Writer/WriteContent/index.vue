@@ -6,27 +6,40 @@
     <v-row justify="center" class="my-3">
       <h1 class="text__h1">Write Content</h1>
     </v-row>
-    <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+    <v-expansion-panels
+      :accordion="true"
+      :focusable="true"
+      multiple
+      v-model="panel"
+    >
       <v-row justify="center" class="mx-5" no-gutters>
         <v-col cols="12">
           <v-expansion-panel>
-            <v-expansion-panel-header class="text__14">Content Information:</v-expansion-panel-header>
+            <v-expansion-panel-header class="text__14"
+              >Content Information:</v-expansion-panel-header
+            >
             <v-expansion-panel-content>
               <v-row>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Title</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Title</span
+                  >
                   <br />
-                  <span class="text__14">{{title}}</span>
+                  <span class="text__14">{{ title }}</span>
                 </v-col>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Campaign</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Campaign</span
+                  >
                   <br />
-                  <span class="text__14">{{campaign}}</span>
+                  <span class="text__14">{{ campaign }}</span>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="12">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Categorys</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Categorys</span
+                  >
                   <br />
                   <v-chip
                     v-for="item in tags"
@@ -41,14 +54,22 @@
               </v-row>
               <v-row>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">End Date</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >End Date</span
+                  >
                   <br />
-                  <span class="text__14">{{deadline | moment("HH:mm DD/MM/YYYY")}}</span>
+                  <span class="text__14">{{
+                    deadline | moment("HH:mm DD/MM/YYYY")
+                  }}</span>
                 </v-col>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Publish Date</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Publish Date</span
+                  >
                   <br />
-                  <span class="text__14">{{publishTime | moment("HH:mm DD/MM/YYYY")}}</span>
+                  <span class="text__14">{{
+                    publishTime | moment("HH:mm DD/MM/YYYY")
+                  }}</span>
                 </v-col>
               </v-row>
             </v-expansion-panel-content>
@@ -56,10 +77,15 @@
         </v-col>
         <v-col cols="12">
           <v-expansion-panel>
-            <v-expansion-panel-header class="text__14">Request Details:</v-expansion-panel-header>
+            <v-expansion-panel-header class="text__14"
+              >Request Details:</v-expansion-panel-header
+            >
             <v-expansion-panel-content class="py-2">
               <div class="my-1">
-                <div v-html="requestData" class="content px-2 py-4"></div>
+                <div
+                  v-html="requestData"
+                  class="content ck-content px-2 py-4"
+                ></div>
               </div>
             </v-expansion-panel-content>
           </v-expansion-panel>
@@ -67,10 +93,12 @@
         <v-row no-gutters>
           <v-col cols="6">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14">Content Details:</v-expansion-panel-header>
+              <v-expansion-panel-header class="text__14"
+                >Content Details:</v-expansion-panel-header
+              >
               <v-expansion-panel-content
                 class="expansion-bg"
-                v-bind:style="{ width: computedWidth}"
+                v-bind:style="{ width: computedWidth }"
               >
                 <v-row>
                   <v-col cols="12">
@@ -86,22 +114,24 @@
                         class="mr-2"
                         @blur="$v.name.$touch()"
                       ></v-text-field>
-                      <v-btn v-on:click="changeWidth()" icon class="mt-3" color="black">
-                        <v-icon>{{btnChange}}</v-icon>
+                      <v-btn
+                        v-on:click="changeWidth()"
+                        icon
+                        class="mt-3"
+                        color="black"
+                      >
+                        <v-icon>{{ btnChange }}</v-icon>
                       </v-btn>
                     </v-row>
-                    <div
-                      style="color:red"
-                      v-if="!$v.name.required && check"
-                    >The title of content cannot be empty.</div>
-                    <div
-                      style="color:red"
-                      v-if="!$v.name.maxLength && check"
-                    >Title up to 255 characters.</div>
-                    <div
-                      style="color:red"
-                      v-if="!$v.content.required && check"
-                    >The content cannot be empty.</div>
+                    <div style="color:red" v-if="!$v.name.required && check">
+                      The title of content cannot be empty.
+                    </div>
+                    <div style="color:red" v-if="!$v.name.maxLength && check">
+                      Title up to 255 characters.
+                    </div>
+                    <div style="color:red" v-if="!$v.content.required && check">
+                      The content cannot be empty.
+                    </div>
                   </v-col>
                   <v-col cols="12">
                     <CKEditor
@@ -114,27 +144,41 @@
                   </v-col>
                 </v-row>
                 <v-row justify="end">
-                  <span class="mr-3">Words: {{countWord}}</span>
+                  <span class="mr-3">Words: {{ countWord }}</span>
                 </v-row>
                 <v-row justify="center" class="flex-nowrap my-2">
-                  <v-btn color="secondary" class="mx-1" @click="$router.go(-1)">Cancel</v-btn>
-                  <v-btn color="warning" class="mx-1" @click="save()" :loading="loadingSave">Save</v-btn>
+                  <v-btn color="secondary" class="mx-1" @click="$router.go(-1)"
+                    >Cancel</v-btn
+                  >
+                  <v-btn
+                    color="warning"
+                    class="mx-1"
+                    @click="save()"
+                    :loading="loadingSave"
+                    >Save</v-btn
+                  >
                   <v-btn
                     color="primary"
                     class="mx-1"
                     @click="submit()"
                     :loading="loadingSubmit"
-                  >Review</v-btn>
+                    >Review</v-btn
+                  >
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-col>
           <v-col cols="6">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14">Editor Comment:</v-expansion-panel-header>
+              <v-expansion-panel-header class="text__14"
+                >Editor Comment:</v-expansion-panel-header
+              >
               <v-expansion-panel-content class="py-2">
                 <div class="my-1">
-                  <div v-html="commentData" class="content px-2 pt-12"></div>
+                  <div
+                    v-html="commentData"
+                    class="content ck-content px-2 pt-12"
+                  ></div>
                 </div>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -144,7 +188,6 @@
     </v-expansion-panels>
   </v-container>
 </template>
-
 
 <script>
 import CKEditor from "../../../components/CKEditor/Ckeditor5.vue";
@@ -350,10 +393,10 @@ export default {
 }
 
 ::v-deep .content table th {
-  border: 1px solid black;
+  border: 1px solid grey;
 }
 ::v-deep .content table td {
   padding-left: 10px;
-  border: 1px solid black;
+  border: 1px solid grey;
 }
 </style>

@@ -7,49 +7,71 @@
       <h1 class="text__h1">Publish Channel</h1>
     </v-row>
     <v-row no-gutters class="mx-10" justify="center">
-      <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+      <v-expansion-panels
+        :accordion="true"
+        :focusable="true"
+        multiple
+        v-model="panel"
+      >
         <v-expansion-panel>
-          <v-expansion-panel-header class="text__14">Task Details:</v-expansion-panel-header>
+          <v-expansion-panel-header class="text__14"
+            >Task Details:</v-expansion-panel-header
+          >
           <v-expansion-panel-content>
             <v-col cols="12" class="px-8">
               <v-row>
                 <v-col cols="12" md="12">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Task Title</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Task Title</span
+                  >
                   <br />
-                  <span class="text__14">{{title}}</span>
+                  <span class="text__14">{{ title }}</span>
                   <!-- <v-text-field label="Title:" required v-model="title" readonly class="text__14"></v-text-field> -->
                 </v-col>
                 <v-col cols="4" md="4">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Writer</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Writer</span
+                  >
                   <br />
-                  <span class="text__14">{{writer}}</span>
+                  <span class="text__14">{{ writer }}</span>
                 </v-col>
                 <v-col cols="4" md="4">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Editor</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Editor</span
+                  >
                   <br />
-                  <span class="text__14">{{editor}}</span>
+                  <span class="text__14">{{ editor }}</span>
                 </v-col>
                 <v-col cols="4" md="4">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Customer</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Customer</span
+                  >
                   <br />
-                  <span class="text__14">{{customer}}</span>
+                  <span class="text__14">{{ customer }}</span>
                 </v-col>
                 <v-col cols="12" md="12">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Content Title</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Content Title</span
+                  >
                   <br />
-                  <span class="text__14">{{name}}</span>
+                  <span class="text__14">{{ name }}</span>
                 </v-col>
               </v-row>
             </v-col>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="text__14">Content Preview:</v-expansion-panel-header>
+          <v-expansion-panel-header class="text__14"
+            >Content Preview:</v-expansion-panel-header
+          >
           <v-expansion-panel-content>
             <v-row class="my-8" style="width:100%;">
               <v-col cols="12" md="12">
-                <div class="content px-12 py-4" style="max-width:795px;margin: 0 auto;">
-                  <span v-html="content"></span>
+                <div
+                  class="content px-12 py-4"
+                  style="max-width:795px;margin: 0 auto;"
+                >
+                  <span v-html="content" class="ck-content"></span>
                 </div>
               </v-col>
             </v-row>
@@ -65,7 +87,9 @@
                   <v-icon>mdi-calendar-range</v-icon>
                 </v-col>
                 <v-col cols="12" md="11">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Publish Time</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Publish Time</span
+                  >
                   <datetime
                     title="Publish Time"
                     type="datetime"
@@ -81,14 +105,15 @@
                   ></datetime>
                 </v-col>
               </v-row>
-              <div
-                style="color:red"
-                v-if="!$v.publishTime.required && check"
-              >Please select publish time.</div>
+              <div style="color:red" v-if="!$v.publishTime.required && check">
+                Please select publish time.
+              </div>
               <div
                 style="color:red"
                 v-if="$v.publishTime.$model < localISOTime && check"
-              >Please select publish time > time now.</div>
+              >
+                Please select publish time > time now.
+              </div>
             </v-col>
             <v-col cols="12" md="6" class="pt-7">
               <v-select
@@ -107,12 +132,19 @@
                 @blur="$v.tags.$touch()"
               >
                 <template v-slot:selection="{ attrs, item, select, selected }">
-                  <v-chip v-bind="attrs" :input-value="selected" color="blue" class="chips">
+                  <v-chip
+                    v-bind="attrs"
+                    :input-value="selected"
+                    color="blue"
+                    class="chips"
+                  >
                     <strong class="text__14">{{ item.name }}</strong>
                   </v-chip>
                 </template>
               </v-select>
-              <div style="color:red" v-if="!$v.tags.required && check">Please select category.</div>
+              <div style="color:red" v-if="!$v.tags.required && check">
+                Please select category.
+              </div>
             </v-col>
           </v-row>
           <v-row>
@@ -130,12 +162,12 @@
                 multiple
                 attach
               >
-                <template v-slot:selection="{ attrs, item,index, select, selected }">
-                  <v-chip
-                    color="blue"
-                    v-if="index === 0"
-                    class="chips caption"
-                  >+{{ fanpageFB.length }} others selected</v-chip>
+                <template
+                  v-slot:selection="{ attrs, item, index, select, selected }"
+                >
+                  <v-chip color="blue" v-if="index === 0" class="chips caption"
+                    >+{{ fanpageFB.length }} others selected</v-chip
+                  >
                 </template>
               </v-select>
             </v-col>
@@ -153,12 +185,12 @@
                 multiple
                 attach
               >
-                <template v-slot:selection="{ attrs, item,index, select, selected }">
-                  <v-chip
-                    color="blue"
-                    v-if="index === 0"
-                    class="chips caption"
-                  >+{{ fanpageWP.length }} others selected</v-chip>
+                <template
+                  v-slot:selection="{ attrs, item, index, select, selected }"
+                >
+                  <v-chip color="blue" v-if="index === 0" class="chips caption"
+                    >+{{ fanpageWP.length }} others selected</v-chip
+                  >
                 </template>
               </v-select>
             </v-col>
@@ -176,18 +208,22 @@
                 multiple
                 @change="changeWebsite"
               >
-                <template v-slot:selection="{ attrs, item,index, select, selected }">
-                  <v-chip
-                    color="blue"
-                    v-if="index === 0"
-                    class="chips caption"
-                  >+{{ websiteCTT.length }} others selected</v-chip>
+                <template
+                  v-slot:selection="{ attrs, item, index, select, selected }"
+                >
+                  <v-chip color="blue" v-if="index === 0" class="chips caption"
+                    >+{{ websiteCTT.length }} others selected</v-chip
+                  >
                 </template>
               </v-select>
             </v-col>
           </v-row>
           <v-row no-gutters class=".flex-nowrap" justify="end" v-if="showAds">
-            <v-switch v-model="isAds" label="Advertise this content" class="mr-3"></v-switch>
+            <v-switch
+              v-model="isAds"
+              label="Advertise this content"
+              class="mr-3"
+            ></v-switch>
             <div class="mt-2" v-if="isAds">
               <datetime
                 title="Set time to end advertise"
@@ -208,7 +244,8 @@
               class="text__14 ml-3"
               @click="publish()"
               :loading="loading"
-            >Publish</v-btn>
+              >Publish</v-btn
+            >
           </v-row>
         </v-col>
       </v-row>
@@ -529,11 +566,11 @@ export default {
 }
 
 ::v-deep .content table th {
-  border: 1px solid black;
+  border: 1px solid grey;
 }
 ::v-deep .content table td {
   padding-left: 10px;
-  border: 1px solid black;
+  border: 1px solid grey;
 }
 .datetime {
   width: 100%;

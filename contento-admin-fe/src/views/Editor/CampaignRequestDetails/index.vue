@@ -6,27 +6,40 @@
     <v-row justify="center" class="my-3">
       <h1 class="text__h1">Work Assignment</h1>
     </v-row>
-    <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+    <v-expansion-panels
+      :accordion="true"
+      :focusable="true"
+      multiple
+      v-model="panel"
+    >
       <v-row justify="center" class="mx-5" no-gutters>
         <v-col cols="12">
           <v-expansion-panel>
-            <v-expansion-panel-header class="text__14">Campaign Information:</v-expansion-panel-header>
+            <v-expansion-panel-header class="text__14"
+              >Campaign Information:</v-expansion-panel-header
+            >
             <v-expansion-panel-content>
               <v-row>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Title</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Title</span
+                  >
                   <br />
-                  <span class="text__14">{{campaign_title}}</span>
+                  <span class="text__14">{{ campaign_title }}</span>
                 </v-col>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Customer</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Customer</span
+                  >
                   <br />
-                  <span class="text__14">{{campaign_customer.name}}</span>
+                  <span class="text__14">{{ campaign_customer.name }}</span>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Categorys</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Categorys</span
+                  >
                   <br />
                   <v-chip
                     v-for="item in campaign_tags"
@@ -39,9 +52,13 @@
                   </v-chip>
                 </v-col>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">End Date</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >End Date</span
+                  >
                   <br />
-                  <span class="text__14">{{campaign_enddate | moment("DD/MM/YYYY")}}</span>
+                  <span class="text__14">{{
+                    campaign_enddate | moment("DD/MM/YYYY")
+                  }}</span>
                 </v-col>
               </v-row>
             </v-expansion-panel-content>
@@ -50,16 +67,23 @@
         <v-row no-gutters>
           <v-col cols="12" md="6">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14">Campaign Request:</v-expansion-panel-header>
+              <v-expansion-panel-header class="text__14"
+                >Campaign Request:</v-expansion-panel-header
+              >
               <v-expansion-panel-content class="my-2 py-2">
-                <div v-html="campaign_content" class="work content px-2 py-4"></div>
+                <div
+                  v-html="campaign_content"
+                  class="work content ck-content px-2 py-4"
+                ></div>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-col>
 
           <v-col cols="12" md="6">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14">Work Assignment:</v-expansion-panel-header>
+              <v-expansion-panel-header class="text__14"
+                >Work Assignment:</v-expansion-panel-header
+              >
               <v-expansion-panel-content class="py-2">
                 <div class="work">
                   <v-row class="my-2" justify="center">
@@ -76,11 +100,13 @@
                     :loading="loading"
                     @page-count="pageCount = $event"
                   >
-                    <template v-slot:item.deadline="{item}">
-                      <span v-if="item.deadline">{{item.deadline| moment("DD/MM/YYYY")}}</span>
+                    <template v-slot:item.deadline="{ item }">
+                      <span v-if="item.deadline">{{
+                        item.deadline | moment("DD/MM/YYYY")
+                      }}</span>
                     </template>
-                    <template v-slot:item.writer="{item}">
-                      <span v-if="item.writer">{{item.writer.name}}</span>
+                    <template v-slot:item.writer="{ item }">
+                      <span v-if="item.writer">{{ item.writer.name }}</span>
                     </template>
                     <template v-slot:item.action="{ item }">
                       <!-- <v-row class="flex-nowrap" justify="center" v-if="item.status">
@@ -95,7 +121,11 @@
                           <v-icon>delete</v-icon>
                         </v-btn>
                       </v-row>-->
-                      <v-row class="flex-nowrap" justify="space-around" v-if="item.status">
+                      <v-row
+                        class="flex-nowrap"
+                        justify="space-around"
+                        v-if="item.status"
+                      >
                         <edit-task
                           v-if="item.status.id == 1"
                           :taskID="item.id"
@@ -130,7 +160,11 @@
                   </v-data-table>
                   <v-row justify="center">
                     <div class="text-center pt-2">
-                      <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
+                      <v-pagination
+                        v-model="page"
+                        :length="pageCount"
+                        :total-visible="10"
+                      ></v-pagination>
                     </div>
                   </v-row>
                 </div>
@@ -287,10 +321,10 @@ export default {
 }
 
 ::v-deep .content table th {
-  border: 1px solid black;
+  border: 1px solid grey;
 }
 ::v-deep .content table td {
   padding-left: 10px;
-  border: 1px solid black;
+  border: 1px solid grey;
 }
 </style>

@@ -1,13 +1,25 @@
 <template>
   <v-container v-if="newsDetails" @scroll="handleScroll">
-    <v-btn fab color="warning" @click="$router.go(-1)" class="scroll-back">Back</v-btn>
-    <v-btn fab color="primary" @click="$vuetify.goTo(0)" v-if="isShowScroll" class="scroll">Top</v-btn>
+    <v-btn fab color="warning" @click="$router.go(-1)" class="scroll-back"
+      >Back</v-btn
+    >
+    <v-btn
+      fab
+      color="primary"
+      @click="$vuetify.goTo(0)"
+      v-if="isShowScroll"
+      class="scroll"
+      >Top</v-btn
+    >
     <v-row justify="center">
       <v-col cols="12" sm="8">
-        <h1 class="my-4">{{newsDetails.contents.name}}</h1>
-        <div v-html="newsDetails.contents.content" class="content"></div>
+        <h1 class="my-4">{{ newsDetails.contents.name }}</h1>
+        <div
+          v-html="newsDetails.contents.content"
+          class="content ck-content"
+        ></div>
         <v-row justify="end" class="mx-4">
-          <h3>{{newsDetails.writer.name}}</h3>
+          <h3>{{ newsDetails.writer.name }}</h3>
         </v-row>
       </v-col>
     </v-row>

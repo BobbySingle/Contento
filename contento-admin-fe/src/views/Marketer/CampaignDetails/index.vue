@@ -7,41 +7,60 @@
       <h1 class="text__h1">Campaign Details</h1>
     </v-row>
     <v-row no-gutters class="mx-10">
-      <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+      <v-expansion-panels
+        :accordion="true"
+        :focusable="true"
+        multiple
+        v-model="panel"
+      >
         <v-expansion-panel>
-          <v-expansion-panel-header class="text__14">Infomation:</v-expansion-panel-header>
+          <v-expansion-panel-header class="text__14"
+            >Infomation:</v-expansion-panel-header
+          >
           <v-expansion-panel-content>
             <v-col sm="12" md="12">
               <v-row>
                 <v-col sm="6" md="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Title</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Title</span
+                  >
                   <br />
-                  <span class="text__14">{{title}}</span>
+                  <span class="text__14">{{ title }}</span>
                   <!-- <v-text-field label="Title:" v-model="title" readonly class="text__14"></v-text-field> -->
                 </v-col>
                 <v-spacer></v-spacer>
                 <v-col sm="5" md="5">
-                  <span style="color:grey; font-weight:300; font-size:12px;">End Date</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >End Date</span
+                  >
                   <br />
-                  <span class="text__14">{{endDate|localTime() | moment("HH:mm DD/MM/YYYY")}}</span>
+                  <span class="text__14">{{
+                    endDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                  }}</span>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col sm="6" md="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Customer</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Customer</span
+                  >
                   <br />
-                  <span class="text__14">{{customer.name}}</span>
+                  <span class="text__14">{{ customer.name }}</span>
                 </v-col>
                 <v-spacer></v-spacer>
                 <v-col sm="5" md="5">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Editor</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Editor</span
+                  >
                   <br />
-                  <span class="text__14">{{editor.name}}</span>
+                  <span class="text__14">{{ editor.name }}</span>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col sm="12" md="12">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Categories</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Categories</span
+                  >
                   <br />
                   <v-chip
                     class="text__14 chips ma-1"
@@ -49,14 +68,28 @@
                     :key="item.id"
                     color="blue"
                     :input-value="item"
-                  >{{item.name}}</v-chip>
+                    >{{ item.name }}</v-chip
+                  >
                 </v-col>
               </v-row>
             </v-col>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="text__14">List Tasks:</v-expansion-panel-header>
+          <v-expansion-panel-header class="text__14"
+            >Campaign Request:</v-expansion-panel-header
+          >
+          <v-expansion-panel-content class="my-2 py-2">
+            <div
+              v-html="campaign_content"
+              class="ck-content content px-2 py-4"
+            ></div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="text__14"
+            >List Tasks:</v-expansion-panel-header
+          >
           <v-expansion-panel-content>
             <v-row no-gutters>
               <v-col cols="12" sm="4" md="4">
@@ -124,12 +157,14 @@
                   @page-count="pageCount = $event"
                 >
                   <template v-slot:item.status="{ item }">
-                    <v-chip class="text__14" :color="item.status.color" dark>{{item.status.name}}</v-chip>
+                    <v-chip class="text__14" :color="item.status.color" dark>{{
+                      item.status.name
+                    }}</v-chip>
                   </template>
-                  <template
-                    v-slot:item.deadline="{ item }"
-                  >{{item.deadline | localTime()|moment("HH:mm DD/MM/YYYY")}}</template>
-                  <template v-slot:item.action="{item}">
+                  <template v-slot:item.deadline="{ item }">{{
+                    item.deadline | localTime() | moment("HH:mm DD/MM/YYYY")
+                  }}</template>
+                  <template v-slot:item.action="{ item }">
                     <v-btn
                       class="text__14"
                       color="primary"
@@ -163,7 +198,11 @@
                 </v-data-table>
                 <v-row justify="center">
                   <div class="text-center pt-2">
-                    <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
+                    <v-pagination
+                      v-model="page"
+                      :length="pageCount"
+                      :total-visible="10"
+                    ></v-pagination>
                   </div>
                 </v-row>
               </v-row>
@@ -186,7 +225,7 @@ export default {
       itemsPerPage: 5,
       /**End Pagination */
       /**Begin Expension Panel */
-      panel: [0, 1],
+      panel: [0, 2],
       /**End Expension Panel */
       dialog: false,
       menu: false,
@@ -195,6 +234,7 @@ export default {
       listTag: [],
       customer: "",
       editor: "",
+      campaign_content: "",
       loading: false,
       /**Filter */
       from: "",
@@ -305,6 +345,7 @@ export default {
       this.editor = this.detailCampaign.editor;
       this.endDate = this.detailCampaign.endDate;
       this.listTag = this.detailCampaign.tagFull;
+      this.campaign_content = this.detailCampaign.description;
       await this.spinnerLoading(false);
       this.loading = false;
     },
@@ -356,5 +397,39 @@ export default {
 .chips {
   color: white !important;
 }
-</style>
+::v-deep .content {
+  max-height: 500px;
+  overflow-y: auto;
+}
+::v-deep .content img {
+  max-width: 100%;
+  max-height: 100%;
+}
+::v-deep .content table {
+  border-collapse: collapse;
+}
+::v-deep .table table {
+  width: 100%;
+}
+::v-deep .image {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 400;
+}
+::v-deep .image img {
+  max-width: 100%;
+  max-height: 100%;
+}
 
+::v-deep .content table th {
+  border: 1px solid grey;
+}
+::v-deep .content table td {
+  padding-left: 10px;
+  border: 1px solid grey;
+}
+</style>
