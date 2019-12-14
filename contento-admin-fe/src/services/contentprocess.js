@@ -107,9 +107,10 @@ export function APIgetStatisticsByTag(tagNumber) {
     `${API_URL}/api/contentprocess/statistics-by-tag/${tagNumber}`
   );
 }
-export function APIgetStatisticsByTagMonth(tagNumber) {
-  return axios.get(
-    `${API_URL}/api/contentprocess/statistics-by-tag-month/${tagNumber}`
+export function APIgetStatisticsByTagMonth(data) {
+  return axios.post(
+    `${API_URL}/api/contentprocess/statistics-by-tag-month`,
+    data
   );
 }
 export function APIgetStatisticsTrend() {

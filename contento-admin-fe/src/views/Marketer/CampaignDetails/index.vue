@@ -425,11 +425,4 @@ export default {
   max-height: 100%;
 }
 
-::v-deep .content table th {
-  border: 1px solid grey;
-}
-::v-deep .content table td {
-  padding-left: 10px;
-  border: 1px solid grey;
-}
 </style>

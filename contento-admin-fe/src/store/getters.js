@@ -69,6 +69,7 @@ const getters = {
   linkFanpage: state => state.batchjob.link,
   listContentOfFanpage: state => state.batchjob.listContentOfFanpage,
   listInteractionFanpageByCampaign: state =>
-    state.batchjob.listInteractionFanpageByCampaign
+    state.batchjob.listInteractionFanpageByCampaign,
+  recommendPublishData: state => state.batchjob.recommendPublishData
 };
 export default getters;

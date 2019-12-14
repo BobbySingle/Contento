@@ -84,7 +84,7 @@
               <div class="my-1">
                 <div
                   v-html="requestData"
-                  class="content ck-content px-2 py-4"
+                  class="content request ck-content px-2 py-4"
                 ></div>
               </div>
             </v-expansion-panel-content>
@@ -392,10 +392,10 @@ export default {
   max-height: 100%;
 }
 
-::v-deep .content table th {
+::v-deep .request table th {
   border: 1px solid grey;
 }
-::v-deep .content table td {
+::v-deep .request table td {
   padding-left: 10px;
   border: 1px solid grey;
 }

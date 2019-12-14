@@ -77,178 +77,250 @@
             </v-row>
           </v-expansion-panel-content>
         </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="text__14"
+            >Publish Config:</v-expansion-panel-header
+          >
+          <v-expansion-panel-content>
+            <v-row>
+              <v-col cols="12" class="px-8">
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-row class="out-endtime">
+                      <v-col cols="0" md="1" class="d-none d-md-block">
+                        <v-icon>mdi-calendar-range</v-icon>
+                      </v-col>
+                      <v-col cols="12" md="11">
+                        <span
+                          style="color:grey; font-weight:300; font-size:12px;"
+                          >Publish Time</span
+                        >
+                        <datetime
+                          title="Publish Time"
+                          type="datetime"
+                          placeholder="Select Publish Time"
+                          input-class="datetime"
+                          input-style="cursor:pointer;"
+                          class="endtime text__14"
+                          v-model="publishTime"
+                          value-zone="UTC+07:00"
+                          :min-datetime="localISOTime"
+                          required
+                          @blur="$v.publishTime.$touch()"
+                        ></datetime>
+                      </v-col>
+                    </v-row>
+                    <div
+                      style="color:red"
+                      v-if="!$v.publishTime.required && check"
+                    >
+                      Please select publish time.
+                    </div>
+                    <div
+                      style="color:red"
+                      v-if="$v.publishTime.$model < localISOTime && check"
+                    >
+                      Please select publish time > time now.
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="6" class="pt-7">
+                    <v-select
+                      v-model="tags"
+                      :value="tags"
+                      :items="listTag"
+                      item-text="name"
+                      item-value="id"
+                      chips
+                      clearable
+                      label="Category"
+                      prepend-inner-icon="category"
+                      multiple
+                      required
+                      @change="changeCategory"
+                      @blur="$v.tags.$touch()"
+                    >
+                      <template
+                        v-slot:selection="{ attrs, item, select, selected }"
+                      >
+                        <v-chip
+                          v-bind="attrs"
+                          :input-value="selected"
+                          color="blue"
+                          class="chips"
+                        >
+                          <strong class="text__14">{{ item.name }}</strong>
+                        </v-chip>
+                      </template>
+                    </v-select>
+                    <div style="color:red" v-if="!$v.tags.required && check">
+                      Please select category.
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" md="4">
+                    <v-select
+                      v-model="fanpageFB"
+                      :items="facebook"
+                      :value="fanpageFB"
+                      item-text="name"
+                      item-value="id"
+                      chips
+                      clearable
+                      label="Facebook Channel"
+                      prepend-inner-icon="mdi-facebook-box"
+                      multiple
+                      attach
+                      @change="changeFacebook"
+                    >
+                      <template
+                        v-slot:selection="{
+                          attrs,
+                          item,
+                          index,
+                          select,
+                          selected
+                        }"
+                      >
+                        <v-chip
+                          color="blue"
+                          v-if="index === 0"
+                          class="chips caption"
+                          >+{{ fanpageFB.length }} others selected</v-chip
+                        >
+                      </template>
+                    </v-select>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-select
+                      v-model="fanpageWP"
+                      :items="wordpress"
+                      :value="fanpageWP"
+                      item-text="name"
+                      item-value="id"
+                      chips
+                      clearable
+                      label="Wordpress Channel"
+                      prepend-inner-icon="mdi-wordpress"
+                      multiple
+                      attach
+                    >
+                      <template
+                        v-slot:selection="{
+                          attrs,
+                          item,
+                          index,
+                          select,
+                          selected
+                        }"
+                      >
+                        <v-chip
+                          color="blue"
+                          v-if="index === 0"
+                          class="chips caption"
+                          >+{{ fanpageWP.length }} others selected</v-chip
+                        >
+                      </template>
+                    </v-select>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-select
+                      v-model="websiteCTT"
+                      :items="website"
+                      :value="websiteCTT"
+                      item-text="name"
+                      item-value="id"
+                      chips
+                      clearable
+                      label="Contento Website"
+                      prepend-inner-icon="mdi-web"
+                      multiple
+                      @change="changeWebsite"
+                    >
+                      <template
+                        v-slot:selection="{
+                          attrs,
+                          item,
+                          index,
+                          select,
+                          selected
+                        }"
+                      >
+                        <v-chip
+                          color="blue"
+                          v-if="index === 0"
+                          class="chips caption"
+                          >+{{ websiteCTT.length }} others selected</v-chip
+                        >
+                      </template>
+                    </v-select>
+                  </v-col>
+                </v-row>
+                <v-row
+                  no-gutters
+                  class=".flex-nowrap"
+                  justify="end"
+                  v-if="showAds"
+                >
+                  <v-switch
+                    v-model="isAds"
+                    label="Advertise this content"
+                    class="mr-3"
+                  ></v-switch>
+                  <div class="mt-2" v-if="isAds">
+                    <datetime
+                      title="Set time to end advertise"
+                      type="datetime"
+                      v-model="endAds"
+                      placeholder="Time end advertise"
+                      :min-datetime="publishTime"
+                      value-zone="UTC+07:00"
+                      input-class="css_time"
+                      class="text__14 out_css_time"
+                      auto
+                    ></datetime>
+                  </div>
+                </v-row>
+                <v-row v-if="recommendPublishData.length > 0">
+                  <v-simple-table style="min-width:50%">
+                    <template v-slot:default>
+                      <thead>
+                        <tr>
+                          <th class="text-left">Fanpage</th>
+                          <th class="text-left">Recommend Time</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          v-for="(data, index) in recommendPublishData"
+                          :key="index"
+                        >
+                          <td>{{ data.fanpageName }}</td>
+                          <td>
+                            {{ data.publishTime }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-simple-table>
+                </v-row>
+                <v-row justify="end">
+                  <v-btn color="warning" class="text__14 ml-3" @click="cancel()"
+                    >Cancel</v-btn
+                  >
+                  <v-btn
+                    color="primary"
+                    class="text__14 ml-3"
+                    @click="publish()"
+                    :loading="loading"
+                    >Publish</v-btn
+                  >
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
       </v-expansion-panels>
-      <v-row>
-        <v-col cols="12" class="px-8">
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-row class="out-endtime">
-                <v-col cols="0" md="1" class="d-none d-md-block">
-                  <v-icon>mdi-calendar-range</v-icon>
-                </v-col>
-                <v-col cols="12" md="11">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >Publish Time</span
-                  >
-                  <datetime
-                    title="Publish Time"
-                    type="datetime"
-                    placeholder="Select Publish Time"
-                    input-class="datetime"
-                    input-style="cursor:pointer;"
-                    class="endtime text__14"
-                    v-model="publishTime"
-                    value-zone="UTC+07:00"
-                    :min-datetime="localISOTime"
-                    required
-                    @blur="$v.publishTime.$touch()"
-                  ></datetime>
-                </v-col>
-              </v-row>
-              <div style="color:red" v-if="!$v.publishTime.required && check">
-                Please select publish time.
-              </div>
-              <div
-                style="color:red"
-                v-if="$v.publishTime.$model < localISOTime && check"
-              >
-                Please select publish time > time now.
-              </div>
-            </v-col>
-            <v-col cols="12" md="6" class="pt-7">
-              <v-select
-                v-model="tags"
-                :value="tags"
-                :items="listTag"
-                item-text="name"
-                item-value="id"
-                chips
-                clearable
-                label="Category"
-                prepend-inner-icon="category"
-                multiple
-                required
-                @change="changeCategory"
-                @blur="$v.tags.$touch()"
-              >
-                <template v-slot:selection="{ attrs, item, select, selected }">
-                  <v-chip
-                    v-bind="attrs"
-                    :input-value="selected"
-                    color="blue"
-                    class="chips"
-                  >
-                    <strong class="text__14">{{ item.name }}</strong>
-                  </v-chip>
-                </template>
-              </v-select>
-              <div style="color:red" v-if="!$v.tags.required && check">
-                Please select category.
-              </div>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" md="4">
-              <v-select
-                v-model="fanpageFB"
-                :items="facebook"
-                :value="fanpageFB"
-                item-text="name"
-                item-value="id"
-                chips
-                clearable
-                label="Facebook Channel"
-                prepend-inner-icon="mdi-facebook-box"
-                multiple
-                attach
-              >
-                <template
-                  v-slot:selection="{ attrs, item, index, select, selected }"
-                >
-                  <v-chip color="blue" v-if="index === 0" class="chips caption"
-                    >+{{ fanpageFB.length }} others selected</v-chip
-                  >
-                </template>
-              </v-select>
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-select
-                v-model="fanpageWP"
-                :items="wordpress"
-                :value="fanpageWP"
-                item-text="name"
-                item-value="id"
-                chips
-                clearable
-                label="Wordpress Channel"
-                prepend-inner-icon="mdi-wordpress"
-                multiple
-                attach
-              >
-                <template
-                  v-slot:selection="{ attrs, item, index, select, selected }"
-                >
-                  <v-chip color="blue" v-if="index === 0" class="chips caption"
-                    >+{{ fanpageWP.length }} others selected</v-chip
-                  >
-                </template>
-              </v-select>
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-select
-                v-model="websiteCTT"
-                :items="website"
-                :value="websiteCTT"
-                item-text="name"
-                item-value="id"
-                chips
-                clearable
-                label="Contento Website"
-                prepend-inner-icon="mdi-web"
-                multiple
-                @change="changeWebsite"
-              >
-                <template
-                  v-slot:selection="{ attrs, item, index, select, selected }"
-                >
-                  <v-chip color="blue" v-if="index === 0" class="chips caption"
-                    >+{{ websiteCTT.length }} others selected</v-chip
-                  >
-                </template>
-              </v-select>
-            </v-col>
-          </v-row>
-          <v-row no-gutters class=".flex-nowrap" justify="end" v-if="showAds">
-            <v-switch
-              v-model="isAds"
-              label="Advertise this content"
-              class="mr-3"
-            ></v-switch>
-            <div class="mt-2" v-if="isAds">
-              <datetime
-                title="Set time to end advertise"
-                type="datetime"
-                v-model="endAds"
-                placeholder="Time end advertise"
-                :min-datetime="publishTime"
-                value-zone="UTC+07:00"
-                input-class="css_time"
-                class="text__14 out_css_time"
-                auto
-              ></datetime>
-            </div>
-          </v-row>
-          <v-row justify="end">
-            <v-btn
-              color="primary"
-              class="text__14 ml-3"
-              @click="publish()"
-              :loading="loading"
-              >Publish</v-btn
-            >
-          </v-row>
-        </v-col>
-      </v-row>
     </v-row>
   </v-container>
 </template>
@@ -262,7 +334,7 @@ export default {
   components: { CKEditor },
   data() {
     return {
-      panel: [0],
+      panel: [0, 2],
       content: "",
       dialog: false,
       menu: false,
@@ -305,6 +377,20 @@ export default {
     tags: { required },
     form: ["tags", "publishTime"]
   },
+  filters: {
+    localTime: function(value) {
+      if (!value) {
+        return "";
+      }
+      //Local TimeZone
+      var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+      var millisecondsTime = Date.parse(value + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      return newDateUTC7;
+    }
+  },
   methods: {
     ...mapActions({
       getTaskDetail: "contentprocess/getTaskDetail",
@@ -314,6 +400,8 @@ export default {
       getFanPageWordpress: "batchjob/getFanPageWordpress",
       // getFanPagesByContentID: "batchjob/getFanPagesByContentID",
       getFanPagesByTagsID: "batchjob/getFanPagesByTagsID",
+      recommendTimePublish: "batchjob/recommendTimePublish",
+      cancelContent: "batchjob/cancelContent",
       spinnerLoading: "spinner/spinnerLoading"
     }),
     async fetchData() {
@@ -365,6 +453,8 @@ export default {
         this.fanpageWP = this.taskDetail.listFanpages.Wordpress;
         this.websiteCTT = this.taskDetail.listFanpages.Contento;
       }
+      await this.recommendTimePublish({ idFanpages: this.fanpageFB });
+
       if (this.websiteCTT == "") {
         this.showAds = false;
       } else {
@@ -375,6 +465,25 @@ export default {
         .startOf("day")
         .toISOString();
       await this.spinnerLoading(false);
+    },
+    async cancel() {
+      let contentID = JSON.parse(sessionStorage.getItem("ContentID"));
+      this.$swal({
+        title: "Are you want cancel this content?",
+        text: "You won't be able to revert this!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, Cancel it!"
+      }).then(async result => {
+        if (result.value) {
+          await this.cancelContent({
+            taskId: contentID
+          });
+          this.$router.push("/ManagePublish");
+        }
+      });
     },
     async publish() {
       this.loading = true;
@@ -461,6 +570,9 @@ export default {
       } else {
         this.showAds = true;
       }
+    },
+    async changeFacebook() {
+      await this.recommendTimePublish({ idFanpages: this.fanpageFB });
     }
   },
   computed: {
@@ -471,7 +583,8 @@ export default {
       "facebook",
       "wordpress",
       "fanpagesContent",
-      "fanpagesTag"
+      "fanpagesTag",
+      "recommendPublishData"
     ])
   },
   watch: {
@@ -580,25 +693,4 @@ export default {
 ::v-deep p {
   text-align: justify;
 }
-/* ::v-deep .table {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 10px;
-}
-::v-deep .image {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-::v-deep .image img {
-  max-width: 100%;
-  max-height: 100%;
-}
-::v-deep .table td {
-  font-size: 14px;
-  text-align: center;
-  font-style: italic;
-  font-weight: bold;
-} */
 </style>

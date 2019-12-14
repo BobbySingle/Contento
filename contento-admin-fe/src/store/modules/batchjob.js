@@ -12,7 +12,9 @@ import {
   APIgetFanPagesByTagsId,
   APIcheckTokenGetLink,
   APIgetListContentByFanPagesID,
-  APIgetInteractionFanpageByCampaignId
+  APIgetInteractionFanpageByCampaignId,
+  APIrecommendTimePublish,
+  APIcancelContent
 } from "../../services/batchjob";
 import Vue from "vue";
 import router from "@/router/index";
@@ -28,7 +30,8 @@ const state = {
   fanpagesTag: [],
   link: "",
   listContentOfFanpage: [],
-  listInteractionFanpageByCampaign: []
+  listInteractionFanpageByCampaign: [],
+  recommendPublishData: []
 };
 
 const mutations = {
@@ -62,6 +65,9 @@ const mutations = {
   },
   SET_INTERACTION_FANPAGE_BY_CAMPAIGN_ID(state, data) {
     state.listInteractionFanpageByCampaign = data;
+  },
+  RECOMMEND_PUBLISHTIME(state, data) {
+    state.recommendPublishData = data;
   }
 };
 
@@ -272,6 +278,33 @@ const actions = {
       if (error.response.status == 400) {
         commit("SET_INTERACTION_FANPAGE_BY_CAMPAIGN_ID", []);
       }
+    }
+  },
+  async recommendTimePublish({ commit }, payload) {
+    try {
+      let rs = await APIrecommendTimePublish(payload);
+      if (rs.status == 200) {
+        commit("RECOMMEND_PUBLISHTIME", rs.data);
+        console.log("RECOMMEND_PUBLISHTIME", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR -  LINK");
+      console.log(error);
+      if (error.response.status == 400) {
+        commit("RECOMMEND_PUBLISHTIME", []);
+      }
+    }
+  },
+  async cancelContent({ commit }, payload) {
+    try {
+      let rs = await APIcancelContent(payload);
+      if (rs.status == 200) {
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR -  CANCEL CONTENT");
+      console.log(error);
     }
   }
 };

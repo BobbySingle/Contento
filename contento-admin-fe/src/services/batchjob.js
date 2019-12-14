@@ -57,3 +57,9 @@ export function APIcheckTokenGetLink(data) {
 export function APIgetInteractionFanpageByCampaignId(id) {
   return axios.get(`${API_URL}/api/BatchJob/interaction/campaign/id?id=${id}`);
 }
+export function APIrecommendTimePublish(data) {
+  return axios.post(`${API_URL}/api/BatchJob/recommend-time`, data);
+}
+export function APIcancelContent(data) {
+  return axios.put(`${API_URL}/api/BatchJob/publish/cancel`, data);
+}

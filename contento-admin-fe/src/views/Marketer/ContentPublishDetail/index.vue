@@ -382,14 +382,6 @@ export default {
   max-width: 100%;
   max-height: 100%;
 }
-/* 
-::v-deep .content table th {
-  border: 1px solid grey;
-}
-::v-deep .content table td {
-  padding-left: 10px;
-  border: 1px solid grey;
-} */
 .datetime {
   width: 100%;
   padding-left: 10px;
@@ -398,25 +390,4 @@ export default {
 ::v-deep p {
   text-align: justify;
 }
-/* ::v-deep .table {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 10px;
-}
-::v-deep .image {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-::v-deep .image img {
-  max-width: 100%;
-  max-height: 100%;
-}
-::v-deep .table td {
-  font-size: 14px;
-  text-align: center;
-  font-style: italic;
-  font-weight: bold;
-} */
 </style>

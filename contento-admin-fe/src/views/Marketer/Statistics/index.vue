@@ -25,7 +25,7 @@
             <!-- TAB WEEK -->
             <v-tab-item>
               <v-container>
-                <v-row
+                <!-- <v-row
                   justify="center"
                   no-gutters
                   style="background-color: white;"
@@ -44,23 +44,13 @@
                     ></v-select>
                   </v-col>
                   <v-col cols="12" md="6"> </v-col>
-                </v-row>
+                </v-row> -->
                 <v-row
                   justify="center"
                   no-gutters
                   style="background-color: white;"
                 >
-                  <v-col cols="12" md="6">
-                    <!-- <v-select
-                      v-model="week"
-                      :items="weeks"
-                      item-text="name"
-                      item-value="id"
-                      label="Statistics Week"
-                      prepend-inner-icon="mdi-chart-donut"
-                      @change="changeTopWeek"
-                      class="mx-10"
-                    ></v-select> -->
+                  <v-col cols="12" md="12">
                     <GChart
                       type="ColumnChart"
                       :data="chartWeekData"
@@ -70,7 +60,12 @@
                       ref="chartWeek"
                     />
                   </v-col>
-                  <v-col cols="12" md="6">
+                  <v-col
+                    cols="12"
+                    md="12"
+                    v-if="this.categoryWeek"
+                    ref="refWeek"
+                  >
                     <GChart
                       type="ColumnChart"
                       :data="chartWeekTagsData"
@@ -85,17 +80,7 @@
             <v-tab-item>
               <v-container>
                 <v-row justify="center" no-gutters>
-                  <v-col cols="12" md="6">
-                    <!-- <v-select
-                      v-model="month"
-                      :items="months"
-                      item-text="name"
-                      item-value="id"
-                      label="Statistics Month"
-                      prepend-inner-icon="mdi-chart-donut"
-                      @change="changeTopMonth"
-                      class="mx-10"
-                    ></v-select> -->
+                  <v-col cols="12">
                     <GChart
                       type="ColumnChart"
                       :data="chartMonthData"
@@ -105,7 +90,7 @@
                       ref="chartMonth"
                     />
                   </v-col>
-                  <v-col cols="12" md="6">
+                  <v-col cols="12" v-if="this.categoryMonth" ref="refMonth">
                     <GChart
                       type="ColumnChart"
                       :data="chartMonthTagsData"
@@ -116,6 +101,7 @@
                 </v-row>
               </v-container>
             </v-tab-item>
+            <!-- CAMPAIGN -->
             <v-tab-item>
               <v-container>
                 <v-row
@@ -186,10 +172,74 @@
                 ></v-select>
               </v-col>
             </v-row>
-            <v-row justify="center" no-gutters style="background-color: white;">
+            <v-row justify="center" no-gutters v-if="campaign">
+              <v-col cols="4">
+                <v-row justify="center">
+                  <v-progress-circular
+                    :rotate="-90"
+                    :size="150"
+                    :width="25"
+                    :value="campaignProcess"
+                    :color="campaignProcess > 50 ? 'success' : 'light-blue'"
+                  >
+                    {{ this.campaignProcess }}%
+                  </v-progress-circular>
+                </v-row>
+                <v-row justify="center" class="mt-2">
+                  <strong>Campaign Progress</strong>
+                </v-row>
+                <v-row justify="center">
+                  <span style="font-size:12px">2000 - 2000</span>
+                </v-row>
+              </v-col>
+              <v-col cols="4">
+                <v-row justify="center">
+                  <v-progress-circular
+                    :rotate="-90"
+                    :size="150"
+                    :width="25"
+                    :value="50"
+                    color="teal"
+                  >
+                    {{ 50 }}/{{ 100 }}
+                  </v-progress-circular>
+                </v-row>
+                <v-row justify="center" class="mt-2">
+                  <strong>KPI</strong>
+                </v-row>
+                <v-row justify="center">
+                  <span style="font-size:12px">2000 - 2000</span>
+                </v-row>
+              </v-col>
+              <v-col cols="4">
+                <v-row justify="center">
+                  <v-progress-circular
+                    :rotate="-90"
+                    :size="150"
+                    :width="25"
+                    :value="50"
+                    color="teal"
+                  >
+                    {{ 50 }}/{{ 100 }}
+                  </v-progress-circular>
+                </v-row>
+                <v-row justify="center" class="mt-2">
+                  <strong>View</strong>
+                </v-row>
+                <v-row justify="center">
+                  <span style="font-size:12px">2000 - 2000</span>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row
+              justify="center"
+              no-gutters
+              style="background-color: white;"
+              v-if="campaign"
+            >
               <v-col
                 cols="12"
-                v-for="fanpage in listInteractionFanpageByCampaign"
+                v-for="fanpage in listInteractionFanpageByCampaign.data"
                 :key="fanpage.index"
               >
                 <h3 class="my-2" style="text-align: center;">
@@ -265,7 +315,12 @@ export default {
       pageCount: 0,
       itemsPerPage: 5,
       loading: false,
+      campaignStartDate: "",
+      campaignEndDate: "",
+      campaignProcess: "",
       categoryWeek: "",
+      categoryMonth: "",
+      categoryMonthRowSelected: "",
       listCategory: [
         { id: 1, name: "THỂ THAO" },
         { id: 2, name: "DU LỊCH" },
@@ -351,12 +406,7 @@ export default {
 
       // Array will be automatically processed with visualization.arrayToDataTable function
       week: 3,
-      // weeks: [
-      //   { id: 3, name: "Top 3 category in the week" },
-      //   { id: 5, name: "Top 5 category in the week" },
-      //   { id: 10, name: "Top 10 category in the week" },
-      //   { id: 0, name: "All category in the week" }
-      // ],
+
       // color: [
       //   "#3366cc",
       //   "#dc3912",
@@ -370,12 +420,8 @@ export default {
       // ],
       chartWeekData: [],
       chartWeekOptions: {
-        // legend: "none",
         isStacked: true,
-        // pieSliceText: 'label',
         title: "VIEWS OF THE WEEK",
-        // pieStartAngle: 0
-        legend: { position: "bottom" },
         hAxis: { minValue: 0 }
       },
       categoryWeekSelected: "",
@@ -393,16 +439,10 @@ export default {
       },
 
       month: 3,
-      months: [
-        { id: 3, name: "Top 3 category in the month" },
-        { id: 5, name: "Top 5 category in the month" },
-        { id: 10, name: "Top 10 category in the month" }
-      ],
-
       chartMonthData: [],
       chartMonthOptions: {
         isStacked: true,
-        legend: { position: "bottom" },
+        title: "VIEWS OF THE MONTH",
         hAxis: { minValue: 0 }
       },
       categoryMonthSelected: "",
@@ -415,6 +455,7 @@ export default {
             this.categoryMonthSelected = this.chartMonthData[0][
               selection.column
             ];
+            this.categoryMonthRowSelected = selection.row;
           } else {
             this.categoryMonthSelected = "";
           }
@@ -423,7 +464,6 @@ export default {
 
       chartWeekTagsData: [],
       chartWeekTagsOptions: {
-        title: "Interaction in the week",
         colors: ["mediumseagreen"],
         animation: {
           duration: 1000,
@@ -432,9 +472,6 @@ export default {
       },
       chartMonthTagsData: [],
       chartMonthTagsOptions: {
-        legend: "none",
-        pieSliceText: "label",
-        title: "Interaction in the month",
         colors: ["mediumseagreen"],
         animation: {
           duration: 1000,
@@ -453,24 +490,42 @@ export default {
             this.categoryWeek = element.id;
           }
         });
+        this.$nextTick(function() {
+          this.$vuetify.goTo(this.$refs.refWeek);
+        });
         this.statisticWeekByTag(category);
       } else {
         this.categoryWeek = "";
-
-        this.statisticWeekTrend();
       }
     },
     categoryMonthSelected() {
       var category;
+      var dateData;
       if (this.categoryMonthSelected) {
         this.listCategory.forEach(element => {
           if (element.name == this.categoryMonthSelected) {
             category = element;
+            this.categoryMonth = element.id;
           }
         });
-        this.statisticMonthByTag(category);
+        if (this.categoryMonthRowSelected) {
+          for (let index = 0; index < this.StatisticsMonth.length; index++) {
+            if (index == this.categoryMonthRowSelected) {
+              dateData = {
+                id: category.id,
+                name: category.name,
+                startDate: this.StatisticsMonth[index].stratDate,
+                endDate: this.StatisticsMonth[index].endDate
+              };
+            }
+          }
+        }
+        this.$nextTick(function() {
+          this.$vuetify.goTo(this.$refs.refMonth);
+        });
+        this.statisticMonthByTag(dateData);
       } else {
-        this.statisticMonthTrend();
+        this.categoryMonth = "";
       }
     }
   },
@@ -517,46 +572,34 @@ export default {
     }),
     async statisticWeekByTag(tag) {
       let status = await this.getStatisticsByTag(tag.id);
-      let weekTagsData = [["Content", "View"]];
+      let weekTagsData = [["Date", "View"]];
       if (status == 200) {
         this.StatisticsByTag.forEach(element => {
-          weekTagsData.push([element.title, element.view]);
+          weekTagsData.push([
+            moment(String(element.date)).format("DD-MM-YYYY"),
+            element.timeInTeraction
+          ]);
         });
         this.chartWeekTagsData = weekTagsData;
         this.chartWeekTagsOptions.title = "TOP VIEW OF " + tag.name;
       }
     },
-    async statisticWeekTrend() {
-      let statusWeekTrend = await this.getStatisticsTrend();
-      let weekTrendData = [["Content", "View"]];
-      if (statusWeekTrend == 200) {
-        this.StatisticsWeekTrend.forEach(element => {
-          weekTrendData.push([element.title, element.view]);
-        });
-        this.chartWeekTagsData = weekTrendData;
-        this.chartWeekTagsOptions.title = "TOP CONTENT OF THE WEEK";
-      }
-    },
-    async statisticMonthByTag(tag) {
-      let status = await this.getStatisticsByTagMonth(tag.id);
-      let monthTagsData = [["Content", "View"]];
+    async statisticMonthByTag(tagData) {
+      let status = await this.getStatisticsByTagMonth({
+        id: tagData.id,
+        startDate: tagData.startDate,
+        endDate: tagData.endDate
+      });
+      let monthTagsData = [["Date", "View"]];
       if (status == 200) {
         this.StatisticsByTagMonth.forEach(element => {
-          monthTagsData.push([element.title, element.view]);
+          monthTagsData.push([
+            moment(String(element.date)).format("DD-MM-YYYY"),
+            element.timeInTeraction
+          ]);
         });
         this.chartMonthTagsData = monthTagsData;
-        this.chartMonthTagsOptions.title = "TOP VIEW OF " + tag.name;
-      }
-    },
-    async statisticMonthTrend() {
-      let statusMonthTrend = await this.getStatisticsTrendMonth();
-      let monthTrendData = [["Content", "View"]];
-      if (statusMonthTrend == 200) {
-        this.StatisticsMonthTrend.forEach(element => {
-          monthTrendData.push([element.title, element.view]);
-        });
-        this.chartMonthTagsData = monthTrendData;
-        this.chartMonthTagsOptions.title = "TOP CONTENT OF THE MONTH";
+        this.chartMonthTagsOptions.title = "TOP VIEW OF " + tagData.name;
       }
     },
     async fetchData() {
@@ -589,12 +632,13 @@ export default {
         headerChartMonth.push(element.name);
       });
       let dataMonth = [];
-      dataMonth.push(headerChart);
+      dataMonth.push(headerChartMonth);
       let statusMonth = await this.getStatisticsOneMonth();
       if (statusMonth == 200) {
         this.StatisticsMonth.forEach(element => {
           var row = [];
-          row.push(moment(String(element.date)).format("DD-MM-YYYY"));
+          // row.push(moment(String(element.date)).format("DD-MM-YYYY"));
+          row.push(element.date);
           element.timeInteraction.forEach(item => {
             row.push(item);
           });
@@ -602,70 +646,51 @@ export default {
         });
       }
       this.chartMonthData = dataMonth;
-      //WEEK TREND
-      let statusWeekTrend = await this.getStatisticsTrend();
-      let weekTrendData = [["Content", "View"]];
-      if (statusWeekTrend == 200) {
-        this.StatisticsWeekTrend.forEach(element => {
-          weekTrendData.push([element.title, element.view]);
-        });
-        this.chartWeekTagsData = weekTrendData;
-        this.chartWeekTagsOptions.title = "TOP CONTENT OF THE WEEK";
-      }
-      //MONTH TREND
-      let dataMonthTrend = [["Category", "Interaction"]];
-      let statusMonthTrend = await this.getStatisticsTrendMonth();
-      if (statusMonthTrend == 200) {
-        this.StatisticsMonthTrend.forEach(element => {
-          dataMonthTrend.push([element.title, element.view]);
-        });
-        this.chartMonthTagsData = dataMonthTrend;
-        this.chartMonthTagsOptions.title = "TOP CONTENT OF THE WEEK";
-      }
       this.spinnerLoading(false);
     },
-    // async changeTopWeek(event) {
-    //   let dataWeek = [["Category", "Interaction"]];
-    //   let statusWeek = await this.getStatisticsOneWeek();
-    //   if (statusWeek == 200) {
-    //     this.StatisticsWeek.forEach(element => {
-    //       dataWeek.push([element.tags, element.timeInTeraction]);
-    //     });
-    //   }
-    //   this.chartWeekData = dataWeek;
-    // },
-    // async changeTopMonth(event) {
-    //   let dataMonth = [["Category", "Interaction"]];
-    //   let statusMonth = await this.getStatisticsOneMonth(event);
-    //   if (statusMonth == 200) {
-    //     this.StatisticsMonth.forEach(element => {
-    //       dataMonth.push([element.tags, element.timeInTeraction]);
-    //     });
-    //   }
-    //   this.chartMonthData = dataMonth;
-    // },
+
     async changeCustomer(event) {
       await this.getListCampaignByCustomerID(event);
     },
     async changeCampaign(event) {
       await this.getInteractionFanpageByCampaignId(event);
+      this.campaignStartDate = Date.parse(
+        this.listInteractionFanpageByCampaign.startDate + "Z"
+      );
+      this.campaignEndDate = Date.parse(
+        this.listInteractionFanpageByCampaign.endDate + "Z"
+      );
+      var currentTime = Date.parse(new Date());
+      if (currentTime >= this.campaignEndDate) {
+        this.campaignProcess = 100;
+      } else {
+        this.campaignProcess = Math.ceil(
+          100 *
+            ((parseInt(currentTime) - parseInt(this.campaignStartDate)) /
+              (parseInt(this.campaignEndDate) -
+                parseInt(this.campaignStartDate)))
+        );
+      }
     },
     async linkTo(event) {
       window.open(event);
-    },
-    changeCategoryWeek(event) {
-      if (event) {
-        this.categoryWeek = event;
-        this.listCategory.forEach(element => {
-          if (event == element.id) {
-            this.categoryWeekSelected = element.name;
-          }
-        });
-      } else {
-        this.categoryWeek = "";
-        this.categoryWeekSelected = "";
-      }
     }
+    // changeCategoryWeek(event) {
+    //   if (event) {
+    //     this.categoryWeek = event;
+    //     this.listCategory.forEach(element => {
+    //       if (event == element.id) {
+    //         this.categoryWeekSelected = element.name;
+    //       }
+    //     });
+    //     this.$nextTick(function() {
+    //       this.$vuetify.goTo(this.$refs.refWeek);
+    //     });
+    //   } else {
+    //     this.categoryWeek = "";
+    //     this.categoryWeekSelected = "";
+    //   }
+    // }
   },
   mounted() {
     this.fetchData();
