@@ -24,7 +24,8 @@ import {
   APIgetStatisticsByTag,
   APIgetStatisticsTrend,
   APIgetStatisticsTrendMonth,
-  APIgetStatisticsByTagMonth
+  APIgetStatisticsByTagMonth,
+  APIgetStatisticsCampaign,
 } from "../../services/contentprocess";
 
 import router from "@/router/index";
@@ -49,7 +50,8 @@ const state = {
   dataStatisticsByTag: [],
   dataStatisticsByTagMonth: [],
   dataStatisticsWeekTrend: [],
-  dataStatisticsMonthTrend: []
+  dataStatisticsMonthTrend: [],
+  dataStatisticsCampaign:[]
 };
 
 const mutations = {
@@ -119,6 +121,9 @@ const mutations = {
   },
   SET_DATA_STATISTICS_MONTH_TREND(state, data) {
     state.dataStatisticsMonthTrend = data;
+  },
+  SET_DATA_STATISTICS_CAMPAIGN(state, data) {
+    state.dataStatisticsCampaign = data;
   }
 };
 
@@ -505,6 +510,21 @@ const actions = {
       console.log(error);
       if (error.response.status == 400) {
         commit("SET_DATA_STATISTICS_MONTH_TREND", []);
+      }
+    }
+  },
+  async getStatisticsCampaign({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticsCampaign(payload);
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICS_CAMPAIGN", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - Statistics Campaign");
+      console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_CAMPAIGN", []);
       }
     }
   }

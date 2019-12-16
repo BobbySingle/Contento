@@ -15,8 +15,7 @@
               color="primary"
               href="https://analytics.google.com/analytics/web/#/report-home/a153845471w217205691p207366696"
               target="_blank"
-              >Google Analytics</v-btn
-            >
+            >Google Analytics</v-btn>
           </div>
           <v-tabs background-color="white">
             <v-tab>Week</v-tab>
@@ -44,12 +43,8 @@
                     ></v-select>
                   </v-col>
                   <v-col cols="12" md="6"> </v-col>
-                </v-row> -->
-                <v-row
-                  justify="center"
-                  no-gutters
-                  style="background-color: white;"
-                >
+                </v-row>-->
+                <v-row justify="center" no-gutters style="background-color: white;">
                   <v-col cols="12" md="12">
                     <GChart
                       type="ColumnChart"
@@ -60,12 +55,7 @@
                       ref="chartWeek"
                     />
                   </v-col>
-                  <v-col
-                    cols="12"
-                    md="12"
-                    v-if="this.categoryWeek"
-                    ref="refWeek"
-                  >
+                  <v-col cols="12" md="12" v-if="this.categoryWeek" ref="refWeek">
                     <GChart
                       type="ColumnChart"
                       :data="chartWeekTagsData"
@@ -104,19 +94,15 @@
             <!-- CAMPAIGN -->
             <v-tab-item>
               <v-container>
-                <v-row
-                  justify="center"
-                  no-gutters
-                  style="background-color: white;"
-                >
+                <v-row justify="center" no-gutters style="background-color: white;">
                   <v-col cols="12" md="6">
                     <v-select
-                      v-model="customer"
+                      v-model="customerContento"
                       :items="listCustomer"
                       item-text="name"
                       item-value="id"
                       label="Customer"
-                      prepend-inner-icon="mdi-chart-donut"
+                      prepend-inner-icon="mdi-account-outline"
                       @change="changeCustomer"
                       class="mx-10"
                       clearable
@@ -124,8 +110,8 @@
                   </v-col>
                   <v-col cols="12" md="6">
                     <v-select
-                      v-if="customer"
-                      v-model="campaign"
+                      v-if="customerContento"
+                      v-model="campaignContento"
                       :items="listCampaignByCustomerID"
                       item-text="title"
                       item-value="id"
@@ -133,7 +119,155 @@
                       prepend-inner-icon="mdi-chart-donut"
                       class="mx-10"
                       clearable
+                      @change="changeCampaignContento"
                     ></v-select>
+                  </v-col>
+                </v-row>
+                <v-row justify="center" no-gutters style="background-color: white;" class="my-4">
+                  <v-col cols="4" align-self="center">
+                    <div style="width:150px; height:150px;  margin: 0 auto;">
+                      <v-progress-circular
+                        :rotate="-90"
+                        :size="150"
+                        :width="20"
+                        :value="100"
+                        color="#009688"
+                      >
+                        <div>
+                          <p
+                            style="font-size:15px; font-weigth:400; margin:0; text-align:center"
+                          >Campaign</p>
+                          <p
+                            style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
+                          >{{StatisticsTotalCampaign.totalCampaign}}</p>
+                        </div>
+                      </v-progress-circular>
+                    </div>
+                  </v-col>
+                  <v-col cols="4">
+                    <div style="width:150px; height:150px;  margin: 0 auto;">
+                      <v-progress-circular
+                        :rotate="-90"
+                        :size="150"
+                        :width="20"
+                        :value="Math.ceil((StatisticsTotalCampaign.campaignInProcess/StatisticsTotalCampaign.totalCampaign)*100)"
+                        color="warning"
+                      >
+                        <div>
+                          <p
+                            style="font-size:15px; font-weigth:400; margin:0; text-align:center"
+                          >In Process</p>
+                          <p
+                            style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
+                          >{{StatisticsTotalCampaign.campaignInProcess}}</p>
+                        </div>
+                      </v-progress-circular>
+                    </div>
+                  </v-col>
+                  <v-col cols="4">
+                    <div style="width:150px; height:150px;  margin: 0 auto;">
+                      <v-progress-circular
+                        :rotate="-90"
+                        :size="150"
+                        :width="20"
+                        :value="Math.ceil((StatisticsTotalCampaign.campaignCompleted/StatisticsTotalCampaign.totalCampaign)*100)"
+                        color="success"
+                      >
+                        <div>
+                          <p
+                            style="font-size:15px; font-weigth:400; margin:0; text-align:center"
+                          >Completed</p>
+                          <p
+                            style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
+                          >{{StatisticsTotalCampaign.campaignCompleted}}</p>
+                        </div>
+                      </v-progress-circular>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row justify="center" class="mx-6">
+                  <v-col cols="12">
+                    <v-data-table
+                      :headers="headersCustomerCampaign"
+                      :items="StatisticsByCustomer"
+                      :items-per-page="5"
+                      class="mb-4"
+                    >
+                      <template v-slot:item.startDate="{ item }">
+                        <span>
+                          {{
+                          item.startDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                          }}
+                        </span>
+                      </template>
+                      <template v-slot:item.endDate="{ item }">
+                        <span>
+                          {{
+                          item.endDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                          }}
+                        </span>
+                      </template>
+                      <template v-slot:item.status="{ item }">
+                        <v-chip
+                          :color="item.status.color"
+                          style="color:white"
+                          class="text__14"
+                        >{{item.status.name}}</v-chip>
+                      </template>
+                      <template v-slot:item.progress="{ item }">
+                        <v-progress-linear
+                          :height="15"
+                          striped
+                          rounded
+                          :value="getCampaignProgress(item.startDate,item.endDate)"
+                          :color="item.status.color"
+                        >
+                          <span
+                            style="color:white; font-size:12px;"
+                          >{{ getCampaignProgress(item.startDate,item.endDate) }}%</span>
+                        </v-progress-linear>
+                      </template>
+                      <template v-slot:item.action="{ item }">
+                        <v-btn
+                          color="primary"
+                          @click="campaignDetail(item.id)"
+                          class="text__14"
+                          icon
+                        >
+                          <v-icon>mdi-information-outline</v-icon>
+                        </v-btn>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+                </v-row>
+                <v-row v-if="campaignContento" no-gutters ref="refCampaignContento" class="mx-6">
+                  <v-col cols="12" class="mx-4">
+                    <h3>{{campaignDetialContentoTitle}}</h3>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-data-table
+                      :headers="headersCustomerCampaignDetails"
+                      :items="StatisticsCampaign"
+                      :items-per-page="5"
+                      class="mb-4 mt-12"
+                    >
+                      <template v-slot:item.published="{ item }">
+                        <span v-if="!item.published">
+                          <v-icon color="success" small class="mb-1 ml-1">check</v-icon>
+                        </span>
+                        <span v-else>
+                          <v-icon color="red" small class="mb-1 ml-1">close</v-icon>
+                        </span>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <GChart
+                      type="ColumnChart"
+                      :data="chartCustomerCampaignDetailData"
+                      :options="chartCustomerCampaignDetailOptions"
+                      style="height:450px"
+                    />
                   </v-col>
                 </v-row>
               </v-container>
@@ -146,7 +280,7 @@
             <v-row justify="center" no-gutters style="background-color: white;">
               <v-col cols="12" md="6">
                 <v-select
-                  v-model="customer"
+                  v-model="customerFacebook"
                   :items="listCustomer"
                   item-text="name"
                   item-value="id"
@@ -159,8 +293,8 @@
               </v-col>
               <v-col cols="12" md="6">
                 <v-select
-                  v-if="customer"
-                  v-model="campaign"
+                  v-if="customerFacebook"
+                  v-model="campaignFacebook"
                   :items="listCampaignByCustomerID"
                   item-text="title"
                   item-value="id"
@@ -168,28 +302,32 @@
                   prepend-inner-icon="mdi-chart-donut"
                   class="mx-10"
                   clearable
-                  @change="changeCampaign"
+                  @change="changeCampaignFacebook"
                 ></v-select>
               </v-col>
             </v-row>
-            <v-row justify="center" no-gutters v-if="campaign">
+            <v-row justify="center" no-gutters v-if="campaignFacebook" class="my-8">
               <v-col cols="4">
                 <v-row justify="center">
                   <v-progress-circular
                     :rotate="-90"
                     :size="150"
-                    :width="25"
+                    :width="20"
                     :value="campaignProcess"
                     :color="campaignProcess > 50 ? 'success' : 'light-blue'"
-                  >
-                    {{ this.campaignProcess }}%
-                  </v-progress-circular>
+                  >{{ this.campaignProcess }}%</v-progress-circular>
                 </v-row>
                 <v-row justify="center" class="mt-2">
                   <strong>Campaign Progress</strong>
                 </v-row>
                 <v-row justify="center">
-                  <span style="font-size:12px">2000 - 2000</span>
+                  <span style="font-size:12px">
+                    {{
+                    listInteractionFanpageByCampaign.startDate | localTime() | moment("DD/MM/YYYY")
+                    }} - {{
+                    listInteractionFanpageByCampaign.endDate | localTime() | moment("DD/MM/YYYY")
+                    }}
+                  </span>
                 </v-row>
               </v-col>
               <v-col cols="4">
@@ -197,18 +335,20 @@
                   <v-progress-circular
                     :rotate="-90"
                     :size="150"
-                    :width="25"
-                    :value="50"
+                    :width="20"
+                    :value="Math.ceil((kpiCampaign.interaction/500)*100)>100 ? 100: Math.ceil((kpiCampaign.interaction/500)*100) "
                     color="teal"
                   >
-                    {{ 50 }}/{{ 100 }}
+                    <div>
+                      <p
+                        style="text-align:center; margin-bottom:0px"
+                      >{{Math.ceil((kpiCampaign.interaction/1000)*100)>100 ? 'Completed': Math.ceil((kpiCampaign.interaction/1000)*100) + '%'}}</p>
+                      <span style="font-size:12px;">{{ kpiCampaign.interaction }}/{{ 1000 }}</span>
+                    </div>
                   </v-progress-circular>
                 </v-row>
                 <v-row justify="center" class="mt-2">
-                  <strong>KPI</strong>
-                </v-row>
-                <v-row justify="center">
-                  <span style="font-size:12px">2000 - 2000</span>
+                  <strong>KPI Interaction</strong>
                 </v-row>
               </v-col>
               <v-col cols="4">
@@ -216,18 +356,20 @@
                   <v-progress-circular
                     :rotate="-90"
                     :size="150"
-                    :width="25"
-                    :value="50"
-                    color="teal"
+                    :width="20"
+                    :value="Math.ceil((kpiCampaign.inbox/500)*100)>100 ? 100: Math.ceil((kpiCampaign.inbox/500)*100) "
+                    color="pink"
                   >
-                    {{ 50 }}/{{ 100 }}
+                    <div>
+                      <p
+                        style="text-align:center; margin-bottom:0px"
+                      >{{Math.ceil((kpiCampaign.inbox/500)*100)>100 ? 'Completed': Math.ceil((kpiCampaign.inbox/500)*100) + '%'}}</p>
+                      <span style="font-size:12px;">{{ kpiCampaign.inbox }}/{{ 500 }}</span>
+                    </div>
                   </v-progress-circular>
                 </v-row>
                 <v-row justify="center" class="mt-2">
-                  <strong>View</strong>
-                </v-row>
-                <v-row justify="center">
-                  <span style="font-size:12px">2000 - 2000</span>
+                  <strong>KPI Inbox</strong>
                 </v-row>
               </v-col>
             </v-row>
@@ -235,16 +377,15 @@
               justify="center"
               no-gutters
               style="background-color: white;"
-              v-if="campaign"
+              v-if="campaignFacebook"
+              class="my-4"
             >
               <v-col
                 cols="12"
                 v-for="fanpage in listInteractionFanpageByCampaign.data"
                 :key="fanpage.index"
               >
-                <h3 class="my-2" style="text-align: center;">
-                  {{ fanpage.name }}
-                </h3>
+                <h3 class="my-2 mx-4">{{ fanpage.name }}</h3>
                 <v-data-table
                   :headers="headersFanpage"
                   :items="fanpage.data"
@@ -252,37 +393,35 @@
                   class="mb-4"
                 >
                   <template v-slot:item.publicDate="{ item }">
-                    <span>{{
+                    <span>
+                      {{
                       item.publicDate | localTime() | moment("HH:mm DD/MM/YYYY")
-                    }}</span>
+                      }}
+                    </span>
                   </template>
                   <template v-slot:item.reactiontCount="{ item }">
-                    <span
-                      >{{ item.reactiontCount }}
-                      <v-icon small class="mb-1 ml-1"
-                        >mdi-thumb-up</v-icon
-                      ></span
-                    >
+                    <span>
+                      {{ item.reactiontCount }}
+                      <v-icon small class="mb-1 ml-1">mdi-thumb-up</v-icon>
+                    </span>
                   </template>
                   <template v-slot:item.shareCount="{ item }">
-                    <span
-                      >{{ item.shareCount }}
-                      <v-icon small class="mb-1 ml-1">mdi-share </v-icon></span
-                    >
+                    <span>
+                      {{ item.shareCount }}
+                      <v-icon small class="mb-1 ml-1">mdi-share</v-icon>
+                    </span>
                   </template>
                   <template v-slot:item.commentCount="{ item }">
-                    <span
-                      >{{ item.commentCount }}
-                      <v-icon small class="mb-1 ml-1"
-                        >mdi-comment-outline</v-icon
-                      ></span
-                    >
+                    <span>
+                      {{ item.commentCount }}
+                      <v-icon small class="mb-1 ml-1">mdi-comment-outline</v-icon>
+                    </span>
                   </template>
                   <template v-slot:item.possitiveCommentCount="{ item }">
-                    <span
-                      >{{ item.possitiveCommentCount }}
-                      <v-icon small class="mb-1 ml-1">mdi-comment</v-icon></span
-                    >
+                    <span>
+                      {{ item.possitiveCommentCount }}
+                      <v-icon small class="mb-1 ml-1">mdi-comment</v-icon>
+                    </span>
                   </template>
                   <template v-slot:item.action="{ item }">
                     <v-btn icon color="primary" fab @click="linkTo(item.link)">
@@ -315,8 +454,8 @@ export default {
       pageCount: 0,
       itemsPerPage: 5,
       loading: false,
-      campaignStartDate: "",
-      campaignEndDate: "",
+      campaignFacebookStartDate: "",
+      campaignFacebookEndDate: "",
       campaignProcess: "",
       categoryWeek: "",
       categoryMonth: "",
@@ -354,6 +493,64 @@ export default {
           value: "action",
           align: "center",
           sortable: false
+        }
+      ],
+      headersCustomerCampaign: [
+        {
+          text: "Name",
+          align: "left",
+          value: "name",
+          width: "30%"
+        },
+        {
+          text: "Start",
+          value: "startDate",
+          align: "center",
+          width: "20%"
+        },
+        {
+          text: "End",
+          value: "endDate",
+          align: "center",
+          width: "10%"
+        },
+        {
+          text: "Status",
+          value: "status",
+          align: "center",
+          width: "10%"
+        },
+        {
+          text: "Progress",
+          value: "progress",
+          align: "center",
+          width: "10%"
+        },
+        {
+          text: "Action",
+          value: "action",
+          align: "center",
+          width: "10%"
+        }
+      ],
+      headersCustomerCampaignDetails: [
+        {
+          text: "Title",
+          align: "left",
+          value: "title",
+          width: "30%"
+        },
+        {
+          text: "View",
+          value: "view",
+          align: "center",
+          width: "20%"
+        },
+        {
+          text: "Published",
+          value: "published",
+          align: "center",
+          width: "10%"
         }
       ],
       headersFanpage: [
@@ -401,8 +598,12 @@ export default {
           width: "10%"
         }
       ],
-      customer: "",
-      campaign: "",
+      customerFacebook: "",
+      campaignFacebook: "",
+
+      customerContento: "",
+      campaignContento: "",
+      campaignDetialContentoTitle: "",
 
       // Array will be automatically processed with visualization.arrayToDataTable function
       week: 3,
@@ -477,6 +678,16 @@ export default {
           duration: 1000,
           easing: "linear"
         }
+      },
+      chartCustomerCampaignDetailData: [],
+      chartCustomerCampaignDetailOptions: {
+        colors: ["mediumseagreen"],
+        animation: {
+          duration: 1000,
+          easing: "linear"
+        },
+        hAxis: { textPosition: "none" },
+        legend: "none"
       }
     };
   },
@@ -553,7 +764,11 @@ export default {
       "StatisticsByTagMonth",
       "listInteractionFanpageByCampaign",
       "StatisticsWeekTrend",
-      "StatisticsMonthTrend"
+      "StatisticsMonthTrend",
+      "StatisticsByCustomer",
+      "StatisticsCampaign",
+      "StatisticsTotalCampaign",
+      "kpiCampaign"
     ])
   },
   methods: {
@@ -568,8 +783,28 @@ export default {
       getStatisticsByTag: "contentprocess/getStatisticsByTag",
       getStatisticsByTagMonth: "contentprocess/getStatisticsByTagMonth",
       getInteractionFanpageByCampaignId:
-        "batchjob/getInteractionFanpageByCampaignId"
+        "batchjob/getInteractionFanpageByCampaignId",
+      getStatisticsByCustomer: "campaign/getStatisticsByCustomer",
+      getStatisticsCampaign: "contentprocess/getStatisticsCampaign",
+      getStatisticsTotalCampaign: "campaign/getStatisticsTotalCampaign",
+      getKPICampaign: "batchjob/getKPICampaign"
     }),
+    getCampaignProgress(start, end) {
+      var startTime = Date.parse(start + "Z");
+      var endTime = Date.parse(end + "Z");
+      var currentTime = Date.parse(new Date());
+      var campaignProcess = 0;
+      if (currentTime >= endTime) {
+        campaignProcess = 100;
+      } else {
+        campaignProcess = Math.ceil(
+          100 *
+            ((parseInt(currentTime) - parseInt(startTime)) /
+              (parseInt(endTime) - parseInt(startTime)))
+        );
+      }
+      return campaignProcess;
+    },
     async statisticWeekByTag(tag) {
       let status = await this.getStatisticsByTag(tag.id);
       let weekTagsData = [["Date", "View"]];
@@ -602,11 +837,119 @@ export default {
         this.chartMonthTagsOptions.title = "TOP VIEW OF " + tagData.name;
       }
     },
+    async changeCustomer(event) {
+      await Promise.all([
+        this.getListCampaignByCustomerID(event),
+        this.getStatisticsByCustomer(event)
+      ]);
+      if (event) {
+        await this.getStatisticsTotalCampaign({
+          idMarketer: this.getUser.id,
+          idCustomer: event
+        });
+      } else {
+        await this.getStatisticsTotalCampaign({
+          idMarketer: this.getUser.id,
+          idCustomer: 0
+        });
+      }
+    },
+    async campaignDetail(event) {
+      let status = await this.getStatisticsCampaign(event);
+      this.campaignContento = event;
+      let data = [["Title", "View"]];
+      if (status == 200) {
+        this.StatisticsCampaign.forEach(element => {
+          if (!element.published) {
+            data.push([element.title, element.view]);
+          }
+        });
+        this.chartCustomerCampaignDetailData = data;
+        this.$nextTick(function() {
+          this.$vuetify.goTo(this.$refs.refCampaignContento);
+        });
+      }
+    },
+    async changeCampaignContento(event) {
+      if (event) {
+        this.listCampaignByCustomerID.forEach(element => {
+          if (element.id == event) {
+            this.campaignDetialContentoTitle = element.title;
+          }
+        });
+      } else {
+        this.campaignDetialContentoTitle = "";
+      }
+      let status = await this.getStatisticsCampaign(event);
+      let data = [["Title", "View"]];
+      if (status == 200) {
+        this.StatisticsCampaign.forEach(element => {
+          if (!element.published) {
+            data.push([element.title, element.view]);
+          }
+        });
+        this.chartCustomerCampaignDetailData = data;
+        this.$nextTick(function() {
+          this.$vuetify.goTo(this.$refs.refCampaignContento);
+        });
+      }
+    },
+    async changeCampaignFacebook(event) {
+      this.spinnerLoading(true);
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await Promise.all([
+        timeOut(500),
+        this.getInteractionFanpageByCampaignId(event),
+        this.getKPICampaign(event)
+      ]);
+      this.campaignFacebookStartDate = Date.parse(
+        this.listInteractionFanpageByCampaign.startDate + "Z"
+      );
+      this.campaignFacebookEndDate = Date.parse(
+        this.listInteractionFanpageByCampaign.endDate + "Z"
+      );
+      var currentTime = Date.parse(new Date());
+      if (currentTime >= this.campaignFacebookEndDate) {
+        this.campaignProcess = 100;
+      } else {
+        this.campaignProcess = Math.ceil(
+          100 *
+            ((parseInt(currentTime) -
+              parseInt(this.campaignFacebookStartDate)) /
+              (parseInt(this.campaignFacebookEndDate) -
+                parseInt(this.campaignFacebookStartDate)))
+        );
+      }
+      this.spinnerLoading(false);
+    },
+    async linkTo(event) {
+      window.open(event);
+    },
     async fetchData() {
       //WEEK
       this.spinnerLoading(true);
-      this.getListCustomerByMarketerID(this.getUser.id);
-
+      const timeOut = t => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("");
+          }, t);
+        });
+      };
+      await Promise.all([
+        timeOut(500),
+        this.getListCustomerByMarketerID(this.getUser.id),
+        //TOTAL CAMPAIGN CONTENTO
+        this.getStatisticsTotalCampaign({
+          idMarketer: this.getUser.id,
+          idCustomer: 0
+        })
+      ]);
       var headerChart = ["Date"];
       this.listCategory.forEach(element => {
         headerChart.push(element.name);
@@ -647,50 +990,7 @@ export default {
       }
       this.chartMonthData = dataMonth;
       this.spinnerLoading(false);
-    },
-
-    async changeCustomer(event) {
-      await this.getListCampaignByCustomerID(event);
-    },
-    async changeCampaign(event) {
-      await this.getInteractionFanpageByCampaignId(event);
-      this.campaignStartDate = Date.parse(
-        this.listInteractionFanpageByCampaign.startDate + "Z"
-      );
-      this.campaignEndDate = Date.parse(
-        this.listInteractionFanpageByCampaign.endDate + "Z"
-      );
-      var currentTime = Date.parse(new Date());
-      if (currentTime >= this.campaignEndDate) {
-        this.campaignProcess = 100;
-      } else {
-        this.campaignProcess = Math.ceil(
-          100 *
-            ((parseInt(currentTime) - parseInt(this.campaignStartDate)) /
-              (parseInt(this.campaignEndDate) -
-                parseInt(this.campaignStartDate)))
-        );
-      }
-    },
-    async linkTo(event) {
-      window.open(event);
     }
-    // changeCategoryWeek(event) {
-    //   if (event) {
-    //     this.categoryWeek = event;
-    //     this.listCategory.forEach(element => {
-    //       if (event == element.id) {
-    //         this.categoryWeekSelected = element.name;
-    //       }
-    //     });
-    //     this.$nextTick(function() {
-    //       this.$vuetify.goTo(this.$refs.refWeek);
-    //     });
-    //   } else {
-    //     this.categoryWeek = "";
-    //     this.categoryWeekSelected = "";
-    //   }
-    // }
   },
   mounted() {
     this.fetchData();

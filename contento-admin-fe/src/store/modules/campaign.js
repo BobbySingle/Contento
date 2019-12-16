@@ -7,7 +7,9 @@ import {
   APIgetListCampaignByCustomerID,
   APIgetListCampaignByEditorID,
   APIgetListFilterCampaignByEditorID,
-  APIgetListFilterCampaignByWriterID
+  APIgetListFilterCampaignByWriterID,
+  APIgetStatisticsByCustomer,
+  APIgetStatisticsTotalCampaign
 } from "../../services/campaign";
 import Vue from "vue";
 const state = {
@@ -16,7 +18,10 @@ const state = {
   listCampaignByCustomerID: [],
   listCampaignByEditorID: [],
   listFilterCampaignByEditorID: [],
-  listFilterCampaignByWriterID: []
+  listFilterCampaignByWriterID: [],
+  dataStatisticsByCustomer: [],
+  dataStatisticsTotalCampaign: [],
+
 };
 const mutations = {
   SET_LISTCAMPAIGN(state, data) {
@@ -45,7 +50,13 @@ const mutations = {
   },
   SET_LIST_FILTER_CAMPAIGN_BY_EDITOR_ID: (state, data) => {
     state.listFilterCampaignByEditorID = data;
-  }
+  },
+  SET_DATA_STATISTICS_BY_CUSTOMER(state, data) {
+    state.dataStatisticsByCustomer = data;
+  },
+  SET_DATA_STATISTICS_TOTAL_CAMPAIGN(state, data) {
+    state.dataStatisticsTotalCampaign = data;
+  },
 };
 const actions = {
   async getListCampaign({ commit }, payload) {
@@ -170,6 +181,36 @@ const actions = {
     } catch (error) {
       console.log("ERROR - LIST FILTER CAMPAIGN BY WRITER ID");
       console.log(error);
+    }
+  },
+  async getStatisticsByCustomer({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticsByCustomer(payload);
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICS_BY_CUSTOMER", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - Statistics By Customer");
+      console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_BY_CUSTOMER", []);
+      }
+    }
+  },
+  async getStatisticsTotalCampaign({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticsTotalCampaign(payload);
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICS_TOTAL_CAMPAIGN", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - Statistics Total Campaign");
+      console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_TOTAL_CAMPAIGN", []);
+      }
     }
   }
 };

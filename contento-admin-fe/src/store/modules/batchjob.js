@@ -14,7 +14,8 @@ import {
   APIgetListContentByFanPagesID,
   APIgetInteractionFanpageByCampaignId,
   APIrecommendTimePublish,
-  APIcancelContent
+  APIcancelContent,
+  APIgetKPICampaign
 } from "../../services/batchjob";
 import Vue from "vue";
 import router from "@/router/index";
@@ -31,7 +32,8 @@ const state = {
   link: "",
   listContentOfFanpage: [],
   listInteractionFanpageByCampaign: [],
-  recommendPublishData: []
+  recommendPublishData: [],
+  kpiCampaign: ""
 };
 
 const mutations = {
@@ -68,6 +70,9 @@ const mutations = {
   },
   RECOMMEND_PUBLISHTIME(state, data) {
     state.recommendPublishData = data;
+  },
+  SET_KPI_CAMPAIGN(state, data) {
+    state.kpiCampaign = data;
   }
 };
 
@@ -306,7 +311,22 @@ const actions = {
       console.log("ERROR -  CANCEL CONTENT");
       console.log(error);
     }
-  }
+  },
+  async getKPICampaign({ commit }, payload) {
+    try {
+      let rs = await APIgetKPICampaign(payload);
+      if (rs.status == 200) {
+        commit("SET_KPI_CAMPAIGN", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR -  KPI CAMPAIGN");
+      console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_KPI_CAMPAIGN", "");
+      }
+    }
+  },
 };
 
 export default {

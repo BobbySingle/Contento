@@ -119,3 +119,7 @@ export function APIgetStatisticsTrend() {
 export function APIgetStatisticsTrendMonth() {
   return axios.get(`${API_URL}/api/contentprocess/statistics-task-trend-month`);
 }
+export function APIgetStatisticsCampaign(idCampaign) {
+  return axios.get(`${API_URL}/api/contentprocess/statistics-task-campaignid/${idCampaign}`);
+}
+

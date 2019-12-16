@@ -63,3 +63,6 @@ export function APIrecommendTimePublish(data) {
 export function APIcancelContent(data) {
   return axios.put(`${API_URL}/api/BatchJob/publish/cancel`, data);
 }
+export function APIgetKPICampaign(idCampaign) {
+  return axios.get(`${API_URL}/api/BatchJob/interaction-count/campaign/${idCampaign}`);
+}

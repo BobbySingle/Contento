@@ -30,6 +30,8 @@ const getters = {
     state.campaign.listFilterCampaignByEditorID,
   listFilterCampaignByWriterID: state =>
     state.campaign.listFilterCampaignByWriterID,
+  StatisticsByCustomer: state => state.campaign.dataStatisticsByCustomer,
+  StatisticsTotalCampaign: state => state.campaign.dataStatisticsTotalCampaign,
 
   //ContentProcess
   listCampaignTaskNotFormated: state => state.contentprocess.listCampaignTask,
@@ -58,6 +60,7 @@ const getters = {
   StatisticsByTagMonth: state => state.contentprocess.dataStatisticsByTagMonth,
   StatisticsWeekTrend: state => state.contentprocess.dataStatisticsWeekTrend,
   StatisticsMonthTrend: state => state.contentprocess.dataStatisticsMonthTrend,
+  StatisticsCampaign: state => state.contentprocess.dataStatisticsCampaign,
 
   //Batchjob
   fanpage: state => state.batchjob.fanpage,
@@ -70,6 +73,7 @@ const getters = {
   listContentOfFanpage: state => state.batchjob.listContentOfFanpage,
   listInteractionFanpageByCampaign: state =>
     state.batchjob.listInteractionFanpageByCampaign,
-  recommendPublishData: state => state.batchjob.recommendPublishData
+  recommendPublishData: state => state.batchjob.recommendPublishData,
+  kpiCampaign: state => state.batchjob.kpiCampaign,
 };
 export default getters;
