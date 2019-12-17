@@ -286,7 +286,7 @@
                   item-value="id"
                   label="Customer"
                   prepend-inner-icon="mdi-chart-donut"
-                  @change="changeCustomer"
+                  @change="changeCustomerFacebook"
                   class="mx-10"
                   clearable
                 ></v-select>
@@ -304,6 +304,124 @@
                   clearable
                   @change="changeCampaignFacebook"
                 ></v-select>
+              </v-col>
+            </v-row>
+            <v-row
+              justify="center"
+              no-gutters
+              style="background-color: white;"
+              class="my-4"
+              v-if="!campaignFacebook"
+            >
+              <v-col cols="4" align-self="center">
+                <div style="width:150px; height:150px;  margin: 0 auto;">
+                  <v-progress-circular
+                    :rotate="-90"
+                    :size="150"
+                    :width="20"
+                    :value="100"
+                    color="#009688"
+                  >
+                    <div>
+                      <p
+                        style="font-size:15px; font-weigth:400; margin:0; text-align:center"
+                      >Campaign</p>
+                      <p
+                        style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
+                      >{{StatisticsTotalCampaignFacebook.totalCampaign}}</p>
+                    </div>
+                  </v-progress-circular>
+                </div>
+              </v-col>
+              <v-col cols="4">
+                <div style="width:150px; height:150px;  margin: 0 auto;">
+                  <v-progress-circular
+                    :rotate="-90"
+                    :size="150"
+                    :width="20"
+                    :value="Math.ceil((StatisticsTotalCampaignFacebook.campaignInProcess/StatisticsTotalCampaignFacebook.totalCampaign)*100)"
+                    color="warning"
+                  >
+                    <div>
+                      <p
+                        style="font-size:15px; font-weigth:400; margin:0; text-align:center"
+                      >In Process</p>
+                      <p
+                        style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
+                      >{{StatisticsTotalCampaignFacebook.campaignInProcess}}</p>
+                    </div>
+                  </v-progress-circular>
+                </div>
+              </v-col>
+              <v-col cols="4">
+                <div style="width:150px; height:150px;  margin: 0 auto;">
+                  <v-progress-circular
+                    :rotate="-90"
+                    :size="150"
+                    :width="20"
+                    :value="Math.ceil((StatisticsTotalCampaignFacebook.campaignCompleted/StatisticsTotalCampaignFacebook.totalCampaign)*100)"
+                    color="success"
+                  >
+                    <div>
+                      <p
+                        style="font-size:15px; font-weigth:400; margin:0; text-align:center"
+                      >Completed</p>
+                      <p
+                        style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
+                      >{{StatisticsTotalCampaignFacebook.campaignCompleted}}</p>
+                    </div>
+                  </v-progress-circular>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row justify="center" class="mx-6" v-if="!campaignFacebook">
+              <v-col cols="12">
+                <v-data-table
+                  :headers="headersCustomerCampaign"
+                  :items="StatisticsByCustomer"
+                  :items-per-page="5"
+                  class="mb-4"
+                >
+                  <template v-slot:item.startDate="{ item }">
+                    <span>
+                      {{
+                      item.startDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                      }}
+                    </span>
+                  </template>
+                  <template v-slot:item.endDate="{ item }">
+                    <span>
+                      {{
+                      item.endDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                      }}
+                    </span>
+                  </template>
+                  <template v-slot:item.status="{ item }">
+                    <v-chip
+                      :color="item.status.color"
+                      style="color:white"
+                      class="text__14"
+                    >{{item.status.name}}</v-chip>
+                  </template>
+                  <template v-slot:item.progress="{ item }">
+                    <v-progress-linear
+                      :height="15"
+                      striped
+                      rounded
+                      :value="getCampaignProgress(item.startDate,item.endDate)"
+                      :color="item.status.color"
+                    >
+                      <span
+                        style="color:white; font-size:12px;"
+                      >{{ getCampaignProgress(item.startDate,item.endDate) }}%</span>
+                    </v-progress-linear>
+                  </template>
+                  <template v-slot:item.action="{ item }">
+                    <v-btn color="primary" @click="campaignDetail(item.id)" class="text__14" icon>
+                      <v-icon>mdi-information-outline</v-icon>
+                    </v-btn>
+                  </template>
+                </v-data-table>
               </v-col>
             </v-row>
             <v-row justify="center" no-gutters v-if="campaignFacebook" class="my-8">
@@ -768,6 +886,7 @@ export default {
       "StatisticsByCustomer",
       "StatisticsCampaign",
       "StatisticsTotalCampaign",
+      "StatisticsTotalCampaignFacebook",
       "kpiCampaign"
     ])
   },
@@ -780,6 +899,7 @@ export default {
       spinnerLoading: "spinner/spinnerLoading",
       getListCustomerByMarketerID: "authentication/getListCustomerByMarketerID",
       getListCampaignByCustomerID: "campaign/getListCampaignByCustomerID",
+      getListCampaignByCustomerIDFacebook: "campaign/getListCampaignByCustomerIDFacebook",
       getStatisticsByTag: "contentprocess/getStatisticsByTag",
       getStatisticsByTagMonth: "contentprocess/getStatisticsByTagMonth",
       getInteractionFanpageByCampaignId:
@@ -787,6 +907,7 @@ export default {
       getStatisticsByCustomer: "campaign/getStatisticsByCustomer",
       getStatisticsCampaign: "contentprocess/getStatisticsCampaign",
       getStatisticsTotalCampaign: "campaign/getStatisticsTotalCampaign",
+      getStatisticsTotalCampaignFacebook: "campaign/getStatisticsTotalCampaignFacebook",
       getKPICampaign: "batchjob/getKPICampaign"
     }),
     getCampaignProgress(start, end) {
@@ -849,6 +970,22 @@ export default {
         });
       } else {
         await this.getStatisticsTotalCampaign({
+          idMarketer: this.getUser.id,
+          idCustomer: 0
+        });
+      }
+    },
+    async changeCustomerFacebook(event) {
+      await Promise.all([
+        this.getListCampaignByCustomerIDFacebook(event),
+      ]);
+      if (event) {
+        await this.getStatisticsTotalCampaignFacebook({
+          idMarketer: this.getUser.id,
+          idCustomer: event
+        });
+      } else {
+        await this.getStatisticsTotalCampaignFacebook({
           idMarketer: this.getUser.id,
           idCustomer: 0
         });
@@ -948,7 +1085,11 @@ export default {
         this.getStatisticsTotalCampaign({
           idMarketer: this.getUser.id,
           idCustomer: 0
-        })
+        }),
+        this.getStatisticsTotalCampaignFacebook({
+          idMarketer: this.getUser.id,
+          idCustomer: 0
+        }),
       ]);
       var headerChart = ["Date"];
       this.listCategory.forEach(element => {

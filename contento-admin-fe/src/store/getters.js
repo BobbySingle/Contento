@@ -32,6 +32,7 @@ const getters = {
     state.campaign.listFilterCampaignByWriterID,
   StatisticsByCustomer: state => state.campaign.dataStatisticsByCustomer,
   StatisticsTotalCampaign: state => state.campaign.dataStatisticsTotalCampaign,
+  StatisticsTotalCampaignFacebook: state => state.campaign.dataStatisticsTotalCampaignFacebook,
 
   //ContentProcess
   listCampaignTaskNotFormated: state => state.contentprocess.listCampaignTask,

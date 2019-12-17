@@ -16,11 +16,13 @@ const state = {
   listCampaign: [],
   detailCampaign: "",
   listCampaignByCustomerID: [],
+  listCampaignByCustomerIDFacebook: [],
   listCampaignByEditorID: [],
   listFilterCampaignByEditorID: [],
   listFilterCampaignByWriterID: [],
   dataStatisticsByCustomer: [],
   dataStatisticsTotalCampaign: [],
+  dataStatisticsTotalCampaignFacebook: [],
 
 };
 const mutations = {
@@ -42,6 +44,9 @@ const mutations = {
   SET_LISTCAMPAIGNBYCUSTOMERID: (state, data) => {
     state.listCampaignByCustomerID = data;
   },
+  SET_LISTCAMPAIGNBYCUSTOMERIDFACEBOOK: (state, data) => {
+    state.listCampaignByCustomerIDFacebook = data;
+  },
   SET_LISTCAMPAIGNBYEDITORID: (state, data) => {
     state.listCampaignByEditorID = data;
   },
@@ -56,6 +61,9 @@ const mutations = {
   },
   SET_DATA_STATISTICS_TOTAL_CAMPAIGN(state, data) {
     state.dataStatisticsTotalCampaign = data;
+  },
+  SET_DATA_STATISTICS_TOTAL_CAMPAIGN_FACEBOOK(state, data) {
+    state.dataStatisticsTotalCampaignFacebook = data;
   },
 };
 const actions = {
@@ -150,6 +158,22 @@ const actions = {
       }
     }
   },
+  async getListCampaignByCustomerIDFacebook({ commit }, payload) {
+    try {
+      let rs = await APIgetListCampaignByCustomerID(payload);
+      if (rs.status == 200) {
+        console.log("LIST CAMPAIGN BY CUSTOMER ID - ACTION");
+        console.log(rs.data);
+        commit("SET_LISTCAMPAIGNBYCUSTOMERIDFACEBOOK", rs.data);
+      }
+    } catch (error) {
+      console.log("ERROR - LIST CAMPAIGN BY CUSTOMER ID");
+      console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_LISTCAMPAIGNBYCUSTOMERIDFACEBOOK", []);
+      }
+    }
+  },
   async getListCampaignByEditorID({ commit }, payload) {
     try {
       let rs = await APIgetListCampaignByEditorID(payload);
@@ -212,7 +236,22 @@ const actions = {
         commit("SET_DATA_STATISTICS_TOTAL_CAMPAIGN", []);
       }
     }
-  }
+  },
+  async getStatisticsTotalCampaignFacebook({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticsTotalCampaign(payload);
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICS_TOTAL_CAMPAIGN_FACEBOOK", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - Statistics Total Campaign Facebook");
+      console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_TOTAL_CAMPAIGN_FACEBOOK", []);
+      }
+    }
+  },
 };
 
 export default {

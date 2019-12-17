@@ -24,7 +24,7 @@ import ManageContentFanpage from "../views/Marketer/ManageContentFanpage/index.v
 import ManageFreelanceAccount from "../views/Admin/ManageFreelanceAccount/index.vue";
 import ManageViewerAccount from "../views/Admin/ManageViewerAccount/index.vue";
 import Statistics from "../views/Marketer/Statistics/index.vue";
-import Customer from "../views/Customer/Statistics/index.vue";
+import Customer from "../views/Customer/index.vue";
 
 Vue.use(Router);
 
