@@ -21,9 +21,9 @@ const state = {
   listFilterCampaignByEditorID: [],
   listFilterCampaignByWriterID: [],
   dataStatisticsByCustomer: [],
+  dataStatisticsByCustomerFacebook: [],
   dataStatisticsTotalCampaign: [],
-  dataStatisticsTotalCampaignFacebook: [],
-
+  dataStatisticsTotalCampaignFacebook: []
 };
 const mutations = {
   SET_LISTCAMPAIGN(state, data) {
@@ -59,12 +59,15 @@ const mutations = {
   SET_DATA_STATISTICS_BY_CUSTOMER(state, data) {
     state.dataStatisticsByCustomer = data;
   },
+  SET_DATA_STATISTICS_BY_CUSTOMER_FACEBOOK(state, data) {
+    state.dataStatisticsByCustomerFacebook = data;
+  },
   SET_DATA_STATISTICS_TOTAL_CAMPAIGN(state, data) {
     state.dataStatisticsTotalCampaign = data;
   },
   SET_DATA_STATISTICS_TOTAL_CAMPAIGN_FACEBOOK(state, data) {
     state.dataStatisticsTotalCampaignFacebook = data;
-  },
+  }
 };
 const actions = {
   async getListCampaign({ commit }, payload) {
@@ -222,6 +225,21 @@ const actions = {
       }
     }
   },
+  async getStatisticsByCustomerFacebook({ commit }, payload) {
+    try {
+      let rs = await APIgetStatisticsByCustomer(payload);
+      if (rs.status == 200) {
+        commit("SET_DATA_STATISTICS_BY_CUSTOMER_FACEBOOK", rs.data);
+        return 200;
+      }
+    } catch (error) {
+      console.log("ERROR - Statistics By Customer Facebook");
+      console.log(error);
+      if (error.response.status == 400) {
+        commit("SET_DATA_STATISTICS_BY_CUSTOMER_FACEBOOK", []);
+      }
+    }
+  },
   async getStatisticsTotalCampaign({ commit }, payload) {
     try {
       let rs = await APIgetStatisticsTotalCampaign(payload);
@@ -251,7 +269,7 @@ const actions = {
         commit("SET_DATA_STATISTICS_TOTAL_CAMPAIGN_FACEBOOK", []);
       }
     }
-  },
+  }
 };
 
 export default {

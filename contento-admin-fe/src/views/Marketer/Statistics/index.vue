@@ -15,7 +15,8 @@
               color="primary"
               href="https://analytics.google.com/analytics/web/#/report-home/a153845471w217205691p207366696"
               target="_blank"
-            >Google Analytics</v-btn>
+              >Google Analytics</v-btn
+            >
           </div>
           <v-tabs background-color="white">
             <v-tab>Week</v-tab>
@@ -44,7 +45,11 @@
                   </v-col>
                   <v-col cols="12" md="6"> </v-col>
                 </v-row>-->
-                <v-row justify="center" no-gutters style="background-color: white;">
+                <v-row
+                  justify="center"
+                  no-gutters
+                  style="background-color: white;"
+                >
                   <v-col cols="12" md="12">
                     <GChart
                       type="ColumnChart"
@@ -55,7 +60,12 @@
                       ref="chartWeek"
                     />
                   </v-col>
-                  <v-col cols="12" md="12" v-if="this.categoryWeek" ref="refWeek">
+                  <v-col
+                    cols="12"
+                    md="12"
+                    v-if="this.categoryWeek"
+                    ref="refWeek"
+                  >
                     <GChart
                       type="ColumnChart"
                       :data="chartWeekTagsData"
@@ -94,7 +104,11 @@
             <!-- CAMPAIGN -->
             <v-tab-item>
               <v-container>
-                <v-row justify="center" no-gutters style="background-color: white;">
+                <v-row
+                  justify="start"
+                  no-gutters
+                  style="background-color: white;"
+                >
                   <v-col cols="12" md="6">
                     <v-select
                       v-model="customerContento"
@@ -108,22 +122,13 @@
                       clearable
                     ></v-select>
                   </v-col>
-                  <v-col cols="12" md="6">
-                    <v-select
-                      v-if="customerContento"
-                      v-model="campaignContento"
-                      :items="listCampaignByCustomerID"
-                      item-text="title"
-                      item-value="id"
-                      label="Campaign"
-                      prepend-inner-icon="mdi-chart-donut"
-                      class="mx-10"
-                      clearable
-                      @change="changeCampaignContento"
-                    ></v-select>
-                  </v-col>
                 </v-row>
-                <v-row justify="center" no-gutters style="background-color: white;" class="my-4">
+                <v-row
+                  justify="center"
+                  no-gutters
+                  style="background-color: white;"
+                  class="my-4"
+                >
                   <v-col cols="4" align-self="center">
                     <div style="width:150px; height:150px;  margin: 0 auto;">
                       <v-progress-circular
@@ -136,10 +141,14 @@
                         <div>
                           <p
                             style="font-size:15px; font-weigth:400; margin:0; text-align:center"
-                          >Campaign</p>
+                          >
+                            Campaign
+                          </p>
                           <p
                             style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
-                          >{{StatisticsTotalCampaign.totalCampaign}}</p>
+                          >
+                            {{ StatisticsTotalCampaign.totalCampaign }}
+                          </p>
                         </div>
                       </v-progress-circular>
                     </div>
@@ -150,16 +159,26 @@
                         :rotate="-90"
                         :size="150"
                         :width="20"
-                        :value="Math.ceil((StatisticsTotalCampaign.campaignInProcess/StatisticsTotalCampaign.totalCampaign)*100)"
+                        :value="
+                          Math.round(
+                            (StatisticsTotalCampaign.campaignInProcess /
+                              StatisticsTotalCampaign.totalCampaign) *
+                              100
+                          )
+                        "
                         color="warning"
                       >
                         <div>
                           <p
                             style="font-size:15px; font-weigth:400; margin:0; text-align:center"
-                          >In Process</p>
+                          >
+                            In Process
+                          </p>
                           <p
                             style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
-                          >{{StatisticsTotalCampaign.campaignInProcess}}</p>
+                          >
+                            {{ StatisticsTotalCampaign.campaignInProcess }}
+                          </p>
                         </div>
                       </v-progress-circular>
                     </div>
@@ -170,16 +189,26 @@
                         :rotate="-90"
                         :size="150"
                         :width="20"
-                        :value="Math.ceil((StatisticsTotalCampaign.campaignCompleted/StatisticsTotalCampaign.totalCampaign)*100)"
+                        :value="
+                          Math.round(
+                            (StatisticsTotalCampaign.campaignCompleted /
+                              StatisticsTotalCampaign.totalCampaign) *
+                              100
+                          )
+                        "
                         color="success"
                       >
                         <div>
                           <p
                             style="font-size:15px; font-weigth:400; margin:0; text-align:center"
-                          >Completed</p>
+                          >
+                            Completed
+                          </p>
                           <p
                             style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
-                          >{{StatisticsTotalCampaign.campaignCompleted}}</p>
+                          >
+                            {{ StatisticsTotalCampaign.campaignCompleted }}
+                          </p>
                         </div>
                       </v-progress-circular>
                     </div>
@@ -196,14 +225,18 @@
                       <template v-slot:item.startDate="{ item }">
                         <span>
                           {{
-                          item.startDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                            item.startDate
+                              | localTime()
+                              | moment("HH:mm DD/MM/YYYY")
                           }}
                         </span>
                       </template>
                       <template v-slot:item.endDate="{ item }">
                         <span>
                           {{
-                          item.endDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                            item.endDate
+                              | localTime()
+                              | moment("HH:mm DD/MM/YYYY")
                           }}
                         </span>
                       </template>
@@ -212,19 +245,24 @@
                           :color="item.status.color"
                           style="color:white"
                           class="text__14"
-                        >{{item.status.name}}</v-chip>
+                          >{{ item.status.name }}</v-chip
+                        >
                       </template>
                       <template v-slot:item.progress="{ item }">
                         <v-progress-linear
                           :height="15"
                           striped
                           rounded
-                          :value="getCampaignProgress(item.startDate,item.endDate)"
+                          :value="
+                            getCampaignProgress(item.startDate, item.endDate)
+                          "
                           :color="item.status.color"
                         >
-                          <span
-                            style="color:white; font-size:12px;"
-                          >{{ getCampaignProgress(item.startDate,item.endDate) }}%</span>
+                          <span style="color:white; font-size:12px;"
+                            >{{
+                              getCampaignProgress(item.startDate, item.endDate)
+                            }}%</span
+                          >
                         </v-progress-linear>
                       </template>
                       <template v-slot:item.action="{ item }">
@@ -240,9 +278,14 @@
                     </v-data-table>
                   </v-col>
                 </v-row>
-                <v-row v-if="campaignContento" no-gutters ref="refCampaignContento" class="mx-6">
+                <v-row
+                  v-if="campaignContento"
+                  no-gutters
+                  ref="refCampaignContento"
+                  class="mx-6"
+                >
                   <v-col cols="12" class="mx-4">
-                    <h3>{{campaignDetialContentoTitle}}</h3>
+                    <h3>{{ campaignDetialContentoTitle }}</h3>
                   </v-col>
                   <v-col cols="12" md="6">
                     <v-data-table
@@ -253,10 +296,14 @@
                     >
                       <template v-slot:item.published="{ item }">
                         <span v-if="!item.published">
-                          <v-icon color="success" small class="mb-1 ml-1">check</v-icon>
+                          <v-icon color="success" small class="mb-1 ml-1"
+                            >check</v-icon
+                          >
                         </span>
                         <span v-else>
-                          <v-icon color="red" small class="mb-1 ml-1">close</v-icon>
+                          <v-icon color="red" small class="mb-1 ml-1"
+                            >close</v-icon
+                          >
                         </span>
                       </template>
                     </v-data-table>
@@ -277,7 +324,7 @@
         <!-- TAB FACEBOOK -->
         <v-tab-item>
           <v-container>
-            <v-row justify="center" no-gutters style="background-color: white;">
+            <v-row justify="start" no-gutters style="background-color: white;">
               <v-col cols="12" md="6">
                 <v-select
                   v-model="customerFacebook"
@@ -285,24 +332,10 @@
                   item-text="name"
                   item-value="id"
                   label="Customer"
-                  prepend-inner-icon="mdi-chart-donut"
+                  prepend-inner-icon="mdi-account-outline"
                   @change="changeCustomerFacebook"
                   class="mx-10"
                   clearable
-                ></v-select>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-select
-                  v-if="customerFacebook"
-                  v-model="campaignFacebook"
-                  :items="listCampaignByCustomerID"
-                  item-text="title"
-                  item-value="id"
-                  label="Campaign"
-                  prepend-inner-icon="mdi-chart-donut"
-                  class="mx-10"
-                  clearable
-                  @change="changeCampaignFacebook"
                 ></v-select>
               </v-col>
             </v-row>
@@ -325,10 +358,14 @@
                     <div>
                       <p
                         style="font-size:15px; font-weigth:400; margin:0; text-align:center"
-                      >Campaign</p>
+                      >
+                        Campaign
+                      </p>
                       <p
                         style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
-                      >{{StatisticsTotalCampaignFacebook.totalCampaign}}</p>
+                      >
+                        {{ StatisticsTotalCampaignFacebook.totalCampaign }}
+                      </p>
                     </div>
                   </v-progress-circular>
                 </div>
@@ -339,16 +376,26 @@
                     :rotate="-90"
                     :size="150"
                     :width="20"
-                    :value="Math.ceil((StatisticsTotalCampaignFacebook.campaignInProcess/StatisticsTotalCampaignFacebook.totalCampaign)*100)"
+                    :value="
+                      Math.round(
+                        (StatisticsTotalCampaignFacebook.campaignInProcess /
+                          StatisticsTotalCampaignFacebook.totalCampaign) *
+                          100
+                      )
+                    "
                     color="warning"
                   >
                     <div>
                       <p
                         style="font-size:15px; font-weigth:400; margin:0; text-align:center"
-                      >In Process</p>
+                      >
+                        In Process
+                      </p>
                       <p
                         style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
-                      >{{StatisticsTotalCampaignFacebook.campaignInProcess}}</p>
+                      >
+                        {{ StatisticsTotalCampaignFacebook.campaignInProcess }}
+                      </p>
                     </div>
                   </v-progress-circular>
                 </div>
@@ -359,40 +406,52 @@
                     :rotate="-90"
                     :size="150"
                     :width="20"
-                    :value="Math.ceil((StatisticsTotalCampaignFacebook.campaignCompleted/StatisticsTotalCampaignFacebook.totalCampaign)*100)"
+                    :value="
+                      Math.round(
+                        (StatisticsTotalCampaignFacebook.campaignCompleted /
+                          StatisticsTotalCampaignFacebook.totalCampaign) *
+                          100
+                      )
+                    "
                     color="success"
                   >
                     <div>
                       <p
                         style="font-size:15px; font-weigth:400; margin:0; text-align:center"
-                      >Completed</p>
+                      >
+                        Completed
+                      </p>
                       <p
                         style="font-size:35px; font-weigth:500;  margin:0; text-align:center"
-                      >{{StatisticsTotalCampaignFacebook.campaignCompleted}}</p>
+                      >
+                        {{ StatisticsTotalCampaignFacebook.campaignCompleted }}
+                      </p>
                     </div>
                   </v-progress-circular>
                 </div>
               </v-col>
             </v-row>
-            <v-row justify="center" class="mx-6" v-if="!campaignFacebook">
+            <v-row justify="center" class="mx-6">
               <v-col cols="12">
                 <v-data-table
                   :headers="headersCustomerCampaign"
-                  :items="StatisticsByCustomer"
+                  :items="StatisticsByCustomerFacebook"
                   :items-per-page="5"
                   class="mb-4"
                 >
                   <template v-slot:item.startDate="{ item }">
                     <span>
                       {{
-                      item.startDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                        item.startDate
+                          | localTime()
+                          | moment("HH:mm DD/MM/YYYY")
                       }}
                     </span>
                   </template>
                   <template v-slot:item.endDate="{ item }">
                     <span>
                       {{
-                      item.endDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                        item.endDate | localTime() | moment("HH:mm DD/MM/YYYY")
                       }}
                     </span>
                   </template>
@@ -401,39 +460,62 @@
                       :color="item.status.color"
                       style="color:white"
                       class="text__14"
-                    >{{item.status.name}}</v-chip>
+                      >{{ item.status.name }}</v-chip
+                    >
                   </template>
                   <template v-slot:item.progress="{ item }">
                     <v-progress-linear
                       :height="15"
                       striped
                       rounded
-                      :value="getCampaignProgress(item.startDate,item.endDate)"
+                      :value="getCampaignProgress(item.startDate, item.endDate)"
                       :color="item.status.color"
                     >
-                      <span
-                        style="color:white; font-size:12px;"
-                      >{{ getCampaignProgress(item.startDate,item.endDate) }}%</span>
+                      <span style="color:white; font-size:12px;"
+                        >{{
+                          getCampaignProgress(item.startDate, item.endDate)
+                        }}%</span
+                      >
                     </v-progress-linear>
                   </template>
                   <template v-slot:item.action="{ item }">
-                    <v-btn color="primary" @click="campaignDetail(item.id)" class="text__14" icon>
+                    <v-btn
+                      color="primary"
+                      class="text__14"
+                      icon
+                      @click="changeCampaignFacebook(item.id)"
+                    >
                       <v-icon>mdi-information-outline</v-icon>
                     </v-btn>
                   </template>
                 </v-data-table>
               </v-col>
             </v-row>
-            <v-row justify="center" no-gutters v-if="campaignFacebook" class="my-8">
-              <v-col cols="4">
+            <v-row
+              justify="center"
+              no-gutters
+              v-if="campaignFacebook"
+              class="my-8"
+              ref="refCampaignFacebook"
+            >
+              <v-col cols="4" class="my-2">
                 <v-row justify="center">
                   <v-progress-circular
                     :rotate="-90"
                     :size="150"
                     :width="20"
                     :value="campaignProcess"
-                    :color="campaignProcess > 50 ? 'success' : 'light-blue'"
-                  >{{ this.campaignProcess }}%</v-progress-circular>
+                    :color="kpiCampaign.status.color"
+                  >
+                    <div>
+                      <p style="margin:0; text-align:center">
+                        {{ this.campaignProcess }}%
+                      </p>
+                      <p style="font-size:12px;">
+                        {{ this.kpiCampaign.status.name }}
+                      </p>
+                    </div></v-progress-circular
+                  >
                 </v-row>
                 <v-row justify="center" class="mt-2">
                   <strong>Campaign Progress</strong>
@@ -441,27 +523,44 @@
                 <v-row justify="center">
                   <span style="font-size:12px">
                     {{
-                    listInteractionFanpageByCampaign.startDate | localTime() | moment("DD/MM/YYYY")
-                    }} - {{
-                    listInteractionFanpageByCampaign.endDate | localTime() | moment("DD/MM/YYYY")
+                      kpiCampaign.start_date
+                        | localTime()
+                        | moment("DD/MM/YYYY")
+                    }}
+                    -
+                    {{
+                      kpiCampaign.end_date | localTime() | moment("DD/MM/YYYY")
                     }}
                   </span>
                 </v-row>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="4" class="my-2">
                 <v-row justify="center">
                   <v-progress-circular
                     :rotate="-90"
                     :size="150"
                     :width="20"
-                    :value="Math.ceil((kpiCampaign.interaction/500)*100)>100 ? 100: Math.ceil((kpiCampaign.interaction/500)*100) "
+                    :value="
+                      Math.round((kpiCampaign.interaction / 500) * 100) > 100
+                        ? 100
+                        : Math.round((kpiCampaign.interaction / 500) * 100)
+                    "
                     color="teal"
                   >
                     <div>
-                      <p
-                        style="text-align:center; margin-bottom:0px"
-                      >{{Math.ceil((kpiCampaign.interaction/1000)*100)>100 ? 'Completed': Math.ceil((kpiCampaign.interaction/1000)*100) + '%'}}</p>
-                      <span style="font-size:12px;">{{ kpiCampaign.interaction }}/{{ 1000 }}</span>
+                      <p style="text-align:center; margin-bottom:0px">
+                        {{
+                          Math.round((kpiCampaign.interaction / 1000) * 100) >
+                          100
+                            ? "Completed"
+                            : Math.round(
+                                (kpiCampaign.interaction / 1000) * 100
+                              ) + "%"
+                        }}
+                      </p>
+                      <span style="font-size:12px;"
+                        >{{ kpiCampaign.interaction }}/{{ 1000 }}</span
+                      >
                     </div>
                   </v-progress-circular>
                 </v-row>
@@ -469,20 +568,30 @@
                   <strong>KPI Interaction</strong>
                 </v-row>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="4" class="my-2">
                 <v-row justify="center">
                   <v-progress-circular
                     :rotate="-90"
                     :size="150"
                     :width="20"
-                    :value="Math.ceil((kpiCampaign.inbox/500)*100)>100 ? 100: Math.ceil((kpiCampaign.inbox/500)*100) "
+                    :value="
+                      Math.round((kpiCampaign.inbox / 500) * 100) > 100
+                        ? 100
+                        : Math.round((kpiCampaign.inbox / 500) * 100)
+                    "
                     color="pink"
                   >
                     <div>
-                      <p
-                        style="text-align:center; margin-bottom:0px"
-                      >{{Math.ceil((kpiCampaign.inbox/500)*100)>100 ? 'Completed': Math.ceil((kpiCampaign.inbox/500)*100) + '%'}}</p>
-                      <span style="font-size:12px;">{{ kpiCampaign.inbox }}/{{ 500 }}</span>
+                      <p style="text-align:center; margin-bottom:0px">
+                        {{
+                          Math.round((kpiCampaign.inbox / 500) * 100) > 100
+                            ? "Completed"
+                            : Math.round((kpiCampaign.inbox / 500) * 100) + "%"
+                        }}
+                      </p>
+                      <span style="font-size:12px;"
+                        >{{ kpiCampaign.inbox }}/{{ 500 }}</span
+                      >
                     </div>
                   </v-progress-circular>
                 </v-row>
@@ -491,11 +600,27 @@
                 </v-row>
               </v-col>
             </v-row>
+            <v-row justify="center" no-gutters v-if="campaignFacebook">
+              <v-col cols="12">
+                <GChart
+                  type="BarChart"
+                  :data="chartCustomerCampaignFacebookDetailData"
+                  :options="chartCustomerCampaignFacebookDetailOptions"
+                  style="height:450px"
+                />
+              </v-col>
+              <v-btn
+                color="primary"
+                @click="moreDetail()"
+                v-if="!showMoreDetail"
+                >More Detail</v-btn
+              >
+            </v-row>
             <v-row
               justify="center"
               no-gutters
               style="background-color: white;"
-              v-if="campaignFacebook"
+              v-if="showMoreDetail"
               class="my-4"
             >
               <v-col
@@ -513,7 +638,9 @@
                   <template v-slot:item.publicDate="{ item }">
                     <span>
                       {{
-                      item.publicDate | localTime() | moment("HH:mm DD/MM/YYYY")
+                        item.publicDate
+                          | localTime()
+                          | moment("HH:mm DD/MM/YYYY")
                       }}
                     </span>
                   </template>
@@ -532,7 +659,9 @@
                   <template v-slot:item.commentCount="{ item }">
                     <span>
                       {{ item.commentCount }}
-                      <v-icon small class="mb-1 ml-1">mdi-comment-outline</v-icon>
+                      <v-icon small class="mb-1 ml-1"
+                        >mdi-comment-outline</v-icon
+                      >
                     </span>
                   </template>
                   <template v-slot:item.possitiveCommentCount="{ item }">
@@ -572,6 +701,7 @@ export default {
       pageCount: 0,
       itemsPerPage: 5,
       loading: false,
+      showMoreDetail: false,
       campaignFacebookStartDate: "",
       campaignFacebookEndDate: "",
       campaignProcess: "",
@@ -806,6 +936,14 @@ export default {
         },
         hAxis: { textPosition: "none" },
         legend: "none"
+      },
+      chartCustomerCampaignFacebookDetailData: [],
+      chartCustomerCampaignFacebookDetailOptions: {
+        animation: {
+          duration: 1000,
+          easing: "linear"
+        },
+        hAxis: { minValue: 0 }
       }
     };
   },
@@ -878,12 +1016,14 @@ export default {
       "getUser",
       "listCustomer",
       "listCampaignByCustomerID",
+      "listCampaignByCustomerIDFacebook",
       "StatisticsByTag",
       "StatisticsByTagMonth",
       "listInteractionFanpageByCampaign",
       "StatisticsWeekTrend",
       "StatisticsMonthTrend",
       "StatisticsByCustomer",
+      "StatisticsByCustomerFacebook",
       "StatisticsCampaign",
       "StatisticsTotalCampaign",
       "StatisticsTotalCampaignFacebook",
@@ -899,15 +1039,19 @@ export default {
       spinnerLoading: "spinner/spinnerLoading",
       getListCustomerByMarketerID: "authentication/getListCustomerByMarketerID",
       getListCampaignByCustomerID: "campaign/getListCampaignByCustomerID",
-      getListCampaignByCustomerIDFacebook: "campaign/getListCampaignByCustomerIDFacebook",
+      getListCampaignByCustomerIDFacebook:
+        "campaign/getListCampaignByCustomerIDFacebook",
       getStatisticsByTag: "contentprocess/getStatisticsByTag",
       getStatisticsByTagMonth: "contentprocess/getStatisticsByTagMonth",
       getInteractionFanpageByCampaignId:
         "batchjob/getInteractionFanpageByCampaignId",
       getStatisticsByCustomer: "campaign/getStatisticsByCustomer",
+      getStatisticsByCustomerFacebook:
+        "campaign/getStatisticsByCustomerFacebook",
       getStatisticsCampaign: "contentprocess/getStatisticsCampaign",
       getStatisticsTotalCampaign: "campaign/getStatisticsTotalCampaign",
-      getStatisticsTotalCampaignFacebook: "campaign/getStatisticsTotalCampaignFacebook",
+      getStatisticsTotalCampaignFacebook:
+        "campaign/getStatisticsTotalCampaignFacebook",
       getKPICampaign: "batchjob/getKPICampaign"
     }),
     getCampaignProgress(start, end) {
@@ -918,7 +1062,7 @@ export default {
       if (currentTime >= endTime) {
         campaignProcess = 100;
       } else {
-        campaignProcess = Math.ceil(
+        campaignProcess = Math.round(
           100 *
             ((parseInt(currentTime) - parseInt(startTime)) /
               (parseInt(endTime) - parseInt(startTime)))
@@ -969,45 +1113,14 @@ export default {
           idCustomer: event
         });
       } else {
+        this.campaignContento = false;
         await this.getStatisticsTotalCampaign({
           idMarketer: this.getUser.id,
           idCustomer: 0
         });
       }
     },
-    async changeCustomerFacebook(event) {
-      await Promise.all([
-        this.getListCampaignByCustomerIDFacebook(event),
-      ]);
-      if (event) {
-        await this.getStatisticsTotalCampaignFacebook({
-          idMarketer: this.getUser.id,
-          idCustomer: event
-        });
-      } else {
-        await this.getStatisticsTotalCampaignFacebook({
-          idMarketer: this.getUser.id,
-          idCustomer: 0
-        });
-      }
-    },
     async campaignDetail(event) {
-      let status = await this.getStatisticsCampaign(event);
-      this.campaignContento = event;
-      let data = [["Title", "View"]];
-      if (status == 200) {
-        this.StatisticsCampaign.forEach(element => {
-          if (!element.published) {
-            data.push([element.title, element.view]);
-          }
-        });
-        this.chartCustomerCampaignDetailData = data;
-        this.$nextTick(function() {
-          this.$vuetify.goTo(this.$refs.refCampaignContento);
-        });
-      }
-    },
-    async changeCampaignContento(event) {
       if (event) {
         this.listCampaignByCustomerID.forEach(element => {
           if (element.id == event) {
@@ -1018,6 +1131,7 @@ export default {
         this.campaignDetialContentoTitle = "";
       }
       let status = await this.getStatisticsCampaign(event);
+      this.campaignContento = true;
       let data = [["Title", "View"]];
       if (status == 200) {
         this.StatisticsCampaign.forEach(element => {
@@ -1031,8 +1145,37 @@ export default {
         });
       }
     },
+    async moreDetail() {
+      this.showMoreDetail = true;
+      let id = sessionStorage.getItem("CP_FB");
+      this.spinnerLoading(true);
+      await this.getInteractionFanpageByCampaignId(id);
+      this.spinnerLoading(false);
+    },
+    async changeCustomerFacebook(event) {
+      this.showMoreDetail = false;
+      await Promise.all([
+        this.getListCampaignByCustomerIDFacebook(event),
+        this.getStatisticsByCustomerFacebook(event)
+      ]);
+      if (event) {
+        await this.getStatisticsTotalCampaignFacebook({
+          idMarketer: this.getUser.id,
+          idCustomer: event
+        });
+      } else {
+        this.campaignFacebook = false;
+        await this.getStatisticsTotalCampaignFacebook({
+          idMarketer: this.getUser.id,
+          idCustomer: 0
+        });
+      }
+    },
     async changeCampaignFacebook(event) {
       this.spinnerLoading(true);
+      this.showMoreDetail = false;
+      this.campaignFacebook = true;
+      sessionStorage.setItem("CP_FB", event);
       const timeOut = t => {
         return new Promise((resolve, reject) => {
           setTimeout(() => {
@@ -1040,22 +1183,18 @@ export default {
           }, t);
         });
       };
-      await Promise.all([
-        timeOut(500),
-        this.getInteractionFanpageByCampaignId(event),
-        this.getKPICampaign(event)
-      ]);
+      await Promise.all([timeOut(500), this.getKPICampaign(event)]);
       this.campaignFacebookStartDate = Date.parse(
-        this.listInteractionFanpageByCampaign.startDate + "Z"
+        this.kpiCampaign.start_date + "Z"
       );
       this.campaignFacebookEndDate = Date.parse(
-        this.listInteractionFanpageByCampaign.endDate + "Z"
+        this.kpiCampaign.end_date + "Z"
       );
       var currentTime = Date.parse(new Date());
       if (currentTime >= this.campaignFacebookEndDate) {
         this.campaignProcess = 100;
       } else {
-        this.campaignProcess = Math.ceil(
+        this.campaignProcess = Math.round(
           100 *
             ((parseInt(currentTime) -
               parseInt(this.campaignFacebookStartDate)) /
@@ -1063,6 +1202,16 @@ export default {
                 parseInt(this.campaignFacebookStartDate)))
         );
       }
+      let data = [["Type", "Number", { role: "style" }]];
+      data.push(["Like", this.kpiCampaign.reaction, "color: #1b9e77"]);
+      data.push(["Comment", this.kpiCampaign.comment, "color: #d95f02"]);
+      data.push(["Share", this.kpiCampaign.share, "color:#7570b3"]);
+      this.chartCustomerCampaignFacebookDetailData = data;
+      this.chartCustomerCampaignFacebookDetailOptions.title = this.kpiCampaign.name;
+
+      this.$nextTick(function() {
+        this.$vuetify.goTo(this.$refs.refCampaignFacebook);
+      });
       this.spinnerLoading(false);
     },
     async linkTo(event) {
@@ -1089,7 +1238,7 @@ export default {
         this.getStatisticsTotalCampaignFacebook({
           idMarketer: this.getUser.id,
           idCustomer: 0
-        }),
+        })
       ]);
       var headerChart = ["Date"];
       this.listCategory.forEach(element => {
