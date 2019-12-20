@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog" persistent scrollable width="600px">
     <template v-slot:activator="{ on }">
       <div v-on="on">
-        <v-btn color="primary" class="text__14" @click="clickCreate()">Create Channel</v-btn>
+        <v-btn color="primary" class="text__14" @click="clickCreate()">Create Fanpage</v-btn>
       </div>
     </template>
     <v-card>
@@ -10,7 +10,7 @@
         <v-btn icon dark @click="dialog = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-toolbar-title>Add New Channel</v-toolbar-title>
+        <v-toolbar-title>Add New Fanpage</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
           <v-btn dark text @click="create()" :loading="loadingCreate">Create</v-btn>

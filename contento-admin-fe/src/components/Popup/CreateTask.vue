@@ -1,7 +1,13 @@
 <template>
   <v-dialog v-model="dialog" scrollable width="800px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" v-on="on" @click="clickCreate()" :disabled="disableStatus">Create Task</v-btn>
+      <v-btn
+        color="primary"
+        v-on="on"
+        @click="clickCreate()"
+        :disabled="disableStatus"
+        >Create Task</v-btn
+      >
     </template>
     <v-card>
       <v-toolbar dark color="primary">
@@ -11,7 +17,9 @@
         <v-toolbar-title>Create Task</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="create()" :loading="loadingCreate">Create</v-btn>
+          <v-btn dark text @click="create()" :loading="loadingCreate"
+            >Create</v-btn
+          >
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">
@@ -28,11 +36,12 @@
                   required
                   @blur="$v.title.$touch()"
                 ></v-text-field>
-                <div style="color:red" v-if="!$v.title.required && check">The title cannot be empty.</div>
-                <div
-                  style="color:red"
-                  v-if="!$v.title.maxLength && check"
-                >Title up to 255 characters.</div>
+                <div style="color:red" v-if="!$v.title.required && check">
+                  The title cannot be empty.
+                </div>
+                <div style="color:red" v-if="!$v.title.maxLength && check">
+                  Title up to 255 characters.
+                </div>
               </v-col>
             </v-row>
             <v-row>
@@ -47,7 +56,9 @@
                   prepend-inner-icon="edit"
                   required
                 ></v-select>
-                <div style="color:red" v-if="!$v.writer.required && check">Please select writer.</div>
+                <div style="color:red" v-if="!$v.writer.required && check">
+                  Please select writer.
+                </div>
               </v-col>
               <v-col cols="12" sm="6" align-self="center">
                 <v-row class="out-endtime flex-nowrap" align="center">
@@ -64,12 +75,14 @@
                       input-class="datetime"
                       input-style="cursor:pointer;"
                       :min-datetime="mintime"
-                      :max-datetime="maxtime"
+                      :max-datetime="maxEndtime"
                       required
                     ></datetime>
                   </v-col>
                 </v-row>
-                <div style="color:red" v-if="!$v.endtime.required && check">Please select endtime.</div>
+                <div style="color:red" v-if="!$v.endtime.required && check">
+                  Please select endtime.
+                </div>
               </v-col>
             </v-row>
             <v-row>
@@ -86,7 +99,9 @@
                   multiple
                   required
                 >
-                  <template v-slot:selection="{ attrs, item, select, selected }">
+                  <template
+                    v-slot:selection="{ attrs, item, select, selected }"
+                  >
                     <v-chip
                       v-bind="attrs"
                       :input-value="selected"
@@ -102,7 +117,9 @@
                 <div
                   style="color:red"
                   v-if="!$v.selectedTags.required && check"
-                >Please select category.</div>
+                >
+                  Please select category.
+                </div>
               </v-col>
               <v-col cols="12" sm="6" align-self="center">
                 <v-row class="out-endtime flex-nowrap" align="center">
@@ -119,24 +136,22 @@
                       class="text__14"
                       input-class="datetime"
                       input-style="cursor:pointer;"
-                      :min-datetime="endtime"
+                      :min-datetime="minPubishTime"
                       :max-datetime="maxtime"
                       required
                     ></datetime>
                   </v-col>
                 </v-row>
-                <div
-                  style="color:red"
-                  v-if="!$v.publishTime.required && check"
-                >Please select publish time.</div>
+                <div style="color:red" v-if="!$v.publishTime.required && check">
+                  Please select publish time.
+                </div>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12" md="12">
-                <div
-                  style="color:red"
-                  v-if="!$v.content.required && check"
-                >The content cannot empty !</div>
+                <div style="color:red" v-if="!$v.content.required && check">
+                  The content cannot empty !
+                </div>
               </v-col>
               <v-col cols="12" sm="12">
                 <CKEditor
@@ -170,8 +185,10 @@ export default {
       menu: false,
       selectedTags: [],
       endtime: "",
+      maxEndtime: "",
       publishTime: "",
       mintime: "",
+      minPubishTime: "",
       maxtime: "",
       content: "",
       writer: [],
@@ -200,12 +217,20 @@ export default {
       "selectedTags"
     ]
   },
+  watch: {
+    endtime() {
+      this.minPubishTime = this.$moment(this.endtime)
+        .add(1, "days")
+        .toISOString();
+    }
+  },
   computed: {
     ...mapGetters(["listWriter", "listTagByCampaignID"])
   },
   mounted() {
     let now = new Date();
     this.mintime = now.toISOString();
+    this.minPubishTime = now.toISOString();
   },
   methods: {
     ...mapActions({ createTask: "contentprocess/createTask" }),
@@ -244,7 +269,12 @@ export default {
       }
       this.writer = [];
       this.title = "";
-      this.maxtime = sessionStorage.getItem("Task-MaxTime");
+      var task_maxtime = sessionStorage.getItem("Task-MaxTime");
+      this.maxtime = task_maxtime;
+      this.maxEndtime = this.$moment(task_maxtime)
+        .subtract(1, "days")
+        .subtract(60, "minutes")
+        .toISOString();
     }
   }
 };

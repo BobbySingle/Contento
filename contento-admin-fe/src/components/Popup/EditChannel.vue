@@ -2,7 +2,12 @@
   <v-dialog v-model="dialog" persistent scrollable width="600px">
     <template v-slot:activator="{ on }">
       <div v-on="on">
-        <v-btn color="warning" class="text__14" @click="clickEdit(channelID)" icon>
+        <v-btn
+          color="warning"
+          class="text__14"
+          @click="clickEdit(channelID)"
+          icon
+        >
           <v-icon>edit</v-icon>
         </v-btn>
       </div>
@@ -12,7 +17,7 @@
         <v-btn icon dark @click="dialog = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-toolbar-title>Edit Channel</v-toolbar-title>
+        <v-toolbar-title>Edit Fanpage</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
           <v-btn dark text @click="update()" :loading="loadingSave">Save</v-btn>
@@ -70,7 +75,10 @@
                   <template v-slot:prepend-item>
                     <v-list-item ripple @click="toggle">
                       <v-list-item-action>
-                        <v-icon :color="listTag.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
+                        <v-icon
+                          :color="listTag.length > 0 ? 'indigo darken-4' : ''"
+                          >{{ icon }}</v-icon
+                        >
                       </v-list-item-action>
                       <v-list-item-content>
                         <v-list-item-title>Select All</v-list-item-title>
@@ -104,7 +112,7 @@
                   prepend-inner-icon="vpn_key"
                   required
                   :error-messages="tokenErrors"
-                  @blur="$v.token.$touch(),setLink()"
+                  @blur="$v.token.$touch(), setLink()"
                 ></v-text-field>
               </v-col>
             </v-row>
