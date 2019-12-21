@@ -6,40 +6,27 @@
     <v-row justify="center" class="my-3">
       <h1 class="text__h1">Review Content</h1>
     </v-row>
-    <v-expansion-panels
-      :accordion="true"
-      :focusable="true"
-      multiple
-      v-model="panel"
-    >
+    <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
       <v-row justify="center" class="mx-5" no-gutters>
         <v-col cols="12">
           <v-expansion-panel>
-            <v-expansion-panel-header class="text__14"
-              >Content Information:</v-expansion-panel-header
-            >
+            <v-expansion-panel-header class="text__14">Content Information:</v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >Title</span
-                  >
+                  <span style="color:grey; font-weight:300; font-size:12px;">Title</span>
                   <br />
                   <span class="text__14">{{ title }}</span>
                 </v-col>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >Campaign</span
-                  >
+                  <span style="color:grey; font-weight:300; font-size:12px;">Campaign</span>
                   <br />
                   <span class="text__14">{{ campaign }}</span>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="12">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >Categorys</span
-                  >
+                  <span style="color:grey; font-weight:300; font-size:12px;">Categorys</span>
                   <br />
                   <v-chip
                     v-for="item in tags"
@@ -54,22 +41,22 @@
               </v-row>
               <v-row>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >End Date</span
-                  >
+                  <span style="color:grey; font-weight:300; font-size:12px;">End Date</span>
                   <br />
-                  <span class="text__14">{{
-                    deadline | moment("DD/MM/YYYY")
-                  }}</span>
+                  <span class="text__14">
+                    {{
+                    deadline|localTime() | moment("hh:mm DD/MM/YYYY")
+                    }}
+                  </span>
                 </v-col>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >Publish Date</span
-                  >
+                  <span style="color:grey; font-weight:300; font-size:12px;">Publish Date</span>
                   <br />
-                  <span class="text__14">{{
-                    publishTime | moment("DD/MM/YYYY")
-                  }}</span>
+                  <span class="text__14">
+                    {{
+                    publishTime |localTime() | moment("hh:mm DD/MM/YYYY")
+                    }}
+                  </span>
                 </v-col>
               </v-row>
             </v-expansion-panel-content>
@@ -78,24 +65,17 @@
         <v-row no-gutters>
           <v-col cols="12">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14"
-                >Request Details:</v-expansion-panel-header
-              >
+              <v-expansion-panel-header class="text__14">Request Details:</v-expansion-panel-header>
               <v-expansion-panel-content class="py-2">
                 <div class="my-1">
-                  <div
-                    v-html="requestDetails"
-                    class="content ck-content px-2 py-4"
-                  ></div>
+                  <div v-html="requestDetails" class="content ck-content px-2 py-4"></div>
                 </div>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-col>
           <v-col cols="12">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14"
-                >Content Details:</v-expansion-panel-header
-              >
+              <v-expansion-panel-header class="text__14">Content Details:</v-expansion-panel-header>
               <v-expansion-panel-content
                 class="my-2 py-2 expansion-bg"
                 v-bind:style="{ width: computedWidth }"
@@ -112,15 +92,18 @@
                       required
                       @blur="$v.name.$touch()"
                     ></v-text-field>
-                    <div style="color:red" v-if="!$v.name.required && check">
-                      The title of content cannot be empty.
-                    </div>
-                    <div style="color:red" v-if="!$v.name.maxLength && check">
-                      Title up to 255 characters.
-                    </div>
-                    <div style="color:red" v-if="!$v.content.required && check">
-                      The content cannot be empty.
-                    </div>
+                    <div
+                      style="color:red"
+                      v-if="!$v.name.required && check"
+                    >The title of content cannot be empty.</div>
+                    <div
+                      style="color:red"
+                      v-if="!$v.name.maxLength && check"
+                    >Title up to 255 characters.</div>
+                    <div
+                      style="color:red"
+                      v-if="!$v.content.required && check"
+                    >The content cannot be empty.</div>
                   </v-col>
                   <v-col cols="12">
                     <CKEditor
@@ -132,25 +115,23 @@
                     />
                   </v-col>
                 </v-row>
-
+                <v-row justify="end">
+                  <span class="mr-3">Words: {{ countWord }}</span>
+                </v-row>
                 <v-row justify="center" class="flex-nowrap mt-3">
-                  <v-btn color="warning" class="mx-1" @click="$router.go(-1)"
-                    >Cancel</v-btn
-                  >
+                  <v-btn color="warning" class="mx-1" @click="$router.go(-1)">Cancel</v-btn>
                   <v-btn
                     color="primary"
                     class="mx-1"
                     @click="rewrite()"
                     :loading="loadingRewrite"
-                    >Rewrite</v-btn
-                  >
+                  >Rewrite</v-btn>
                   <v-btn
                     color="success"
                     class="mx-1"
                     @click="submit()"
                     :loading="loadingSubmit"
-                    >Complete</v-btn
-                  >
+                  >Complete</v-btn>
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -186,13 +167,27 @@ export default {
       computedWidth: "",
       check: false,
       loadingRewrite: false,
-      loadingSubmit: false
+      loadingSubmit: false,
     };
   },
   validations: {
     name: { required, maxLength: maxLength(255) },
     content: { required },
     form: ["name", "content"]
+  },
+  filters: {
+    localTime: function(value) {
+      if (!value) {
+        return "";
+      }
+      //Local TimeZone
+      var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+      var millisecondsTime = Date.parse(value + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      return newDateUTC7;
+    }
   },
   methods: {
     // changeWidth() {
@@ -267,7 +262,23 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getUser", "taskDetail"])
+    ...mapGetters(["getUser", "taskDetail"]),
+        countWord() {
+      if (this.content) {
+        var cont = this.content;
+        console.log(this.content);
+        cont = cont.replace(/<[^>]*>/g, " "); //remove tag html
+        // cont = cont.replace(/(^\s*)|(\s*$)/g, ""); //exclude  start and end white-space
+        cont = cont.replace(/&nbsp;/g, ""); // remove &nbsp
+        cont = cont.replace(/[!@#$%^&*(),.?":{}|<>\`\~\/\\]+/g, ""); //remove special charactor
+        cont = cont.replace(/[ ]{2,}/g, " "); //2 or more space to 1
+        cont = cont.trim();
+        console.log(cont);
+        var words = cont.split(" ").length;
+        return words;
+      }
+      return 0;
+    }
   },
   created() {
     let role = this.getUser.role;

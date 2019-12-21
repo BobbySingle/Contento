@@ -13,7 +13,7 @@
         <v-toolbar-title>Add New Campaign</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark text @click="create()" :loading="loadingSave">Save</v-btn>
+          <v-btn dark text @click="create()" :loading="loadingSave">Create</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text style="min-height: 300px; padding:0px;">

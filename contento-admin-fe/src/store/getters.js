@@ -44,8 +44,8 @@ const getters = {
   listCampaignTaskFormated: state => {
     return state.contentprocess.listCampaignTask.map(el => {
       el.name = el.title;
-      el.start = moment(String(el.publishTime)).format("YYYY-MM-DD hh:mm");
-      el.deadline = moment(String(el.deadline)).format("YYYY-MM-DD hh:mm");
+      el.start = moment(String(el.publishTime)).add(7,'hours').format("YYYY-MM-DD hh:mm");
+      el.deadline = moment(String(el.deadline)).add(7,'hours').format("YYYY-MM-DD hh:mm");
       return el;
     });
   },
