@@ -65,7 +65,7 @@
           </v-expansion-panel>
         </v-col>
         <v-row no-gutters>
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-expansion-panel>
               <v-expansion-panel-header class="text__14"
                 >Campaign Request:</v-expansion-panel-header
@@ -79,7 +79,7 @@
             </v-expansion-panel>
           </v-col>
 
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-expansion-panel>
               <v-expansion-panel-header class="text__14"
                 >Work Assignment:</v-expansion-panel-header
@@ -108,34 +108,29 @@
                     <template v-slot:item.writer="{ item }">
                       <span v-if="item.writer">{{ item.writer.name }}</span>
                     </template>
+                    <template v-slot:item.status="{ item }">
+                      <v-chip
+                        :color="item.status.color"
+                        style="color:white"
+                        class="text__14"
+                        >{{ item.status.name }}</v-chip
+                      >
+                    </template>
                     <template v-slot:item.action="{ item }">
-                      <!-- <v-row class="flex-nowrap" justify="center" v-if="item.status">
-                        <edit-task v-if="item.status.id <= 4" :taskID="item.id" :fromManageTask="false" />
-                        <v-btn
-                          text
-                          icon
-                          color="error"
-                          v-if="item.status.id == 1"
-                          @click="clickDelete(item.id)"
-                        >
-                          <v-icon>delete</v-icon>
-                        </v-btn>
-                      </v-row>-->
                       <v-row
                         class="flex-nowrap"
-                        justify="space-around"
+                        justify="end"
                         v-if="item.status"
                       >
-                        <edit-task
-                          v-if="item.status.id == 1"
-                          :taskID="item.id"
-                          :fromManageTask="false"
-                        />
-                        <edit-task-over-due
-                          v-if="item.status.id == 2 || item.status.id == 4"
-                          :taskID="item.id"
-                          :fromManageTask="false"
-                        />
+                        <v-btn
+                          color="primary"
+                          icon
+                          fab
+                          v-if="item.status.id == 3"
+                          @click="changeToReview(item.id)"
+                        >
+                          <v-icon>gavel</v-icon>
+                        </v-btn>
                         <v-btn
                           text
                           icon
@@ -146,15 +141,20 @@
                           <v-icon>delete</v-icon>
                         </v-btn>
 
-                        <v-btn
-                          color="primary"
-                          icon
-                          fab
-                          v-if="item.status.id == 3"
-                          @click="changeToReview(item.id)"
-                        >
-                          <v-icon>gavel</v-icon>
-                        </v-btn>
+                        <edit-task
+                          v-if="item.status.id == 1"
+                          :taskID="item.id"
+                          :fromManageTask="false"
+                        />
+                        <edit-task-over-due
+                          v-if="item.status.id == 2 || item.status.id == 4"
+                          :taskID="item.id"
+                          :fromManageTask="false"
+                        />
+                        <task-details
+                          :taskID="item.id"
+                          :fromManageTask="false"
+                        />
                       </v-row>
                     </template>
                   </v-data-table>
@@ -181,13 +181,14 @@
 import moment from "moment";
 import CreateTask from "../../../components/Popup/CreateTask.vue";
 import EditTask from "../../../components/Popup/EditTask.vue";
+import TaskDetails from "../../../components/Popup/TaskDetails.vue";
 import EditTaskOverDue from "../../../components/Popup/EditTaskOverDue.vue";
 import { mapGetters, mapActions } from "vuex";
 export default {
-  components: { CreateTask, EditTask, EditTaskOverDue },
+  components: { CreateTask, EditTask, EditTaskOverDue, TaskDetails },
   data() {
     return {
-      panel: [0, 1, 2],
+      panel: [0, 2],
       /**Begin Pagination */
       page: 1,
       pageCount: 0,
@@ -210,9 +211,21 @@ export default {
           text: "Implementer",
           value: "writer",
           sortable: false,
+          width: "15%"
+        },
+        {
+          text: "End",
+          value: "deadline",
+          sortable: false,
           width: "20%"
         },
-        { text: "End", value: "deadline", sortable: false, width: "20%" },
+        {
+          text: "Status",
+          value: "status",
+          sortable: false,
+          width: "15%",
+          align: "center"
+        },
         { text: "Action", value: "action", align: "center", width: "10%" }
       ]
     };

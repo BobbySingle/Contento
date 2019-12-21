@@ -214,7 +214,7 @@
                     </div>
                   </v-col>
                 </v-row>
-                <v-row justify="center" class="mx-6">
+                <v-row justify="center" class="mx-6" v-if="customerContento">
                   <v-col cols="12">
                     <v-data-table
                       :headers="headersCustomerCampaign"
@@ -431,7 +431,7 @@
                 </div>
               </v-col>
             </v-row>
-            <v-row justify="center" class="mx-6">
+            <v-row justify="center" class="mx-6" v-if="customerFacebook">
               <v-col cols="12">
                 <v-data-table
                   :headers="headersCustomerCampaign"

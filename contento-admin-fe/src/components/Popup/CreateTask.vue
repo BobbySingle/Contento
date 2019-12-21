@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" scrollable width="800px">
+  <v-dialog v-model="dialog" persistent scrollable width="800px">
     <template v-slot:activator="{ on }">
       <v-btn
         color="primary"
@@ -25,6 +25,23 @@
       <v-card-text style="min-height: 300px; padding:0px;">
         <v-row no-gutters class="mx-10">
           <v-col cols="12" sm="12">
+            <v-expansion-panels focusable>
+              <v-row no-gutters class="my-4">
+                <v-col cols="12">
+                  <v-expansion-panel>
+                    <v-expansion-panel-header class="text__14"
+                      >View Campaign Request:</v-expansion-panel-header
+                    >
+                    <v-expansion-panel-content class="my-2 py-2">
+                      <div
+                        v-html="campaign_content"
+                        class="work content ck-content px-2 py-4"
+                      ></div>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-col>
+              </v-row>
+            </v-expansion-panels>
             <v-row>
               <v-col cols="12" sm="12">
                 <v-text-field
@@ -184,6 +201,7 @@ export default {
       dialog: false,
       menu: false,
       selectedTags: [],
+      panel: [],
       endtime: "",
       maxEndtime: "",
       publishTime: "",
@@ -191,6 +209,7 @@ export default {
       minPubishTime: "",
       maxtime: "",
       content: "",
+      campaign_content: undefined,
       writer: [],
       title: "",
       firstTimeLoad: true,
@@ -225,7 +244,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["listWriter", "listTagByCampaignID"])
+    ...mapGetters(["listWriter", "listTagByCampaignID", "detailCampaign"])
   },
   mounted() {
     let now = new Date();
@@ -233,7 +252,9 @@ export default {
     this.minPubishTime = now.toISOString();
   },
   methods: {
-    ...mapActions({ createTask: "contentprocess/createTask" }),
+    ...mapActions({
+      createTask: "contentprocess/createTask"
+    }),
     async create() {
       this.check = true;
       this.loadingCreate = true;
@@ -275,6 +296,7 @@ export default {
         .subtract(1, "days")
         .subtract(60, "minutes")
         .toISOString();
+      this.campaign_content = this.detailCampaign.description;
     }
   }
 };

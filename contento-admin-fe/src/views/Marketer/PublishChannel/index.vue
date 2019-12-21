@@ -86,7 +86,7 @@
               <v-col cols="12" class="px-8">
                 <v-row>
                   <v-col cols="12" md="6">
-                    <v-row class="out-endtime">
+                    <v-row class="out-endtime" no-gutters>
                       <v-col cols="0" md="1" class="d-none d-md-block">
                         <v-icon>mdi-calendar-range</v-icon>
                       </v-col>
@@ -108,20 +108,22 @@
                           required
                           @blur="$v.publishTime.$touch()"
                         ></datetime>
+                        <div
+                          class="pt-7"
+                          style="color:red"
+                          v-if="!$v.publishTime.required && check"
+                        >
+                          Please select publish time.
+                        </div>
+                        <div
+                          class="pt-7"
+                          style="color:red"
+                          v-if="$v.publishTime.$model < localISOTime && check"
+                        >
+                          Please select publish time > time now.
+                        </div>
                       </v-col>
                     </v-row>
-                    <div
-                      style="color:red"
-                      v-if="!$v.publishTime.required && check"
-                    >
-                      Please select publish time.
-                    </div>
-                    <div
-                      style="color:red"
-                      v-if="$v.publishTime.$model < localISOTime && check"
-                    >
-                      Please select publish time > time now.
-                    </div>
                   </v-col>
                   <v-col cols="12" md="6" class="pt-7">
                     <v-select
@@ -190,8 +192,40 @@
                         >
                       </template>
                     </v-select>
+                    <v-row v-if="recommendPublishData.length > 0">
+                      <v-col>
+                        <v-simple-table style="width:100%">
+                          <template v-slot:default>
+                            <thead>
+                              <tr>
+                                <th class="text-left" style="width:50%">
+                                  Fanpage Facebook
+                                </th>
+                                <th class="text-left" style="width:50%">
+                                  Recommend Time
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr
+                                v-for="(data, index) in recommendPublishData"
+                                :key="index"
+                              >
+                                <td>{{ data.fanpageName }}</td>
+                                <td v-if="data.publishTime">
+                                  {{ data.publishTime }}
+                                </td>
+                                <td v-else>
+                                  Updating...
+                                </td>
+                              </tr>
+                            </tbody>
+                          </template>
+                        </v-simple-table>
+                      </v-col>
+                    </v-row>
                   </v-col>
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="4" class="line_border">
                     <v-select
                       v-model="fanpageWP"
                       :items="wordpress"
@@ -203,7 +237,6 @@
                       label="Wordpress Channel"
                       prepend-inner-icon="mdi-wordpress"
                       multiple
-                      attach
                     >
                       <template
                         v-slot:selection="{
@@ -254,55 +287,32 @@
                         >
                       </template>
                     </v-select>
+                    <v-row
+                      no-gutters
+                      class=".flex-nowrap"
+                      justify="center"
+                      v-if="showAds"
+                    >
+                      <v-switch
+                        v-model="isAds"
+                        label="Advertise in Contento Website"
+                        class="mr-3"
+                      ></v-switch>
+                      <div class="mt-2" v-if="isAds">
+                        <datetime
+                          title="Set time to end advertise"
+                          type="datetime"
+                          v-model="endAds"
+                          placeholder="Time end advertise"
+                          :min-datetime="publishTime"
+                          value-zone="UTC+07:00"
+                          input-class="css_time"
+                          class="text__14 out_css_time"
+                          auto
+                        ></datetime>
+                      </div>
+                    </v-row>
                   </v-col>
-                </v-row>
-                <v-row
-                  no-gutters
-                  class=".flex-nowrap"
-                  justify="end"
-                  v-if="showAds"
-                >
-                  <v-switch
-                    v-model="isAds"
-                    label="Advertise this content"
-                    class="mr-3"
-                  ></v-switch>
-                  <div class="mt-2" v-if="isAds">
-                    <datetime
-                      title="Set time to end advertise"
-                      type="datetime"
-                      v-model="endAds"
-                      placeholder="Time end advertise"
-                      :min-datetime="publishTime"
-                      value-zone="UTC+07:00"
-                      input-class="css_time"
-                      class="text__14 out_css_time"
-                      auto
-                    ></datetime>
-                  </div>
-                </v-row>
-                <v-row v-if="recommendPublishData.length > 0">
-                  <v-simple-table style="min-width:50%">
-                    <template v-slot:default>
-                      <thead>
-                        <tr>
-                          <th class="text-left">Fanpage</th>
-                          <th class="text-left">Recommend Time</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(data, index) in recommendPublishData"
-                          :key="index"
-                        >
-                          <td>{{ data.fanpageName }}</td>
-                          <td>
-                            {{ data.publishTime }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
                 </v-row>
                 <v-row justify="end">
                   <v-btn color="warning" class="text__14 ml-3" @click="cancel()"
@@ -561,6 +571,7 @@ export default {
         idCustomer: this.taskDetail.customer.id
       });
       this.fanpageFB = this.fanpagesTag.Facebook;
+      await this.recommendTimePublish({ idFanpages: this.fanpageFB });
       this.fanpageWP = this.fanpagesTag.Wordpress;
       this.websiteCTT = this.fanpagesTag.Contento;
     },
@@ -616,6 +627,13 @@ export default {
 };
 </script>
 <style scoped>
+@media only screen and (min-width: 960px) {
+  .line_border {
+    border-left: 2px groove rgba(133, 133, 133, 0.25);
+    border-right: 2px groove rgba(133, 133, 133, 0.25);
+  }
+}
+
 ::v-deep .css_time {
   cursor: pointer;
   padding-left: 10px;

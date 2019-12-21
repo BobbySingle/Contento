@@ -19,9 +19,16 @@
       </v-col>
     </v-row>
     <v-row no-gutters class="mx-6 mb-2">
-      <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+      <v-expansion-panels
+        :accordion="true"
+        :focusable="true"
+        multiple
+        v-model="panel"
+      >
         <v-expansion-panel>
-          <v-expansion-panel-header class="text__14">Advanced Filter:</v-expansion-panel-header>
+          <v-expansion-panel-header class="text__14"
+            >Advanced Filter:</v-expansion-panel-header
+          >
           <v-expansion-panel-content>
             <v-row class=".flex-nowrap">
               <v-col cols="12" sm="6" md="3">
@@ -113,16 +120,18 @@
             :loading="loading"
             @page-count="pageCount = $event"
           >
-            <template v-slot:item.campaign="{item}">
-              <span class="content-inner-table text__14">{{item.campaign.name}}</span>
+            <template v-slot:item.campaign="{ item }">
+              <span class="content-inner-table text__14">{{
+                item.campaign.name
+              }}</span>
             </template>
-            <template
-              v-slot:item.modifiedDate="{item}"
-            >{{item.modifiedDate| localTime() | moment("HH:mm DD/MM/YYYY")}}</template>
-            <template
-              v-slot:item.deadline="{item}"
-            >{{item.deadline| localTime()| moment("HH:mm DD/MM/YYYY")}}</template>
-            <template v-slot:item.contentTitle="{item}">
+            <template v-slot:item.modifiedDate="{ item }">{{
+              item.modifiedDate | localTime() | moment("HH:mm DD/MM/YYYY")
+            }}</template>
+            <template v-slot:item.deadline="{ item }">{{
+              item.deadline | localTime() | moment("HH:mm DD/MM/YYYY")
+            }}</template>
+            <template v-slot:item.contentTitle="{ item }">
               <div class="content_details">
                 <div>
                   <span class="text__14">{{ item.contentTitle }}</span>
@@ -134,10 +143,29 @@
                 :color="item.status.color"
                 style="color:white"
                 class="text__14"
-              >{{item.status.name}}</v-chip>
+                >{{ item.status.name }}</v-chip
+              >
             </template>
             <template v-slot:item.action="{ item }">
-              <v-row class="flex-nowrap" justify="space-around">
+              <v-row class="flex-nowrap" justify="end">
+                <v-btn
+                  color="primary"
+                  icon
+                  fab
+                  v-if="item.status.id == 3"
+                  @click="changeToReview(item.id)"
+                >
+                  <v-icon>gavel</v-icon>
+                </v-btn>
+                <v-btn
+                  text
+                  icon
+                  color="error"
+                  v-if="item.status.id == 1"
+                  @click="clickDelete(item.id)"
+                >
+                  <v-icon>delete</v-icon>
+                </v-btn>
                 <edit-task
                   v-if="item.status.id == 1"
                   :taskID="item.id"
@@ -150,31 +178,21 @@
                   :campID="item.campaign.id"
                   :fromManageTask="true"
                 />
-                <v-btn
-                  text
-                  icon
-                  color="error"
-                  v-if="item.status.id == 1"
-                  @click="clickDelete(item.id)"
-                >
-                  <v-icon>delete</v-icon>
-                </v-btn>
-
-                <v-btn
-                  color="primary"
-                  icon
-                  fab
-                  v-if="item.status.id == 3"
-                  @click="changeToReview(item.id)"
-                >
-                  <v-icon>gavel</v-icon>
-                </v-btn>
+                <task-details
+                  :taskID="item.id"
+                  :campID="item.campaign.id"
+                  :fromManageTask="true"
+                />
               </v-row>
             </template>
           </v-data-table>
           <v-row justify="center">
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
+              <v-pagination
+                v-model="page"
+                :length="pageCount"
+                :total-visible="10"
+              ></v-pagination>
             </div>
           </v-row>
         </v-row>
@@ -187,10 +205,11 @@
 import moment from "moment";
 import axios from "axios";
 import EditTask from "../../../components/Popup/EditTask.vue";
+import TaskDetails from "../../../components/Popup/TaskDetails.vue";
 import EditTaskOverDue from "../../../components/Popup/EditTaskOverDue.vue";
 import { mapGetters, mapActions } from "vuex";
 export default {
-  components: { EditTask, EditTaskOverDue },
+  components: { EditTask, EditTaskOverDue, TaskDetails },
   data() {
     return {
       /**Begin Pagination */
@@ -407,7 +426,6 @@ export default {
   height: 40px;
   display: flex;
 }
-
 
 .content_details span {
   /**line-clamp */

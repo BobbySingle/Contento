@@ -25,7 +25,7 @@ import {
   APIgetStatisticsTrend,
   APIgetStatisticsTrendMonth,
   APIgetStatisticsByTagMonth,
-  APIgetStatisticsCampaign,
+  APIgetStatisticsCampaign
 } from "../../services/contentprocess";
 
 import router from "@/router/index";
@@ -51,7 +51,7 @@ const state = {
   dataStatisticsByTagMonth: [],
   dataStatisticsWeekTrend: [],
   dataStatisticsMonthTrend: [],
-  dataStatisticsCampaign:[]
+  dataStatisticsCampaign: []
 };
 
 const mutations = {
@@ -278,12 +278,24 @@ const actions = {
   async setApprovalContentRequest({ commit }, payload) {
     try {
       await APIsetApprovalContentRequest(payload);
+      sessionStorage.removeItem("ApproveRequestID");
       router.push({
         name: "ApproveRequest"
       });
     } catch (error) {
       console.log("ERROR - APPROVAL CONTENT REQUEST");
       console.log(error);
+      if (error.response.status == 409) {
+        Vue.notify({
+          group: "notice",
+          title: "Reject/Approve Failed!",
+          text: "This content has been conflicted!",
+          type: "warn"
+        });
+        router.push({
+          name: "ApproveRequest"
+        });
+      }
     }
   },
   async getTaskByWriterId({ commit }, payload) {

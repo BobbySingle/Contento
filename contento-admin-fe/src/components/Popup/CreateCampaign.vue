@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="dialog" persistent scrollable width="800px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" v-on="on" class="text__14" @click="clickCreate()">Create Campaign</v-btn>
+      <v-btn color="primary" v-on="on" class="text__14" @click="clickCreate()"
+        >Create Campaign</v-btn
+      >
     </template>
     <v-card>
       <v-toolbar dark color="primary">
@@ -28,11 +30,12 @@
                   required
                   @blur="$v.title.$touch()"
                 ></v-text-field>
-                <div style="color:red" v-if="!$v.title.required && check">The title cannot be empty.</div>
-                <div
-                  style="color:red"
-                  v-if="!$v.title.maxLength && check"
-                >Title up to 255 characters.</div>
+                <div style="color:red" v-if="!$v.title.required && check">
+                  The title cannot be empty.
+                </div>
+                <div style="color:red" v-if="!$v.title.maxLength && check">
+                  Title up to 255 characters.
+                </div>
               </v-col>
               <v-col cols="12" md="6" align-self="center">
                 <v-row class="out-endtime">
@@ -56,7 +59,9 @@
                     ></datetime>
                   </v-col>
                 </v-row>
-                <div style="color:red" v-if="!$v.endtime.required && check">Please select endtime.</div>
+                <div style="color:red" v-if="!$v.endtime.required && check">
+                  Please select endtime.
+                </div>
               </v-col>
             </v-row>
             <v-row>
@@ -77,7 +82,9 @@
                     <div
                       style="color:red"
                       v-if="!$v.customer.required && check"
-                    >Please select customer.</div>
+                    >
+                      Please select customer.
+                    </div>
                   </v-col>
                   <v-col
                     cols="2"
@@ -87,7 +94,9 @@
                     align-self="center"
                     justify-self="center"
                   >
-                    <popup-create-customer :isSmallBtn="true"></popup-create-customer>
+                    <popup-create-customer
+                      :isSmallBtn="true"
+                    ></popup-create-customer>
                   </v-col>
                 </v-row>
               </v-col>
@@ -103,7 +112,9 @@
                   required
                   @blur="$v.editor.$touch()"
                 ></v-select>
-                <div style="color:red" v-if="!$v.editor.required && check">Please select editor.</div>
+                <div style="color:red" v-if="!$v.editor.required && check">
+                  Please select editor.
+                </div>
               </v-col>
             </v-row>
             <v-row>
@@ -121,7 +132,9 @@
                   required
                   @blur="$v.tags.$touch()"
                 >
-                  <template v-slot:selection="{ attrs, item, select, selected }">
+                  <template
+                    v-slot:selection="{ attrs, item, select, selected }"
+                  >
                     <v-chip
                       v-bind="attrs"
                       :input-value="selected"
@@ -133,15 +146,16 @@
                     </v-chip>
                   </template>
                 </v-select>
-                <div style="color:red" v-if="!$v.tags.required && check">Please select category.</div>
+                <div style="color:red" v-if="!$v.tags.required && check">
+                  Please select category.
+                </div>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12" md="12">
-                <div
-                  style="color:red"
-                  v-if="!$v.content.required && check"
-                >The content cannot empty !</div>
+                <div style="color:red" v-if="!$v.content.required && check">
+                  The content cannot empty !
+                </div>
               </v-col>
               <v-col cols="12" md="12">
                 <CKEditor
@@ -187,7 +201,7 @@ export default {
       loadingSave: false,
       campaignForm:
         '<figure class="table"><table><thead><tr><th colspan="2"><h3 style="text-align:center;">Campaign Request</h3></th></tr></thead><tbody><tr><th>Number of Content</th><td>&nbsp;</td></tr><tr><th>Publish time of Content</th><td><p><span class="text-small"><i>Ex: Content ? - ??:?? ??/??/????</i></span></p><ul><li>&nbsp;</li></ul></td></tr><tr><th>Promise</th><td>&nbsp;</td></tr><tr><th>Slogan</th><td>&nbsp;</td></tr><tr><th>Key Message</th><td>&nbsp;</td></tr><tr><th>Target Customers</th><td>&nbsp;</td></tr><tr><th>Reasons to believe</th><td>&nbsp;</td></tr><tr><th>Function Products</th><td>&nbsp;</td></tr><tr><th>Story</th><td>&nbsp;</td></tr><tr><th>Brand Logo</th><td>&nbsp;</td></tr><tr><th>Positioning maps</th><td>&nbsp;</td></tr><tr><th>Character</th><td>&nbsp;</td></tr><tr><th>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</th><td>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td></tr></tbody></table></figure>'
-        // '<figure class="table"><table><thead><tr><th colspan="2"><h3 style="text-align:center;">Campaign Request</h3></th></tr></thead><tbody><tr><th>Promise</th><td>&nbsp;</td></tr><tr><th>Slogan</th><td>&nbsp;</td></tr><tr><th>Target Customers</th><td>&nbsp;</td></tr><tr><th>Reasons to believe</th><td>&nbsp;</td></tr><tr><th>Function Products</th><td>&nbsp;</td></tr><tr><th>Story</th><td>&nbsp;</td></tr><tr><th>Brand Logo</th><td>&nbsp;</td></tr><tr><th>Positioning maps</th><td>&nbsp;</td></tr><tr><th>Character</th><td>&nbsp;</td></tr><tr><th>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</th><td>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td></tr></tbody></table></figure>'
+      // '<figure class="table"><table><thead><tr><th colspan="2"><h3 style="text-align:center;">Campaign Request</h3></th></tr></thead><tbody><tr><th>Promise</th><td>&nbsp;</td></tr><tr><th>Slogan</th><td>&nbsp;</td></tr><tr><th>Target Customers</th><td>&nbsp;</td></tr><tr><th>Reasons to believe</th><td>&nbsp;</td></tr><tr><th>Function Products</th><td>&nbsp;</td></tr><tr><th>Story</th><td>&nbsp;</td></tr><tr><th>Brand Logo</th><td>&nbsp;</td></tr><tr><th>Positioning maps</th><td>&nbsp;</td></tr><tr><th>Character</th><td>&nbsp;</td></tr><tr><th>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</th><td>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td></tr></tbody></table></figure>'
     };
   },
   validations: {

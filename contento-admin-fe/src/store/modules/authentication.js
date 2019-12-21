@@ -29,8 +29,8 @@ import {
   APIgetViewerAccounts
 } from "../../services/authentication";
 import router from "@/router/index";
-import Swal from 'sweetalert2';
-import Vue from 'vue'
+import Swal from "sweetalert2";
+import Vue from "vue";
 
 const state = {
   access_token: "",
@@ -50,7 +50,7 @@ const state = {
   listWritersBasic: [],
   adminUserDetail: "",
   freelanceAccount: [],
-  listViewerAccounts: [],
+  listViewerAccounts: []
 };
 const mutations = {
   SET_ACCESS_TOKEN(state, data) {
@@ -103,19 +103,21 @@ const mutations = {
     state.listAdminAccounts = data;
   },
   SET_MARKETERS_BASIC(state, data) {
-    state.listMarketersBasic = data
+    state.listMarketersBasic = data;
   },
   SET_EDITORS_BASIC(state, data) {
-    state.listEditorsBasic = data
+    state.listEditorsBasic = data;
   },
   SET_WRITERS_BASIC(state, data) {
-    state.listWritersBasic = data
+    state.listWritersBasic = data;
   },
   SET_ADMIN_USER_DETAIL(state, data) {
-    state.adminUserDetail = data
+    state.adminUserDetail = data;
   },
   DELETE_MARKETER_BASIC(state, id) {
-    const IdElementDelete = state.listMarketersBasic.findIndex(l => l.id === id);
+    const IdElementDelete = state.listMarketersBasic.findIndex(
+      l => l.id === id
+    );
     state.listMarketersBasic.splice(IdElementDelete, 1);
   },
   DELETE_EDITOR_BASIC(state, id) {
@@ -146,27 +148,25 @@ const actions = {
       }
     } catch (error) {
       if (error.response.status == 403) {
-        Swal.fire(
-          {
-            title: 'Error',
-            titleText: "Your account has been locked!",
-            text:"Please contact the administrator for more details. Huongntdse62600@fpt.edu.vn",
-            type: 'error',
-            confirmButtonText: "OK",
-            timer: 3000,
-            allowOutsideClick: false
-          })
+        Swal.fire({
+          title: "Error",
+          titleText: "Your account has been locked!",
+          text:
+            "Please contact the administrator for more details. Huongntdse62600@fpt.edu.vn",
+          type: "error",
+          confirmButtonText: "OK",
+          timer: 3000,
+          allowOutsideClick: false
+        });
       } else {
-        Swal.fire(
-          {
-            title: 'Warning',
-            text: "Your email or password is incorrect. Please try again!",
-            type: 'warning',
-            confirmButtonText: "OK",
-            timer: 3000,
-            allowOutsideClick: false
-          }
-        );
+        Swal.fire({
+          title: "Warning",
+          text: "Your email or password is incorrect. Please try again!",
+          type: "warning",
+          confirmButtonText: "OK",
+          timer: 3000,
+          allowOutsideClick: false
+        });
         console.log("ERROR - LOGIN ACTION");
         console.log(error);
       }
@@ -196,10 +196,10 @@ const actions = {
           name: rs.data.fullName
         });
         Vue.notify({
-          group: 'notice',
-          title: 'Create successful!',
-          text: 'Customer has been created successfully!',
-          type: 'suc'
+          group: "notice",
+          title: "Create successful!",
+          text: "Customer has been created successfully!",
+          type: "suc"
         });
         return 202;
       }
@@ -207,11 +207,11 @@ const actions = {
       console.log("ERROR - NEW LIST INFO CUSTOMER");
       console.log(error);
       Vue.notify({
-        group: 'notice',
-        title: 'Create failed!',
-        text: 'Customer has been created failed!',
-        type: 'warn'
-      })
+        group: "notice",
+        title: "Create failed!",
+        text: "Customer has been created failed!",
+        type: "warn"
+      });
     }
   },
   async editCustomer({ commit }, payload) {
@@ -222,20 +222,20 @@ const actions = {
         console.log(rs.data);
         commit("UPDATE_LISTINFOCUSTOMER", rs.data);
         Vue.notify({
-          group: 'notice',
-          title: 'Edit successful!',
-          text: 'Customer has been edited successfully!',
-          type: 'suc'
-        })
+          group: "notice",
+          title: "Edit successful!",
+          text: "Customer has been edited successfully!",
+          type: "suc"
+        });
         return 202;
       }
     } catch (error) {
       Vue.notify({
-        group: 'notice',
-        title: 'Edit failed!',
-        text: 'Customer has been edited failed!',
-        type: 'warn'
-      })
+        group: "notice",
+        title: "Edit failed!",
+        text: "Customer has been edited failed!",
+        type: "warn"
+      });
       console.log("ERROR - EDIT LIST INFO CUSTOMER");
       console.log(error);
     }
@@ -327,28 +327,27 @@ const actions = {
       if (rs.status == 202) {
         return 202;
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   },
   async changePassword({ commit }, payload) {
     try {
       let rs = await APIchangePassword(payload);
       if (rs.status == 202) {
         Vue.notify({
-          group: 'notice',
-          title: 'Change password successful!',
-          text: 'Password has been changed successfully!',
-          type: 'suc'
-        })
+          group: "notice",
+          title: "Change password successful!",
+          text: "Password has been changed successfully!",
+          type: "suc"
+        });
         return 202;
       }
     } catch (error) {
       Vue.notify({
-        group: 'notice',
-        title: 'Change password failed!',
-        text: 'Password has been changed failed!',
-        type: 'warn'
-      })
+        group: "notice",
+        title: "Change password failed!",
+        text: "Password has been changed failed!",
+        type: "warn"
+      });
       console.log("ERROR -  CHANGE PASSWORD");
       console.log(error);
     }
@@ -362,21 +361,21 @@ const actions = {
       profile.fullName = rs.data.fullName;
       localStorage.setItem("Profile", JSON.stringify(profile));
       Vue.notify({
-        group: 'notice',
-        title: 'Edit successful!',
-        text: 'Profile has been edited successfully!',
-        type: 'suc'
-      })
+        group: "notice",
+        title: "Edit successful!",
+        text: "Profile has been edited successfully!",
+        type: "suc"
+      });
       return 202;
     } catch (error) {
       console.log("ERROR -  PROFILE");
       console.log(error);
       Vue.notify({
-        group: 'notice',
-        title: 'Edit failed!',
-        text: 'Profile has been edited failed!',
-        type: 'warn'
-      })
+        group: "notice",
+        title: "Edit failed!",
+        text: "Profile has been edited failed!",
+        type: "warn"
+      });
     }
   },
   async getAdminAccounts({ commit }) {
@@ -391,7 +390,6 @@ const actions = {
       console.log("ERROR - LIST ACCOUNTS");
       console.log(error);
     }
-
   },
   async createAccount({ commit }, payload) {
     try {
@@ -400,22 +398,22 @@ const actions = {
         console.log("CREATE ACCOUNT");
         console.log(rs.data);
         Vue.notify({
-          group: 'notice',
-          title: 'Create successful!',
-          text: 'Account has been created successfully!',
-          type: 'suc'
-        })
+          group: "notice",
+          title: "Create successful!",
+          text: "Account has been created successfully!",
+          type: "suc"
+        });
         return 202;
       }
     } catch (error) {
       console.log("ERROR - CREATE ACCOUNT");
       console.log(error);
       Vue.notify({
-        group: 'notice',
-        title: 'Create failed!',
-        text: 'Account has been created failed!',
-        type: 'warn'
-      })
+        group: "notice",
+        title: "Create failed!",
+        text: "Account has been created failed!",
+        type: "warn"
+      });
     }
   },
   async editAccount({ commit }, payload) {
@@ -425,22 +423,22 @@ const actions = {
         console.log("EDIT ACCOUNT");
         console.log(rs.data);
         Vue.notify({
-          group: 'notice',
-          title: 'Edit successful!',
-          text: 'Account has been edited successfully!',
-          type: 'suc'
-        })
+          group: "notice",
+          title: "Edit successful!",
+          text: "Account has been edited successfully!",
+          type: "suc"
+        });
         return 202;
       }
     } catch (error) {
       console.log("ERROR - EDIT ACCOUNT");
       console.log(error);
       Vue.notify({
-        group: 'notice',
-        title: 'Edit failed!',
-        text: 'Account has been edited failed!',
-        type: 'warn'
-      })
+        group: "notice",
+        title: "Edit failed!",
+        text: "Account has been edited failed!",
+        type: "warn"
+      });
     }
   },
   async assignMember({ commit }, payload) {
@@ -450,22 +448,22 @@ const actions = {
         console.log("ASSIGN ACCOUNT");
         console.log(rs.data);
         Vue.notify({
-          group: 'notice',
-          title: 'Assign successful!',
-          text: 'Account has been assigned successfully!',
-          type: 'suc'
-        })
+          group: "notice",
+          title: "Assign successful!",
+          text: "Account has been assigned successfully!",
+          type: "suc"
+        });
         return 202;
       }
     } catch (error) {
       console.log("ERROR - ASSIGN ACCOUNT");
       console.log(error);
       Vue.notify({
-        group: 'notice',
-        title: 'Assign failed!',
-        text: 'Account has been assigned failed!',
-        type: 'warn'
-      })
+        group: "notice",
+        title: "Assign failed!",
+        text: "Account has been assigned failed!",
+        type: "warn"
+      });
     }
   },
   async isActiveAccount({ commit }, payload) {
@@ -475,22 +473,22 @@ const actions = {
         console.log("CHANGE STATUS ACCOUNT");
         console.log(rs.data);
         Vue.notify({
-          group: 'notice',
-          title: 'Change successful!',
-          text: 'Account has been changed status successfully!',
-          type: 'suc'
-        })
+          group: "notice",
+          title: "Change successful!",
+          text: "Account has been changed status successfully!",
+          type: "suc"
+        });
         return 202;
       }
     } catch (error) {
       console.log("ERROR - CHANGE STATUS ACCOUNT");
       console.log(error);
       Vue.notify({
-        group: 'notice',
-        title: 'Change failed!',
-        text: 'Account has been changed status failed!',
-        type: 'warn'
-      })
+        group: "notice",
+        title: "Change failed!",
+        text: "Account has been changed status failed!",
+        type: "warn"
+      });
     }
   },
   async getMarketersBasic({ commit }) {
@@ -555,7 +553,8 @@ const actions = {
         console.log(rs.data);
         commit("SET_EDITORS_BASIC", rs.data);
         return 200;
-      } if (rs.status == 204) {
+      }
+      if (rs.status == 204) {
         console.log("GET EDITORS FOR WRITER");
         console.log(rs.data);
         commit("SET_EDITORS_BASIC", []);
@@ -636,22 +635,22 @@ const actions = {
       let rs = await APIdisableAccount(payload);
       if (rs.status == 202) {
         Vue.notify({
-          group: 'notice',
-          title: 'Disable successful!',
-          text: 'Account has been disable successfully!',
-          type: 'suc'
-        })
+          group: "notice",
+          title: "Disable successful!",
+          text: "Account has been disable successfully!",
+          type: "suc"
+        });
         return 202;
       }
     } catch (error) {
       console.log("ERROR - DISABLE ACCOUNT");
       console.log(error);
       Vue.notify({
-        group: 'notice',
-        title: 'Disable failed!',
-        text: 'Account has been disable failed!',
-        type: 'warn'
-      })
+        group: "notice",
+        title: "Disable failed!",
+        text: "Account has been disable failed!",
+        type: "warn"
+      });
     }
   },
   removeElementMarketer({ commit }, payload) {

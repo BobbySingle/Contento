@@ -1,8 +1,14 @@
- <template>
+<template>
   <v-dialog v-model="dialog" persistent width="400px">
     <template v-slot:activator="{ on }">
       <div v-on="on">
-        <v-btn fab color="primary" small v-if="isSmallBtn" @click="clickCreate()">
+        <v-btn
+          fab
+          color="primary"
+          small
+          v-if="isSmallBtn"
+          @click="clickCreate()"
+        >
           <v-icon color="white">add</v-icon>
         </v-btn>
         <v-btn
@@ -10,7 +16,8 @@
           v-if="!isSmallBtn"
           class="text__14"
           @click="clickCreate()"
-        >Create Customer</v-btn>
+          >Create Customer</v-btn
+        >
       </div>
     </template>
     <v-card>
@@ -74,7 +81,9 @@
       </v-row>
       <v-card-actions>
         <div class="flex-grow-1"></div>
-        <v-btn color="warning" @click="dialog = false" class="text__14">Cancel</v-btn>
+        <v-btn color="warning" @click="dialog = false" class="text__14"
+          >Cancel</v-btn
+        >
         <v-btn color="success" @click="create()" class="text__14">Create</v-btn>
       </v-card-actions>
     </v-card>
