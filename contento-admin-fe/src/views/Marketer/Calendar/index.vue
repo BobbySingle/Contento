@@ -81,7 +81,7 @@
                 <v-col
                   cols="6"
                   style="color:white;font-size:14px; font-weight:bold;"
-                >{{selectedEvent.deadline | moment("hh:mm DD/MM/YYYY")}}</v-col>
+                >{{selectedEvent.deadline |localTime() | moment("hh:mm DD/MM/YYYY")}}</v-col>
               </v-row>
               <!-- /**End Event endDate */ -->
               <!-- /**Begin Event Title */ -->
@@ -165,6 +165,20 @@ export default {
     selectedOpen: false,
     events: []
   }),
+  filters: {
+    localTime: function(value) {
+      if (!value) {
+        return "";
+      }
+      //Local TimeZone
+      var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+      var millisecondsTime = Date.parse(value + "Z");
+      var newDateUTC7 = new Date(millisecondsTime - tzoffset)
+        .toISOString()
+        .slice(0, -1);
+      return newDateUTC7;
+    }
+  },
   computed: {
     ...mapGetters(["getUser", , "listCampaignTaskFormated"]),
     title() {
