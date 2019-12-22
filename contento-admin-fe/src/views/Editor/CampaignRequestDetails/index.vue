@@ -122,12 +122,6 @@
                         >
                           <v-icon>delete</v-icon>
                         </v-btn>
-<<<<<<< HEAD
-
-=======
-                      </v-row>-->
-                      <v-row class="flex-nowrap" justify="space-around" v-if="item.status">
->>>>>>> master
                         <edit-task
                           v-if="item.status.id == 1"
                           :taskID="item.id"
