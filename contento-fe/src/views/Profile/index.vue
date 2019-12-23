@@ -280,7 +280,6 @@ export default {
       !this.$v.phone.maxLength && errors.push("Phone up to 10 numbers");
       !this.$v.phone.minLength && errors.push("Phone up to 10 numbers");
       !this.$v.phone.between && errors.push("Phone must be type number");
-      !this.$v.phone.required && errors.push("Please enter your phone");
       return errors;
     },
     ageErrors() {

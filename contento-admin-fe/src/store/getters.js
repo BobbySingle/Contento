@@ -44,8 +44,8 @@ const getters = {
   listCampaignTaskFormated: state => {
     return state.contentprocess.listCampaignTask.map(el => {
       el.name = el.title;
-      el.start = moment(String(el.publishTime)).add(7,'hours').format("YYYY-MM-DD hh:mm");
-      el.deadline = moment(String(el.deadline)).add(7,'hours').format("YYYY-MM-DD hh:mm");
+      el.start = moment(String(el.publishTime)).add(7, 'hours').format("YYYY-MM-DD hh:mm");
+      el.deadline = moment(String(el.deadline)).add(7, 'hours').format("YYYY-MM-DD hh:mm");
       return el;
     });
   },
@@ -71,8 +71,26 @@ const getters = {
   //Batchjob
   fanpage: state => state.batchjob.fanpage,
   fanpages: state => state.batchjob.fanpages,
-  facebook: state => state.batchjob.facebook,
-  wordpress: state => state.batchjob.wordpress,
+  facebook: state => {
+    let data = [];
+    state.batchjob.customer.forEach(element => {
+      if (element.channel.id == 2) {
+        data.push({ "id": element.id, "name": element.name });
+      }
+    });
+    return data;
+  },
+  wordpress: state => {
+    let data = [];
+    state.batchjob.customer.forEach(element => {
+      if (element.channel.id == 3) {
+        data.push({ "id": element.id, "name": element.name });
+      }
+    });
+    return data;
+  },
+  // facebook: state => state.batchjob.facebook,
+  // wordpress: state => state.batchjob.wordpress,
   fanpagesContent: state => state.batchjob.fanpagesContent,
   fanpagesTag: state => state.batchjob.fanpagesTag,
   linkFanpage: state => state.batchjob.link,

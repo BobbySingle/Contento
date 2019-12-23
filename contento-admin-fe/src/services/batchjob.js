@@ -31,12 +31,12 @@ export function APIdeleteFanPage(fanpageID) {
   return axios.delete(`${API_URL}/api/BatchJob/fanpages/${fanpageID}`);
 }
 
-export function APIgetFanPageFacebook(marketerId) {
-  return axios.get(`${API_URL}/api/BatchJob/fanpages/marketer/2/${marketerId}`);
+export function APIgetFanPageFacebook(customerId) {
+  return axios.get(`${API_URL}/api/BatchJob/fanpages/customer/2/${customerId}`);
 }
 
-export function APIgetFanPageWordpress(marketerId) {
-  return axios.get(`${API_URL}/api/BatchJob/fanpages/marketer/3/${marketerId}`);
+export function APIgetFanPageWordpress(customerId) {
+  return axios.get(`${API_URL}/api/BatchJob/fanpages/customer/3/${customerId}`);
 }
 
 export function APIgetFanPageCustomer(customerId) {

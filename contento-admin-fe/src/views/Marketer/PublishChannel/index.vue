@@ -7,52 +7,35 @@
       <h1 class="text__h1">Publish Channel</h1>
     </v-row>
     <v-row no-gutters class="mx-10" justify="center">
-      <v-expansion-panels
-        :accordion="true"
-        :focusable="true"
-        multiple
-        v-model="panel"
-      >
+      <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
         <v-expansion-panel>
-          <v-expansion-panel-header class="text__14"
-            >Task Details:</v-expansion-panel-header
-          >
+          <v-expansion-panel-header class="text__14">Task Details:</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-col cols="12" class="px-8">
               <v-row>
                 <v-col cols="12" md="12">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >Task Title</span
-                  >
+                  <span style="color:grey; font-weight:300; font-size:12px;">Task Title</span>
                   <br />
                   <span class="text__14">{{ title }}</span>
                   <!-- <v-text-field label="Title:" required v-model="title" readonly class="text__14"></v-text-field> -->
                 </v-col>
                 <v-col cols="4" md="4">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >Writer</span
-                  >
+                  <span style="color:grey; font-weight:300; font-size:12px;">Writer</span>
                   <br />
                   <span class="text__14">{{ writer }}</span>
                 </v-col>
                 <v-col cols="4" md="4">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >Editor</span
-                  >
+                  <span style="color:grey; font-weight:300; font-size:12px;">Editor</span>
                   <br />
                   <span class="text__14">{{ editor }}</span>
                 </v-col>
                 <v-col cols="4" md="4">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >Customer</span
-                  >
+                  <span style="color:grey; font-weight:300; font-size:12px;">Customer</span>
                   <br />
                   <span class="text__14">{{ customer }}</span>
                 </v-col>
                 <v-col cols="12" md="12">
-                  <span style="color:grey; font-weight:300; font-size:12px;"
-                    >Content Title</span
-                  >
+                  <span style="color:grey; font-weight:300; font-size:12px;">Content Title</span>
                   <br />
                   <span class="text__14">{{ name }}</span>
                 </v-col>
@@ -61,16 +44,11 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="text__14"
-            >Content Preview:</v-expansion-panel-header
-          >
+          <v-expansion-panel-header class="text__14">Content Preview:</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-row class="my-8" style="width:100%;">
               <v-col cols="12" md="12">
-                <div
-                  class="content px-12 py-4"
-                  style="max-width:795px;margin: 0 auto;"
-                >
+                <div class="content px-12 py-4" style="max-width:795px;margin: 0 auto;">
                   <span v-html="content" class="ck-content"></span>
                 </div>
               </v-col>
@@ -78,9 +56,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="text__14"
-            >Publish Config:</v-expansion-panel-header
-          >
+          <v-expansion-panel-header class="text__14">Publish Config:</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-row>
               <v-col cols="12" class="px-8">
@@ -91,10 +67,7 @@
                         <v-icon>mdi-calendar-range</v-icon>
                       </v-col>
                       <v-col cols="12" md="11">
-                        <span
-                          style="color:grey; font-weight:300; font-size:12px;"
-                          >Publish Time</span
-                        >
+                        <span style="color:grey; font-weight:300; font-size:12px;">Publish Time</span>
                         <datetime
                           title="Publish Time"
                           type="datetime"
@@ -112,16 +85,12 @@
                           class="pt-7"
                           style="color:red"
                           v-if="!$v.publishTime.required && check"
-                        >
-                          Please select publish time.
-                        </div>
+                        >Please select publish time.</div>
                         <div
                           class="pt-7"
                           style="color:red"
                           v-if="$v.publishTime.$model < localISOTime && check"
-                        >
-                          Please select publish time > time now.
-                        </div>
+                        >Please select publish time > time now.</div>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -141,22 +110,13 @@
                       @change="changeCategory"
                       @blur="$v.tags.$touch()"
                     >
-                      <template
-                        v-slot:selection="{ attrs, item, select, selected }"
-                      >
-                        <v-chip
-                          v-bind="attrs"
-                          :input-value="selected"
-                          color="blue"
-                          class="chips"
-                        >
+                      <template v-slot:selection="{ attrs, item, select, selected }">
+                        <v-chip v-bind="attrs" :input-value="selected" color="blue" class="chips">
                           <strong class="text__14">{{ item.name }}</strong>
                         </v-chip>
                       </template>
                     </v-select>
-                    <div style="color:red" v-if="!$v.tags.required && check">
-                      Please select category.
-                    </div>
+                    <div style="color:red" v-if="!$v.tags.required && check">Please select category.</div>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -188,8 +148,7 @@
                           color="blue"
                           v-if="index === 0"
                           class="chips caption"
-                          >+{{ fanpageFB.length }} others selected</v-chip
-                        >
+                        >+{{ fanpageFB.length }} others selected</v-chip>
                       </template>
                     </v-select>
                     <v-row v-if="recommendPublishData.length > 0">
@@ -198,26 +157,15 @@
                           <template v-slot:default>
                             <thead>
                               <tr>
-                                <th class="text-left" style="width:50%">
-                                  Fanpage Facebook
-                                </th>
-                                <th class="text-left" style="width:50%">
-                                  Recommend Time
-                                </th>
+                                <th class="text-left" style="width:50%">Fanpage Facebook</th>
+                                <th class="text-left" style="width:50%">Recommend Time</th>
                               </tr>
                             </thead>
                             <tbody>
-                              <tr
-                                v-for="(data, index) in recommendPublishData"
-                                :key="index"
-                              >
+                              <tr v-for="(data, index) in recommendPublishData" :key="index">
                                 <td>{{ data.fanpageName }}</td>
-                                <td v-if="data.publishTime">
-                                  {{ data.publishTime }}
-                                </td>
-                                <td v-else>
-                                  Updating...
-                                </td>
+                                <td v-if="data.publishTime">{{ data.publishTime }}</td>
+                                <td v-else>Updating...</td>
                               </tr>
                             </tbody>
                           </template>
@@ -251,8 +199,7 @@
                           color="blue"
                           v-if="index === 0"
                           class="chips caption"
-                          >+{{ fanpageWP.length }} others selected</v-chip
-                        >
+                        >+{{ fanpageWP.length }} others selected</v-chip>
                       </template>
                     </v-select>
                   </v-col>
@@ -283,21 +230,11 @@
                           color="blue"
                           v-if="index === 0"
                           class="chips caption"
-                          >+{{ websiteCTT.length }} others selected</v-chip
-                        >
+                        >+{{ websiteCTT.length }} others selected</v-chip>
                       </template>
                     </v-select>
-                    <v-row
-                      no-gutters
-                      class=".flex-nowrap"
-                      justify="center"
-                      v-if="showAds"
-                    >
-                      <v-switch
-                        v-model="isAds"
-                        label="Advertise in Contento Website"
-                        class="mr-3"
-                      ></v-switch>
+                    <v-row no-gutters class=".flex-nowrap" justify="center" v-if="showAds">
+                      <v-switch v-model="isAds" label="Advertise in Contento Website" class="mr-3"></v-switch>
                       <div class="mt-2" v-if="isAds">
                         <datetime
                           title="Set time to end advertise"
@@ -315,16 +252,13 @@
                   </v-col>
                 </v-row>
                 <v-row justify="end">
-                  <v-btn color="warning" class="text__14 ml-3" @click="cancel()"
-                    >Cancel</v-btn
-                  >
+                  <v-btn color="warning" class="text__14 ml-3" @click="cancel()">Cancel</v-btn>
                   <v-btn
                     color="primary"
                     class="text__14 ml-3"
                     @click="publish()"
                     :loading="loading"
-                    >Publish</v-btn
-                  >
+                  >Publish</v-btn>
                 </v-row>
               </v-col>
             </v-row>
@@ -406,8 +340,9 @@ export default {
       getTaskDetail: "contentprocess/getTaskDetail",
       getListTag: "contentprocess/getListTag",
       publishContent: "batchjob/publishContent",
-      getFanPageFacebook: "batchjob/getFanPageFacebook",
-      getFanPageWordpress: "batchjob/getFanPageWordpress",
+      getFanPageCustomer: "batchjob/getFanPageCustomer",
+      // getFanPageFacebook: "batchjob/getFanPageFacebook",
+      // getFanPageWordpress: "batchjob/getFanPageWordpress",
       // getFanPagesByContentID: "batchjob/getFanPagesByContentID",
       getFanPagesByTagsID: "batchjob/getFanPagesByTagsID",
       recommendTimePublish: "batchjob/recommendTimePublish",
@@ -431,8 +366,8 @@ export default {
       await Promise.all([
         timeOut(500),
         this.getListTag(),
-        this.getFanPageFacebook(this.getUser.id),
-        this.getFanPageWordpress(this.getUser.id),
+        // this.getFanPageFacebook(this.getUser.id),
+        // this.getFanPageWordpress(this.getUser.id),
         this.getTaskDetail(contentID)
       ]);
       this.title = this.taskDetail.title;
@@ -450,6 +385,8 @@ export default {
       this.name = this.taskDetail.content.name;
       this.customerID = this.taskDetail.customer.id;
       this.customer = this.taskDetail.customer.name;
+      await this.getFanPageCustomer(this.customerID);
+
       if (isPublish) {
         await this.getFanPagesByTagsID({
           lstTags: this.tags,
