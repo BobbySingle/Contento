@@ -241,6 +241,11 @@ export default {
       this.minPubishTime = this.$moment(this.endtime)
         .add(1, "days")
         .toISOString();
+      if (this.publishTime < this.minPubishTime) {
+        this.publishTime = this.$moment(this.endtime)
+          .add(1, "days")
+          .toISOString();
+      }
     }
   },
   computed: {
@@ -248,12 +253,17 @@ export default {
   },
   mounted() {
     let now = new Date();
-    this.mintime = now.toISOString();
-    this.minPubishTime = now.toISOString();
+    this.mintime = this.$moment(now)
+      .add(1, "days")
+      .toISOString();
+    this.minPubishTime = this.$moment(now)
+      .add(2, "days")
+      .toISOString();
   },
   methods: {
     ...mapActions({
-      createTask: "contentprocess/createTask"
+      createTask: "contentprocess/createTask",
+      getListCampaignTask: "contentprocess/getListCampaignTask"
     }),
     async create() {
       this.check = true;
@@ -271,6 +281,8 @@ export default {
           tags: this.selectedTags
         });
         if (status == 202) {
+          let campaignID = sessionStorage.getItem("CampaignID");
+          await this.getListCampaignTask(campaignID);
           this.loadingCreate = false;
           this.dialog = false;
         }
@@ -292,7 +304,7 @@ export default {
       this.title = "";
       var task_maxtime = sessionStorage.getItem("Task-MaxTime");
       this.maxtime = task_maxtime;
-      this.maxEndtime = this.$moment(task_maxtime)
+      this.maxEndtime = this.$moment(this.maxtime)
         .subtract(1, "days")
         .subtract(60, "minutes")
         .toISOString();

@@ -6,27 +6,40 @@
     <v-row justify="center" class="my-3">
       <h1 class="text__h1">Work Assignment</h1>
     </v-row>
-    <v-expansion-panels :accordion="true" :focusable="true" multiple v-model="panel">
+    <v-expansion-panels
+      :accordion="true"
+      :focusable="true"
+      multiple
+      v-model="panel"
+    >
       <v-row justify="center" class="mx-5" no-gutters>
         <v-col cols="12">
           <v-expansion-panel>
-            <v-expansion-panel-header class="text__14">Campaign Information:</v-expansion-panel-header>
+            <v-expansion-panel-header class="text__14"
+              >Campaign Information:</v-expansion-panel-header
+            >
             <v-expansion-panel-content>
               <v-row>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Title</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Title</span
+                  >
                   <br />
                   <span class="text__14">{{ campaign_title }}</span>
                 </v-col>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Customer</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Customer</span
+                  >
                   <br />
                   <span class="text__14">{{ campaign_customer.name }}</span>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">Categorys</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >Categorys</span
+                  >
                   <br />
                   <v-chip
                     v-for="item in campaign_tags"
@@ -39,12 +52,12 @@
                   </v-chip>
                 </v-col>
                 <v-col cols="6">
-                  <span style="color:grey; font-weight:300; font-size:12px;">End Date</span>
+                  <span style="color:grey; font-weight:300; font-size:12px;"
+                    >End Date</span
+                  >
                   <br />
                   <span class="text__14">
-                    {{
-                    campaign_enddate |localTime() | moment("DD/MM/YYYY")
-                    }}
+                    {{ campaign_enddate | localTime() | moment("DD/MM/YYYY") }}
                   </span>
                 </v-col>
               </v-row>
@@ -54,16 +67,23 @@
         <v-row no-gutters>
           <v-col cols="12">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14">Campaign Request:</v-expansion-panel-header>
+              <v-expansion-panel-header class="text__14"
+                >Campaign Request:</v-expansion-panel-header
+              >
               <v-expansion-panel-content class="my-2 py-2">
-                <div v-html="campaign_content" class="work content ck-content px-2 py-4"></div>
+                <div
+                  v-html="campaign_content"
+                  class="work content ck-content px-2 py-4"
+                ></div>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-col>
 
           <v-col cols="12">
             <v-expansion-panel>
-              <v-expansion-panel-header class="text__14">Work Assignment:</v-expansion-panel-header>
+              <v-expansion-panel-header class="text__14"
+                >Work Assignment:</v-expansion-panel-header
+              >
               <v-expansion-panel-content class="py-2">
                 <div class="work">
                   <v-row class="my-2" justify="center">
@@ -82,9 +102,7 @@
                   >
                     <template v-slot:item.deadline="{ item }">
                       <span v-if="item.deadline">
-                        {{
-                        item.deadline |localTime() | moment("DD/MM/YYYY")
-                        }}
+                        {{ item.deadline | localTime() | moment("DD/MM/YYYY") }}
                       </span>
                     </template>
                     <template v-slot:item.writer="{ item }">
@@ -141,7 +159,11 @@
                   </v-data-table>
                   <v-row justify="center">
                     <div class="text-center pt-2">
-                      <v-pagination v-model="page" :length="pageCount" :total-visible="10"></v-pagination>
+                      <v-pagination
+                        v-model="page"
+                        :length="pageCount"
+                        :total-visible="10"
+                      ></v-pagination>
                     </div>
                   </v-row>
                 </div>
@@ -274,12 +296,18 @@ export default {
         this.getListWriter(this.$store.getters.getUser.id),
         this.getDetailCampaign(campaignID)
       ]);
+      debugger;
       this.campaign_title = this.detailCampaign.title;
       this.campaign_tags = this.detailCampaign.tagFull;
       this.campaign_customer = this.detailCampaign.customer;
       this.campaign_enddate = this.detailCampaign.endDate;
       let now = new Date();
-      if (this.detailCampaign.endDate < now.toISOString()) {
+      let endFlag;
+      endFlag = this.$moment(this.detailCampaign.endDate)
+        .subtract(2, "days")
+        .add(7, "hours")
+        .toISOString();
+      if (endFlag < now.toISOString()) {
         this.disableStatus = true;
       }
       sessionStorage.setItem("Task-MaxTime", this.detailCampaign.endDate);
