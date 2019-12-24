@@ -256,7 +256,7 @@ export default {
     clickCreate() {
       this.check = false;
       let tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setDate(tomorrow.getDate() + 7);
       this.mintime = tomorrow.toISOString();
       this.title = "";
       if (this.firstTimeLoad) {
